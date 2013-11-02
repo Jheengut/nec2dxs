@@ -86,19 +86,11 @@
      -KSYMP,IFAR,IPERF
       COMMON /ZLOAD/ ZARRAY(MAXSEG),NLOAD,NLODF
       COMMON/YPARM/Y11A(5),Y12A(20),NCOUP,ICOUP,NCTAG(5),NCSEG(5)
-!av14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,
-!av14 -IPCON(10),NPCON
       COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
      -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
 
-!av07 COMMON/VSORC/VQD(30),VSANT(30),VQDS(30),IVQD(30),ISANT(30),
-!av07 -IQDS(30),NVQD,NSANT,NQDS
       COMMON/VSORC/VQD(nsmax),VSANT(nsmax),VQDS(nsmax),IVQD(nsmax),
      -ISANT(nsmax),IQDS(nsmax),NVQD,NSANT,NQDS			! av07
-
-!av06 COMMON/NETCX/ZPED,PIN,PNLS,X11R(30),X11I(30),X12R(30),X12I(30),
-!     -X22R(30),X22I(30),NTYP(30),ISEG1(30),ISEG2(30),NEQ,NPEQ,NEQ2,
-!av06 -NONET,NTSOL,NPRINT,MASYM
 
       COMMON/NETCX/ZPED,PIN,PNLS,X11R(netmx),X11I(netmx),X12R(netmx),
      -X12I(netmx),X22R(netmx),X22I(netmx),NTYP(netmx),ISEG1(netmx),
@@ -115,8 +107,6 @@
 !***
       DIMENSION CAB(1),SAB(1),X2(1),Y2(1),Z2(1)
 
-!av05 DIMENSION LDTYP(30),LDTAG(30),LDTAGF(30),LDTAGT(30),ZLR(30),
-!av05 -ZLI(30),ZLC(30)
       DIMENSION LDTYP(loadmx),LDTAG(loadmx),LDTAGF(loadmx),
      -LDTAGT(loadmx),ZLR(loadmx),ZLI(loadmx),ZLC(loadmx)	! av05
 
@@ -135,7 +125,6 @@
       DATA PNET/6H      ,2H  ,6HSTRAIG,2HHT,6HCROSSE,1HD/
       DATA TA/1.745329252D-02/,CVEL/299.8/
 
-!av05-7 DATA LOADMX,NSMAX,NETMX/30,30,30/,NORMF/200/
       DATA NORMF/200/							
 
 	INCLUDE 'g77port.inc'	! Sets G77 port and version used to compile/link.
@@ -146,10 +135,10 @@
       print *, 'developed at Lawrence Livermore Lab., ',
      &'Livermore, CA., by G. Burke'
       print *, '(burke@icdc.llnl.gov) and A. Poggio.'
-!av03      Write(*,*)
-!av03      & 'Fortran file was created 4/11/80, last changed: Jan 15, 96, by'
-!av03      Write(*,*)
-!av03     & 'J. Bergervoet (bergervo@prl.philips.nl)'
+      Write(*,*)
+     & 'Fortran file was created 4/11/80, changed: Jan 15, 96, by'
+      Write(*,*)
+     & 'J. Bergervoet (bergervo@prl.philips.nl)'
       print *, 'Maximum number of segments in core : MAXMAT=',MAXMAT
       If(MaxSeg.ne.MaxMat) 
      &print *, 'Maximum when using swap files      : MAXSEG=',MAXSEG
@@ -166,29 +155,20 @@
 706   CONTINUE
       WRITE(*,700)
 700   FORMAT(' ENTER NAME OF INPUT FILE >',$)
-!av03 READ(*,701,ERR=702) INFILE
       READ(*,701,ERR=706,END=708) INFILE				! av03
 701   FORMAT(A)
-!     IF(INFILE.EQ.' ')INFILE='SYS$INPUT'
       OPEN (UNIT=2,FILE=INFILE,STATUS='OLD',ERR=702)
-!     OPEN (UNIT=2,FILE=INFILE,STATUS='OLD',ACTION='READ',ERR=702)
-!     OPEN (UNIT=2,FILE=INFILE,STATUS='OLD',READONLY,ERR=702)
 
 707   CONTINUE
       WRITE(*,703)
 703   FORMAT(' ENTER NAME OF OUTPUT FILE >',$)
-cav03 READ(*,701,ERR=704) OUTFILE
       READ(*,701,ERR=707,end=706) OUTFILE				! av03
-!     IF(OUTFILE.EQ.' ')OUTFILE='SYS$OUTPUT'
-!     OPEN (UNIT=3,FILE=OUTFILE,STATUS='NEW',ERR=704)
       OPEN (UNIT=3,FILE=OUTFILE,STATUS='UNKNOWN',ERR=704)
       GO TO 705
 
-!av03 702   CALL ERROR
 702	print *, 'Error opening input-file:',infile		! av03
       GO TO 706
 
-!av03 704   CALL ERROR
 704	print *, 'Error opening output-file:',outfile		! av03
       GO TO 707
 
@@ -199,7 +179,6 @@ cav03 READ(*,701,ERR=704) OUTFILE
       CALL SECOND(STARTTIME)
       FJ=(0.,1.)
       LD=MAXSEG
-!av03 NXA(1)=0		! NXA is now init by block-data SOMSET
 1     KCOM=0
 !***
       IFRTIMW=0
@@ -517,7 +496,6 @@ cav03 READ(*,701,ERR=704) OUTFILE
       IPLP2=ITMP2
       IPLP3=ITMP3
       IPLP4=ITMP4
-!av04 OPEN (UNIT=8,FILE='PLTDAT.NEC',STATUS='NEW',ERR=14)
       OPEN (UNIT=8,FILE='PLTDAT.NEC',STATUS='UNKNOWN',ERR=14) ! av04
 !***
       GO TO 14
@@ -720,7 +698,6 @@ cav03 READ(*,701,ERR=704) OUTFILE
       FRATI=(1.,0.)
       IF (IPERF.EQ.1) GO TO 48
 
-!av03 IF(SIG.LT.0.) SIG=-SIG/(59.96*WLAM)
       IF (SIG.LT.0.) then		! av03, Negative sigma ?
 	   llneg = 1			! Set flag
          SIG=-SIG/(59.96*WLAM)	! Make positive
@@ -750,15 +727,6 @@ cav03 READ(*,701,ERR=704) OUTFILE
 	   if (llneg.eq.1) llneg=2	! If negative, only once
    	   call som2d (fmhz,epsr,sig) ! Get SomNec data, av03
 	endif
-
-!av03 328   IF(NXA(1).EQ.0)THEN
-!         OPEN(UNIT=21,FILE='SOM2D.NEC',STATUS='OLD',FORM='UNFORMATTED',
-!     &   ERR=800)
-!         GO TO 801
-!800      WRITE(3,900)
-!         STOP
-!801      READ(21)AR1,AR2,AR3,EPSCF,DXA,DYA,XSA,YSA,NXA,NYA
-!av03      END IF
 
       FRATI=(EPSC-1.)/(EPSC+1.)
       IF(ABS((EPSCF-EPSC)/EPSC).LT.1.D-3)GO TO 400
@@ -1174,7 +1142,7 @@ cav03 READ(*,701,ERR=704) OUTFILE
 900   FORMAT(' ERROR OPENING SOMMERFELD GROUND FILE - SOM2D.NEC')
       END
 
-!av03 ################## START OF SOM2D INCLUDE ########################
+! ################## START OF SOM2D INCLUDE ########################
 
 !***********************************************************************
 !----------------------------------------------------------------------------
@@ -1194,9 +1162,6 @@ cav03 READ(*,701,ERR=704) OUTFILE
       CHARACTER*3  LCOMP(4)
       DATA LCOMP/'ERV','EZV','ERH','EPH'/
 !
-!av03 999   WRITE(*,21)
-!av03 READ(*,*,ERR=999) EPR,SIG,FMHZ,IPT
-
 	epr = repr		! av03
 	sig = rsig		! av03
 	fmhz = rmhz		! av03
@@ -1205,15 +1170,6 @@ cav03 READ(*,701,ERR=704) OUTFILE
 !deb	write (*,100) fmhz,epr,sig
 !deb  100 format (' Som2d: Freq=',d10.5,' Diel=',d10.5,' Cond=',d10.5)
 
-!av03      WRITE(*,100) EPR
-!av03100   FORMAT("  RELATIVE DIELECTRIC CONSTANT (EPR)  = ", D20.5)
-!av03      WRITE(*,101) SIG
-!av03101   FORMAT("  SIGMA [CONDUCTIVITY IN MHOS/METER]  = ", D20.5)
-!av03      WRITE(*,102) FMHZ
-!av03102   FORMAT("                     FREQUENCY IN MHZ = ", D20.5)
-!av03      IF(IPT == 1) WRITE(*,*) "   GRID FILE [SOM2D.OUT] WILL BE CREATED"
-!av03      IF(IPT == 0) WRITE(*,*) "   NO GRID FILE WILL BE CREATED"
-!av03      WRITE(*,*)
 !***
       IF (SIG.LT.0.) GO TO 1
       WLAM=299.8/FMHZ
@@ -1221,7 +1177,6 @@ cav03 READ(*,701,ERR=704) OUTFILE
       GO TO 2
 1     EPSCF=DCMPLX(EPR,SIG)
 2     CONTINUE
-!av03 2     CALL SECOND (TST)
       CK2=6.283185308
       CK2SQ=CK2*CK2
 !
@@ -1313,20 +1268,13 @@ cav03 READ(*,701,ERR=704) OUTFILE
       AR1(1,ITH,2)=EZV
       AR1(1,ITH,3)=ERH
 9     AR1(1,ITH,4)=EPH
-!av03 CALL SECOND (TIM)
 !
 !     WRITE GRID ON TAPE21
 !
-!av03      OPEN(UNIT=21,FILE='SOM2D.NEC',STATUS='UNKNOWN',FORM='UNFORMATTED')
-!av03      WRITE (21) AR1,AR2,AR3,EPSCF,DXA,DYA,XSA,YSA,NXA,NYA
-!av03      REWIND 21
-!av03      IF (IPT.EQ.0) GO TO 14
       IF (IPT.EQ.0) RETURN						! av03
 !
 !     PRINT GRID
 !
-!av03 OPEN (UNIT=3,FILE='SOM2D.OUT',STATUS='NEW',ERR=14)
-cAV04 OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='NEW',ERR=14)	! av03
       OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='UNKNOWN',ERR=14)! av04
       WRITE(3,17) EPSCF
       DO 13 K=1,3
@@ -1343,10 +1291,7 @@ cAV04 OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='NEW',ERR=14)	! av03
       GO TO 13
 12    WRITE(9,20) IR,(AR3(IR,ITH,L),ITH=1,NTH)
 13    CONTINUE
-!av03 14    TIM=TIM-TST
-!av03 WRITE(*,16) TIM
-!av03	STOP
-14	return								! av03
+14    return								! av03
 !
 16    FORMAT (6H TIME=,1PE12.5)
 17    FORMAT (30H1NEC GROUND INTERPOLATION GRID,/,21H DIELECTRIC CONSTAN
@@ -1355,7 +1300,6 @@ cAV04 OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='NEW',ERR=14)	! av03
      1,/,9H THET(1)=,F7.4,3X,4HDTH=,F7.4,3X,4HNTH=,I3,//)
 19    FORMAT (///,1X,A3)
 20    FORMAT (4H IR=,I3,/,1X,(1P10E12.5))
-! hwh 21    FORMAT($,' ENTER EPR,SIG,FMHZ,IPT > ')
 22    FORMAT(' STARTING COMPUTATION OF SOMMERFELD INTEGRAL TABLES')
       END
 
@@ -1387,8 +1331,6 @@ cAV04 OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='NEW',ERR=14)	! av03
       DIMENSION M(101), A1(25), A2(25), FJX(2)
       EQUIVALENCE (FJ,FJX)
 
-!av03      DATA PI,C3,P10,P20,Q10,Q20/3.141592654,.7978845608,.0703125,.11215
-!av03     120996,.125,.0732421875/
       DATA C3,P10,P20,Q10,Q20/.7978845608,.0703125,.11215
      -20996,.125,.0732421875/
 
@@ -1934,52 +1876,6 @@ cAV04 OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='NEW',ERR=14)	! av03
       END
 
 !***********************************************************************
-!----------------------------------------------------------------------------
-
-!av03 SUBROUTINE TEST (F1R,F2R,TR,F1I,F2I,TI,DMIN)
-!
-!av03	Routine already available, note however the SAVE statement.
-!
-!***********************************************************************
-!
-!     TEST FOR CONVERGENCE IN NUMERICAL INTEGRATION
-!
-!av03      IMPLICIT REAL*8(A-H,O-Z)
-!av03      SAVE
-!av03      DEN=ABS(F2R)
-!av03      TR=ABS(F2I)
-!av03      IF (DEN.LT.TR) DEN=TR
-!av03      IF (DEN.LT.DMIN) DEN=DMIN
-!av03      IF (DEN.LT.1.E-37) GO TO 1
-!av03      TR=ABS((F1R-F2R)/DEN)
-!av03      TI=ABS((F1I-F2I)/DEN)
-!av03      RETURN
-!av03
-!av031     TR=0.
-!av03      TI=0.
-!av03      RETURN
-!av03      END
-
-!av03      SUBROUTINE SECOND (CPUSECD)
-!     Purpose:
-!     SECOND returns cpu time in seconds.  Must be customized!!!
-!av03      REAL*8 CPUSECD
-!av03      integer Iticks
-!av03
-!--   Not customized:
-!       Cpusecd = 0.0            ! if we have no clock routine
-!--   MACINTOSH:
-!       CPUSECD= LONG(362)/60.0
-!--   Lahey fortran
-!        Call Timer(Iticks)
-!av03        cpusecd = Iticks/100.d0
-!av03      END
-
-!av03 ################## END OF SOM2D INCLUDE ##########################
-
-!***********************************************************************
-!----------------------------------------------------------------------------
-
       SUBROUTINE ARC (ITG,NS,RADA,ANG1,ANG2,RAD)
 !***********************************************************************
 ! ***
@@ -2096,13 +1992,9 @@ cAV04 OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='NEW',ERR=14)	! av03
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
       COMMON /CRNT/ AIR(MAXSEG),AII(MAXSEG),BIR(MAXSEG),BII(MAXSEG),
      &CIR(MAXSEG),CII(MAXSEG),CUR(3*MAXSEG)
-!av14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
-!av14-CON(10),NPCON
       COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
      -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
 
-!av07 COMMON /VSORC/ VQD(30),VSANT(30),VQDS(30),IVQD(30),ISANT(30),IQDS(
-!av07 130),NVQD,NSANT,NQDS
       COMMON /VSORC/ VQD(nsmax),VSANT(nsmax),VQDS(nsmax),IVQD(nsmax),
      &ISANT(nsmax),IQDS(nsmax),NVQD,NSANT,NQDS			! av07
 
@@ -2199,8 +2091,6 @@ cAV04 OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='NEW',ERR=14)	! av03
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
       COMMON /ZLOAD/ ZARRAY(MAXSEG),NLOAD,NLODF
-!av14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
-!av14-CON(10),NPCON
       COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
      -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
 
@@ -2482,8 +2372,6 @@ cAV04 OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='NEW',ERR=14)	! av03
       COMMON /SCRATM/ D(2*MAXSEG)
       COMMON /ZLOAD/ ZARRAY(MAXSEG),NLOAD,NLODF
 
-!av14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
-!av14-CON(10),NPCON
       COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
      -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
 
@@ -2686,8 +2574,6 @@ cAV04 OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='NEW',ERR=14)	! av03
       COMMON /DATAJ/ S,B,XJ,YJ,ZJ,CABJ,SABJ,SALPJ,EXK,EYK,EZK,EXS,EYS,
      &EZS,EXC,EYC,EZC,RKH,IND1,INDD1,IND2,INDD2,IEXK,IPGND
 
-!av14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
-!av14-CON(10),NPCON
       COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
      -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
 
@@ -2835,8 +2721,6 @@ cAV04 OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='NEW',ERR=14)	! av03
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
       COMMON /ANGL/ SALP(MAXSEG)
 
-!av14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
-!av14-CON(10),NPCON
       COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
      -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
 
@@ -2927,8 +2811,6 @@ cAV04 OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='NEW',ERR=14)	! av03
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
       COMMON /ANGL/ SALP(MAXSEG)
 
-!av14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
-!av14-CON(10),NPCON
       COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
      -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
 
@@ -3055,16 +2937,12 @@ cAV04 OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='NEW',ERR=14)	! av03
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
 
-!av14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
-!av14-CON(10),NPCON
       COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
      -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
 
       DIMENSION X2(1), Y2(1), Z2(1)
       EQUIVALENCE (X2,SI), (Y2,ALP), (Z2,BET)
 
-!av07 DATA JMAX/30/,SMIN/1.D-3/,NSMAX/50/,NPMAX/10/
-!av14 DATA JMAX/30/,SMIN/1.D-3/,NPMAX/10/
       DATA SMIN/1.D-3/,NPMAX/10/
 
       NSCON=0
@@ -3373,8 +3251,6 @@ cAV04 OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='NEW',ERR=14)	! av03
      1,VQDS
       COMMON/YPARM/Y11A(5),Y12A(20),NCOUP,ICOUP,NCTAG(5),NCSEG(5)
 
-!av07 COMMON /VSORC/ VQD(30),VSANT(30),VQDS(30),IVQD(30),ISANT(30),IQDS(
-!av07 130),NVQD,NSANT,NQDS
       COMMON /VSORC/ VQD(nsmax),VSANT(nsmax),VQDS(nsmax),IVQD(nsmax),
      &ISANT(nsmax),IQDS(nsmax),NVQD,NSANT,NQDS			! av07
 
@@ -4157,24 +4033,6 @@ cAV04 OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='NEW',ERR=14)	! av03
 
 !----------------------------------------------------------------------------
 
-!av03 SUBROUTINE ERROR
-! ***
-!     GET REASON FOR FILE ERROR (VAX ONLY).  ERROR SHOULD BE REDUCED TO 
-!     "RETURN END" FOR MACINTOSH.
-!
-!      IMPLICIT INTEGER (A-Z)
-!      CHARACTER MSG*80
-!      CALL ERRSNS(FNUM,RMSSTS,RMSSTV,IUNIT,CONDVAL)
-!      CALL SYS$GETMSG(%VAL(RMSSTS),MSGLEN,MSG,,,)
-!      CALL STR$UPCASE(MSG,MSG)
-!      IND=INDEX(MSG,',')
-!      TYPE 1,MSG(IND+2:MSGLEN)
-!1     FORMAT(//,'  ****  ERROR  ****   ',//,5X,A,//)
-!av03 RETURN
-!av03 END
-
-!----------------------------------------------------------------------------
-
       SUBROUTINE ETMNS (P1,P2,P3,P4,P5,P6,IPR,E)
 ! ***
 !     DOUBLE PRECISION 6/4/85
@@ -4194,8 +4052,6 @@ cAV04 OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='NEW',ERR=14)	! av03
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
       COMMON /ANGL/ SALP(MAXSEG)
 
-!av07 COMMON /VSORC/ VQD(30),VSANT(30),VQDS(30),IVQD(30),ISANT(30),IQDS(
-!av07 130),NVQD,NSANT,NQDS
       COMMON /VSORC/ VQD(nsmax),VSANT(nsmax),VQDS(nsmax),IVQD(nsmax),
      &ISANT(nsmax),IQDS(nsmax),NVQD,NSANT,NQDS			! av07
 
@@ -5303,9 +5159,6 @@ cAV04 OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='NEW',ERR=14)	! av03
       EQUIVALENCE (T2X,ICON1),(T2Y,ICON2),(T2Z,ITAG)
 !***
       DATA IGFL/20/
-!av12 OPEN(UNIT=IGFL,FILE='NGF2D.NEC',FORM='UNFORMATTED',STATUS='OLD')
-
-!av018	write (3, '(2A)') 'Opening NGF-file : ',ngfnam			! av12
 
 	OPEN(UNIT=IGFL,FILE=NGFNAM,FORM='UNFORMATTED',STATUS='OLD',ERR=30)! av12
 	goto 31										! av12
@@ -5636,14 +5489,8 @@ cAV04 OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='NEW',ERR=14)	! av03
       EQUIVALENCE (T2X,ICON1),(T2Y,ICON2),(T2Z,ITAG)
 !***
       DATA IGFL/20/
-!av04 OPEN(UNIT=IGFL,FILE='NGF2D.NEC',FORM='UNFORMATTED',STATUS='NEW')
 
-!av12 OPEN(UNIT=IGFL,FILE='NGF2D.NEC',
-!av12 &FORM='UNFORMATTED',STATUS='UNKNOWN')
-
-!      write (3, '(2A)') 'Writing NGF-file : ',ngfnam			! av12
-
-	OPEN(UNIT=IGFL,FILE=NGFNAM,
+      OPEN(UNIT=IGFL,FILE=NGFNAM,
      &FORM='UNFORMATTED',STATUS='UNKNOWN')	! av12
 
       NEQ=N+2*M
@@ -5759,7 +5606,6 @@ cAV04 OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='NEW',ERR=14)	! av03
       COMMON /GWAV/ U,U2,XX1,XX2,R1,R2,ZMH,ZPH
       DIMENSION FJX(2), TPJX(2), ECONX(2)
       EQUIVALENCE (FJ,FJX), (TPJ,TPJX), (ECON,ECONX)
-!av01 DATA PI/3.141592654D+0/,FJX/0.,1./,TPJX/0.,6.283185308D+0/
 	DATA FJX/0.,1./,TPJX/0.,6.283185308D+0/
       DATA ECONX/0.,-188.367/
       SPPP=ZMH/R1
@@ -7294,14 +7140,8 @@ cAV04 OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='NEW',ERR=14)	! av03
       COMMON /CRNT/ AIR(MAXSEG),AII(MAXSEG),BIR(MAXSEG),BII(MAXSEG),
      &CIR(MAXSEG),CII(MAXSEG),CUR(3*MAXSEG)
 
-!av07 COMMON /VSORC/ VQD(30),VSANT(30),VQDS(30),IVQD(30),ISANT(30),IQDS(
-!av07 130),NVQD,NSANT,NQDS
       COMMON /VSORC/ VQD(nsmax),VSANT(nsmax),VQDS(nsmax),IVQD(nsmax),
      &ISANT(nsmax),IQDS(nsmax),NVQD,NSANT,NQDS			! av07
-
-!av06 COMMON/NETCX/ZPED,PIN,PNLS,X11R(30),X11I(30),X12R(30),X12I(30),
-!     &X22R(30),X22I(30),NTYP(30),ISEG1(30),ISEG2(30),NEQ,NPEQ,NEQ2,
-!av06 &NONET,NTSOL,NPRINT,MASYM
 
       COMMON/NETCX/ZPED,PIN,PNLS,X11R(netmx),X11I(netmx),X12R(netmx),
      &X12I(netmx),X22R(netmx),X22I(netmx),NTYP(netmx),ISEG1(netmx),
@@ -7309,17 +7149,10 @@ cAV04 OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='NEW',ERR=14)	! av03
 
       DIMENSION EINC(1), IP(1),CM(1),CMB(1),CMC(1),CMD(1)
 
-!av07 DIMENSION CMN(30,30), RHNT(30), IPNT(30), NTEQA(30), NTSCA(30),
-!av07 &RHS(3*MAXSEG), VSRC(30), RHNX(30)
-
-!av08	Keep VSRC dimension to 30 (for now) as it's use is uncertain.
-!av17 VSRC made equal to netmx as it somehow limited the nr of NT's to 30
-
       DIMENSION CMN(netmx,netmx), RHNT(netmx), IPNT(netmx), 
      &NTEQA(netmx), NTSCA(netmx), RHS(3*MAXSEG), VSRC(netmx), 
      &RHNX(netmx)								! av017
 
-!av06 DATA NDIMN,NDIMNP/30,31/,TP/6.283185308D+0/
 !hwh  DATA NDIMN,NDIMNP/netmx,netmx+1/,TP/6.283185308D+0/	! av06
       DATA NDIMN,NDIMNP/netmx,netmxp1/,TP/6.283185308D+0/	! av06 hwh
 
@@ -7357,9 +7190,6 @@ cAV04 OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='NEW',ERR=14)	! av03
 7     IROW1=IROW1+1
       IPNT(IROW1)=NSEG1
 8     CONTINUE
-
-!av09
-!9	print *,'irow1=',irow1,'  ndimnp=',ndimnp
 
 9      IF (IROW1.LT.NDIMNP) GO TO 10
       WRITE(3,59)
@@ -8193,13 +8023,9 @@ cAV04 OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='NEW',ERR=14)	! av03
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
 
-!av07 COMMON /VSORC/ VQD(30),VSANT(30),VQDS(30),IVQD(30),ISANT(30),IQDS(
-!av07 130),NVQD,NSANT,NQDS
       COMMON /VSORC/ VQD(nsmax),VSANT(nsmax),VQDS(nsmax),IVQD(nsmax),
      &ISANT(nsmax),IQDS(nsmax),NVQD,NSANT,NQDS			! av07
 
-!av14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
-!av14-CON(10),NPCON
       COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
      -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
 
@@ -8722,9 +8548,6 @@ cAV04 OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='NEW',ERR=14)	! av03
            ENDFLD(I)= 0
  3020 CONTINUE
 
-!av018	print *,'parsit:',cmnd,totcol,maxint,maxrea
-!av018	print *, rec
-
 !
 !  Find the beginning and ending of each field as well as the total number of
 !  fields.
@@ -8767,8 +8590,6 @@ cAV04 OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='NEW',ERR=14)	! av03
 !  Check to see if the total number of value fields is within the precribed
 !  limits.
 
-!av018 5000	print *,totfld,maxint,cmnd,rec
-
  5000	if ((cmnd.eq.'WG').or.(cmnd.eq.'GF')) then	! Init default NGFNAM
 	   ngfnam='NGF2D.NEC' 				! av15
         endif
@@ -8786,12 +8607,9 @@ cAV04 OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='NEW',ERR=14)	! av03
              LENGTH= ENDFLD(I) - BGNFLD(I) + 1
              BUFFER= REC(BGNFLD(I):ENDFLD(I))
 
-!av018	print *,i,'buf(1:1)=',buffer(1:1)
-
 	if (((cmnd.eq.'WG').or.(cmnd.eq.'GF')).and.
      &  (buffer(1:1).ne.'0') .and. (buffer(1:1).ne.'1')) then	! Text field, av12
 	   ngfnam = rec(bgnfld(i):endfld(i))			! av12
-!av018	   write (3, '(2A)') 'NGF-file set to : ',ngfnam			! av12
 	   return								! av12
 	endif									! av12
 
@@ -9246,7 +9064,6 @@ cAV04 OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='NEW',ERR=14)	! av03
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
 
-!av14 DATA PI/3.141592654D+0/,JMAX/30/
       DATA PI/3.141592654D+0/
 
       AA=0.
@@ -9372,288 +9189,6 @@ cAV04 OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='NEW',ERR=14)	! av03
 !
 25    FORMAT (43H SBF - SEGMENT CONNECTION ERROR FOR SEGMENT,I5)
       END
-
-!----------------------------------------------------------------------------
-
-!av02 SUBROUTINE SECOND (CPUSECD)
-!
-!     Purpose:
-!     SECOND returns cpu time in seconds.  Must be customized!!!
-!
-!     VAX or other (modify subroutine stopwtch):
-!
-!av02 REAL*8 CPUSECD
-!av02 CALL STOPWTCH(CPUSECS,WALLTOT,CPUSPLT,WALLSPLT)
-!av02 CPUSECD=60.*CPUSECS
-!     MACINTOSH:
-!      CPUSECD= LONG(362)/60.0
-!av02 RETURN
-!av02 END
-
-c **********************************************************************
-!av03   subroutine stopwtch(cputot,walltot,cpusplt,wallsplt)
-c
-c       This routine operates as a stopwatch.
-c       When first called, the routine initializes the clock.
-c       On subsequent calls, the routine returns:
-c
-c       Outputs: cputot   -- elapsed CPU time since initialization
-c                walltot  -- elapsed wallclock time since initialization
-c                cpusplt  -- split (delta) CPU time since previous call
-c                wallsplt -- split wallclock time since previous call
-c
-c       These outputs will all be zero (or very close to it) on the
-c       first (initialization) call.
-c
-c       Internal times (cpuinit,wallinit,cpunow,wallnow) are stored in
-c       seconds.  cpuinit  and cpunow  are stored as reals,
-c                 wallinit and wallnow are stored as integers.
-c       Output times are converted to real minutes.
-c
-c History:
-c   Date       Author            Reason
-c   ---------  ----------------  ------------------------------------
-c    early-90  Scott L. Ray      initial version
-c      mid-90  Scott L. Ray      support for additional machines
-c   14-JAN-91                    ---- Version 2.2/release    ----
-c   23-MAY-91  Scott L. Ray      UNICOS branch
-c   29-JAN-92  Scott L. Ray      FPS and NLTSS support dropped
-c   29-JAN-92  Scott L. Ray      switch to cpp conditional compilation
-c   18-SEP-92      Conditional compilation disabled for use in NEC
-c
-c  (C) Copyright 1990, 1992.
-c  The Regents of the University of California.  All rights reserved.
-c ----------------------------------------------------------------------
-c
-c parameter list
-c
-!av03        real cputot,walltot,cpusplt,wallsplt
-c
-c locals (non sysdep)
-c
-!av03        logical initiz
-!av03        integer wallinit,walllast,wallnow
-!av03        real cpuinit,cpulast,cpunow
-!av03        save initiz,cpuinit,cpulast,wallinit,walllast
-c
-c locals (sysdep)
-c
-!#include "machines.h"
-!#ifdef VAX_VMS
-!        integer istatus,iwall,icpu
-!        real rwall
-!        dimension iwall(2)
-!#endif
-!#ifdef SUN4TIMER
-!av03        integer time
-!av03        real tarray
-!av03        dimension tarray(2)
-!#endif
-!#ifdef CONVEX
-!        real time, secnds, tarray
-!        dimension tarray(2)
-!        external secnds
-!#endif
-!#ifdef IBM_RISC
-c        integer icpu
-c        integer mclock
-!#endif
-!#ifdef IRIS4D
-!        external time
-!#endif
-!#ifdef STARDENT
-!        integer stime
-!        real tarray
-!        dimension tarray(2)
-!#endif
-!#ifdef UNICOS
-!        real rwall
-!#endif
-c
-c data initialization
-c
-!av03        data initiz/.false./
-c
-c ----------------------------------------------------------------------
-c
-!av03        if (.not. initiz) then
-c
-c ...      set the flag showing that the clock has been initialized
-c
-!av03           initiz = .true.
-c
-c ...      set the initial times to default value of zero.  These may
-c          be changed, depending on how an individual machine handles
-c          its timer.
-c
-!av03           cpuinit  = 0.0
-!av03           wallinit = 0
-c
-c ...      initialize the timer (may not be necessary on all machines)
-c
-!#ifdef VAX_VMS
-!           istatus = lib$init_timer()
-!#endif
-c
-!#ifdef SUN4TIMER
-c          CPU timer on SUN4 initializes automatically on job startup.
-c          However, we want t=0 to be defined when this routine is first
-c          called.  Hence, define initial CPU time here.
-c          Wall clock timer counts in seconds from 1-Jan-70  Thus,
-c          initial wall clock time is non-zero.  It is obtained here.
-c 
-!av03           cpuinit  = etime(tarray)
-!av03           wallinit = time()
-!#endif
-c
-!#ifdef CONVEX
-!           cpuinit = etime(tarray)
-!           time = secnds(0.0)
-!           wallinit = ifix(time)
-!#endif
-c
-!#ifdef IBM_RISC
-c          no known wall clock timer
-c
-c           icpu = mclock( )
-c           cpuinit  = float(icpu)/100.0
-c           wallinit = 0
-!#endif
-c
-!#ifdef STARDENT
-c          CPU timer on STARDENT initializes automatically on job
-c          startup.
-c          However, we want t=0 to be defined when this routine is first
-c          called.  Hence, define initial CPU time here.
-c          Wall clock timer counts in seconds from 1-Jan-70  Thus,
-c          initial wall clock time is non-zero.  It is obtained here.
-c
-!           cpuinit  = etime(tarray)
-!           wallinit = stime()
-!#endif
-c
-!#ifdef UNICOS
-c          I hope that the "second" routine is true UNICOS and not a
-c          local (LLNL) feature that was added on to keep things
-c          consistent with NLTSS.
-c          The "timef" routine returns real milliseconds; first
-c          call initializes the timer and should return zero (not
-c          that we care -- this routine works by taking differences).
-c
-!           call second(cpuinit)
-!           call timef(rwall)
-!           wallinit = ifix(rwall*1.0e-03)
-!#endif
-c
-c ...      since this is the first call to this routine,
-c          initialize the previous call times to the initial time.
-c
-!av03           cpulast  =  cpuinit
-!av03           walllast = wallinit
-c
-!av03        end if
-c
-c ...   Find the current cpu and wall times
-c
-!#ifdef HASTIMER
-!#ifdef VAX_VMS
-c
-c       function "lib$stat_timer" is called as:
-c       error_status = lib$stat_timer(input_code,output_result,junk)
-c       where,
-c        input_code = 1 returns elapsed wall clock time in VAX_VMS
-c           binary internal format.  This format takes 64 bits to store,
-c           hence output_result should be a 32 bit integer array of
-c           length 2.
-c           This internal format is converted to a floating point number
-c           by calling "lib$cvtf_from_internal_time".  This function
-c           is poorly documented in the VAX_VMS manuals.  Here are some
-c           details:  First argument = 28 ==> result in real hours
-c                                    = 29 ==> result in real minutes
-c                                    = 30 ==> result in real seconds
-c           The input to "lib$cvtf_from_internal_time" goes in the 3rd
-c           argument, the result is returned in the 2nd argument.
-c           input_code = 2 returns elapsed cpu time as an integer in
-c           units of 10msec.  This is converted to seconds here.
-c 
-!        istatus = lib$stat_timer(1,iwall,)
-!        istatus = lib$cvtf_from_internal_time(30,rwall,iwall)
-!        wallnow = rwall
-!        istatus = lib$stat_timer(2,icpu,)
-!        cpunow = icpu*(10.0e-3)
-!#endif
-c
-!#ifdef SUN4TIMER
-c       there is some ambiguity in the manual as to how to use
-c       etime.  Function returns:
-c          "elapsed execution time" = tarray(1) + tarray(2)
-c                                   = user time + system time
-c       I am uncertain whether to let cpunow = return value or
-c       else tarray(1).
-c
-!av03        cpunow  = etime(tarray)
-!av03        wallnow = time()
-!#endif
-c
-!#ifdef CONVEX
-!           cpunow = etime(tarray)
-!           time = secnds(0.0)
-!           wallnow = ifix(time)
-!#endif
-c
-!#ifdef IBM_RISC
-c       no known wall clock timer
-c
-c        icpu = mclock( )
-c        cpunow  = float(icpu)/100.0
-c        wallnow = 0
-!#endif
-c
-!#ifdef STARDENT
-c       there is some ambiguity in the manual as to how to use
-c       etime.  Function returns:
-c          "elapsed execution time" = tarray(1) + tarray(2)
-c                                   = user time + system time
-c       I am uncertain whether to let cpunow = return value or
-c       else tarray(1).
-c 
-!        cpunow  = etime(tarray)
-!        wallnow = stime()
-!#endif
-c
-!#ifdef UNICOS
-c       I hope that the "second" routine is true UNICOS and not a
-c       local (LLNL) feature that was added on to keep things
-c       consistent with NLTSS.
-c       The "timef" routine returns real milliseconds.
-c
-!        call second(cpunow)
-!        call timef(rwall)
-!        wallnow = ifix(rwall*1.0e-03)
-!#endif
-!#else
-c       for machines without timers or with unknown timers,
-c       set things to zero now to ensure that something is returned
-!        cpunow  = 0.0
-!        wallnow = 0
-!#endif
-c
-c ...   calculate elapsed and split cpu and wall clock times,
-c       convert to minutes on output.
-c
-!av03        cputot   = (cpunow  - cpuinit )/60.0
-!av03        walltot  = float(wallnow - wallinit)/60.0
-!av03        cpusplt  = (cpunow  - cpulast )/60.0
-!av03        wallsplt = float(wallnow - walllast)/60.0
-c
-c ...   save "now" times in "last" times
-c
-!av03        cpulast  = cpunow
-!av03        walllast = wallnow
-c
-!av03        return
-c **********************************************************************
-!av03        end
 
 !----------------------------------------------------------------------------
 
@@ -9788,8 +9323,6 @@ c **********************************************************************
       COMPLEX*16 A,B,C,D,SUM,XY,Y
       COMMON /SCRATM/ Y(2*MAXSEG)
 
-!av14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
-!av14-CON(10),NPCON
       COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
      -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
 
@@ -10089,12 +9622,9 @@ c **********************************************************************
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
 
-!av14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
-!av14-CON(10),NPCON
       COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
      -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
 
-!av14 DATA PI/3.141592654D+0/,JMAX/30/
       DATA PI/3.141592654D+0/
 
       JSNO=0
@@ -10263,12 +9793,8 @@ c **********************************************************************
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
 
-!av14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
-!av14-CON(10),NPCON
       COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
      -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
-
-!av14 DATA JMAX/30/
 
       JSNO=0
       JCOX=ICON1(J)
@@ -10516,150 +10042,3 @@ c **********************************************************************
       RETURN
       END
 
-!av03 logical*4 function GetPut(what,where,message,file,volume,nt,types)
-!
-!      implicit none
-!
-!      integer NEWHANDLE
-!      parameter (NEWHANDLE = Z'122000A8')
-!      integer HLOCK
-!      parameter (HLOCK = Z'02980008')
-!      integer HUNLOCK
-!      parameter (HUNLOCK = Z'02A80008')
-!      integer NEWDIALOG
-!      parameter (NEWDIALOG = Z'97D20002')
-!      integer DISPOSHANDLE
-!      parameter (DISPOSHANDLE = Z'02380008')
-!      integer SFPUTFILE
-!      parameter (SFPUTFILE = Z'9EA16CB1')
-!      integer SFGETFILE
-!      parameter (SFGETFILE = Z'9EA20003')
-!      integer PTR
-!      parameter (PTR = Z'C0000000')
-!      integer DISPOSEDIALOG
-!      parameter (DISPOSEDIALOG = Z'98310000')
-!      integer PBSETVOL
-!      parameter (PBSETVOL = Z'01580010')
-!
-!      integer*4 what                ! 0 SFPUTFILE; 1 SFGETFILE
-!      integer*2 where(2)            ! location of box upper-left corner (y,x)
-!      character*(*) message         ! string to go over dialog box
-!      character*(*) file            ! file name
-!      integer*4 volume              ! volume number
-!      integer*4 nt                  ! number of filter types
-!      character*(*) types           ! filter types
-!
-!      integer*4 toolbx              ! toolbx interface
-!
-!      integer*4 dptr                ! dialog pointer
-!      character*64 fname
-!      logical*1 good                ! result flag
-!      integer*4 i
-!      integer*2 iovrefnum
-!      integer*4 lhdl                      ! handle of item list
-!      integer*4 lptr                      ! pointer to item list
-!      integer*4 nc                        ! number of characters in file name
-!      integer*2 posd(2)                   ! location of standard dialog
-!      integer*2 rect(4)                   ! rectangle
-!      integer*2 vrefnum
-!      integer*1 params(108)                ! partial PBGETVOL parameter block
-!      equivalence (params(23),iovrefnum)
-!      integer*1 reply(76)                 ! reply record
-!      equivalence (reply(1),good)
-!      equivalence (reply(7),vrefnum)
-!      equivalence (reply(11),fname)
-!
-!av03  GetPut = .false.
-!      volume = 0
-!      good = .true.
-!      if (what .eq. 0) then
-!        lhdl = 0
-!        lhdl = toolbx(NEWHANDLE,72)
-!        if (lhdl .eq. 0) return
-!        call toolbx(HLOCK,lhdl)
-!        lptr = LONG(lhdl)
-!        WORD(lptr) = 1
-!        LONG(lptr + 2) = 0
-!        WORD(lptr + 6) = 0
-!        WORD(lptr + 8) = 0
-!        WORD(lptr + 10) = 32
-!        WORD(lptr + 12) = 32
-!        BYTE(lptr + 14) = 160
-!        BYTE(lptr + 15) = 2
-!        WORD(lptr + 16) = 1
-!        LONG(lptr + 18) = 0
-!        WORD(lptr + 22) = 8
-!        WORD(lptr + 24) = 40
-!        WORD(lptr + 26) = 24
-!        WORD(lptr + 28) = 304
-!        BYTE(lptr + 30) = 136
-!        BYTE(lptr + 31) = 40
-!        do (i = 1, 40)
-!          BYTE(lptr + 31 + i) = ICHAR(message(i:i))
-!        enddo
-!        call toolbx(HUNLOCK,lhdl)
-!        rect(1) = where(1)
-!        rect(2) = where(2)
-!        rect(3) = rect(1) + 32
-!        rect(4) = rect(2) + 304
-!      elseif (what .eq. 1) then
-!        lhdl = 0
-!        lhdl = toolbx(NEWHANDLE,80)
-!        if (lhdl .eq. 0) return
-!        call toolbx(HLOCK,lhdl)
-!        lptr = LONG(lhdl)
-!        WORD(lptr) = 1
-!        LONG(lptr + 2) = 0
-!        WORD(lptr + 6) = 0
-!        WORD(lptr + 8) = 0
-!        WORD(lptr + 10) = 32
-!        WORD(lptr + 12) = 32
-!        BYTE(lptr + 14) = 160
-!        BYTE(lptr + 15) = 2
-!        WORD(lptr + 16) = 1
-!        LONG(lptr + 18) = 0
-!        WORD(lptr + 22) = 8
-!        WORD(lptr + 24) = 40
-!        WORD(lptr + 26) = 24
-!        WORD(lptr + 28) = 348
-!        BYTE(lptr + 30) = 136
-!        BYTE(lptr + 31) = 48
-!        do (i = 1, 48)
-!          BYTE(lptr + 31 + i) = ICHAR(message(i:i))
-!        enddo
-!        call toolbx(HUNLOCK,lhdl)
-!        rect(1) = where(1)
-!        rect(2) = where(2)
-!        rect(3) = rect(1) + 32
-!        rect(4) = rect(2) + 348
-!      else
-!        return
-!      endif
-!      dptr = 0
-!      dptr = toolbx(NEWDIALOG,0,rect,0,.true.,1,-1,.false.,0,lhdl)
-!      if (dptr .eq. 0) then
-!        call toolbx(DISPOSHANDLE,lhdl)
-!        return
-!      endif
-!      posd(1) = where(1) + 50
-!      posd(2) = where(2)
-!      if (what .eq. 0) then
-!        call toolbx(SFPUTFILE,posd,0,0,0,reply,1)
-!      else
-!        call toolbx(SFGETFILE,posd,0,0,nt,toolbx(PTR,types),0,reply,2)
-!      endif
-!      call toolbx(DISPOSEDIALOG,dptr)                 ! Dispose of Header dialog
-!      if (good .eq. .false.) return
-!      nc = ICHAR(fname(1:1))
-!      file = fname(2:nc + 1)
-!      do (i = 1, 108)
-!        params(i) = 0
-!      enddo
-!      iovrefnum = vrefnum
-!      if (toolbx(PBSETVOL,toolbx(PTR,params)) .eq. 0) then
-!        GetPut = .true.
-!        volume = vrefnum
-!      endif
-!
-!av03 return
-!av03 end
