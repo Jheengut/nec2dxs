@@ -1,0 +1,67 @@
+Subject: NEC-2 FORTRAN Sources available 
+Date: Thu, 30 Jan 1992 11:03:55 -0500
+
+
+    I have posted the FORTRAN source code for NEC-2 on UCSD.EDU:
+
+    /hamradio/nec-2.f
+
+    It's available for anonymous FTP thanks to Brian Kantor's efforts.
+
+    A few notes:
+
+        1. This is FORTRAN-77 source code, with some VAX specific
+           modifications. I have not tested it (look at my .sig).
+		   It's *not* the official NEC-2 source, it's been hacked
+		   a bit, but it's pretty close to what was released originally.
+		
+        2. There is no documentation with the code except for whatever
+           comments are embedded.
+
+        3. It is, as far as I know, public domain, having been developed
+           by an agency of the US Gov't. There's no copyright
+           statement on the code I received. I got it from a friend of
+           a friend (at Purdue Univ, I think).
+
+        4. You're on your own getting it running on your system. 
+
+    Documentation:
+
+        The code is documented in two (huge!) manuals, available for
+    purchase from the National Technical Information Service (NTIS).
+    They're in the phone book in Springfield, Virginia, 22161. Call
+    them and ask them about current selling price & shipping info on the
+    following two publications (you want both of them):
+
+    NTIS  AD-A075289  NOSC TD-116 Vol 1
+                      Numerical Electromagnetics Code (NEC)
+                      - Method of Moments
+
+    NTIS  AD-A075460  NOSC TD-116 Vol 2
+                      [same title]
+
+    The above two manuals completely document the code. They contain,
+    among other things, a listing of the complete code as released
+    (which agrees fairly well with what's archived on UCSD.EDU, but there
+    are some differences), theory of operation and instructions for use.
+
+    Help:
+
+        *Please* don't call me for help getting the code running. It's
+    not mine and I'm paid by my company to do other things. You're on 
+    your own. I think it's possible, but it takes a bit of work. I
+    have tried & have had some success, but I'm not there yet. If you
+    get it running, it would be nice to hear about it.
+
+
+    73,
+    Pete
+
+    
+ ==============================================================================
+  Peter Simpson                 (508) 870-9837 voice
+  Data General Corp.            (508) 898-4212 fax
+  4400 Computer Dr. E132
+  Westboro, MA  01580           INTERNET: pzs@ficus.webo.dg.com
+ ==============================================================================
+

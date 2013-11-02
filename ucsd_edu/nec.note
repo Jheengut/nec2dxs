@@ -1,0 +1,124 @@
+From pzs@ficus.webo.dg.com Tue Jan 28 05:28:30 1992
+Received: from dg-rtp.rtp.dg.com by ucsd.edu; id AA20377
+	sendmail 5.64/UCSD-2.2-sun via SMTP
+	Tue, 28 Jan 92 05:28:17 -0800 for brian
+Received: from dg-webo.webo.dg.com by dg-rtp.dg.com (5.4/dg-rtp-proto)
+	id AA13825; Tue, 28 Jan 1992 08:27:20 -0500
+Received: from ficus by dg-webo.webo.dg.com (5.4/dg-g01)
+	id AA20920; Tue, 28 Jan 1992 08:26:12 -0500 via SMTP
+Received: by ficus.webo.dg.com (5.4/dg-s01)
+	id AA00765; Tue, 28 Jan 1992 08:26:47 -0500
+Date: Tue, 28 Jan 1992 08:26:47 -0500
+From: pzs@ficus.webo.dg.com (  Peter Z. Simpson)
+Message-Id: <9201281326.AA00765@ficus.webo.dg.com>
+To: brian@ucsd.edu
+Subject: NEC-2 FORTRAN sources
+Status: R
+
+
+Brian:
+
+    I have a copy of the FORTRAN sources for NEC-2 (Numerical
+Electromagnetics Code - Version 2). The header of the code says:
+
+     NUMERICAL ELECTROMAGNETICS CODE (NEC2)  DEVELOPED AT LAWRENCE
+C     LIVERMORE LAB., LIVERMORE, CA.  (CONTACT G. BURKE AT 415-422-8414
+C     FOR PROBLEMS WITH THE NEC CODE.  FOR PROBLEMS WITH THE VAX IMPLEM-
+C     ENTATION, CONTACT J. BREAKALL AT 415-422-8196 OR E. DOMNING AT 415
+C     422-5936)
+C     FILE CREATED 4/11/80.
+C
+C                ***********NOTICE**********
+C     THIS COMPUTER CODE MATERIAL WAS PREPARED AS AN ACCOUNT OF WORK
+C     SPONSORED BY THE UNITED STATES GOVERNMENT.  NEITHER THE UNITED
+C     STATES NOR THE UNITED STATES DEPARTMENT OF ENERGY, NOR ANY OF
+C     THEIR EMPLOYEES, NOR ANY OF THEIR CONTRACTORS, SUBCONTRACTORS, OR
+C     THEIR EMPLOYEES, MAKES ANY WARRANTY, EXPRESS OR IMPLIED, OR
+C     ASSUMES ANY LEGAL LIABILITY OR RESPONSIBILITY FOR THE ACCURACY,
+C     COMPLETENESS OR USEFULNESS OF ANY INFORMATION, APPARATUS, PRODUCT
+C     OR PROCESS DISCLOSED, OR REPRESENTS THAT ITS USE WOULD NOT
+C     INFRINGE PRIVATELY-OWNED RIGHTS.
+
+    I interpret that as meaning that this stuff is PD, since,
+
+    1 - It's government contracted research.
+
+    2 - There's no copyright statement.
+
+    I would be willing to send you the file for posting on UCSD, if
+you feel it is appropriate. I see no difference between this code and
+the MININEC code currently posted on SIMTEL as far as ownership is
+concerned. The only issue I see is that I don't believe the code will
+run "as-is", except perhaps on a VAX (which I don't have :-).
+
+    Please let me know what you think, and if you want it, I'll send
+you the code.
+
+        Pete
+
+    
+ ==============================================================================
+  Peter Simpson                 (508) 870-9837 voice
+  Data General Corp.            (508) 898-4212 fax
+  4400 Computer Dr. E132
+  Westboro, MA  01580           INTERNET: pzs@ficus.webo.dg.com
+ ==============================================================================
+
+From pzs@ficus.webo.dg.com Tue Jan 28 09:16:55 1992
+Received: from dg-rtp.rtp.dg.com by ucsd.edu; id AA03193
+	sendmail 5.64/UCSD-2.2-sun via SMTP
+	Tue, 28 Jan 92 09:16:46 -0800 for brian
+Received: from dg-webo.webo.dg.com by dg-rtp.dg.com (5.4/dg-rtp-proto)
+	id AA08325; Tue, 28 Jan 1992 12:16:35 -0500
+Received: from ficus by dg-webo.webo.dg.com (5.4/dg-g01)
+	id AA22760; Tue, 28 Jan 1992 12:15:28 -0500 via SMTP
+Received: by ficus.webo.dg.com (5.4/dg-s01)
+	id AA01434; Tue, 28 Jan 1992 12:15:52 -0500
+Date: Tue, 28 Jan 1992 12:15:52 -0500
+From: pzs@ficus.webo.dg.com (  Peter Z. Simpson)
+Message-Id: <9201281715.AA01434@ficus.webo.dg.com>
+To: brian@UCSD.EDU (Brian Kantor)
+Subject: Re:  NEC-2 - on the way!
+References: <9201281633.AA29939@ucsd.edu>
+Status: R
+
+I didn't realize you have anonymous ftp write permission. I'm
+transferring it now...into the "incoming" subdirectory. 
+
+nec-2.f  294131   Jan 14 14:57     Fortran source code for NEC-2
+
+    This code is marked as being for the VAX. I don't know. People who
+want to use it should count on doing some work, but I believe the code
+is complete and will compile (with some changes most likely :-)
+    
+    Two manuals are available from the National Technical Information
+Service (NTIS) *  which describe the code and how to use it. They are:
+
+    NTIS AD-A075289  Naval Ocean Systems Center
+                     Technical Document 116 
+                     Volume 1
+                     Numerical Electromagnetics Code (NEC)
+                        - Method of Moments
+
+    NTIS AD-A075460  Naval Ocean Systems Center
+                     Technical Document 116
+                     Volume 2
+                     [same title]
+
+    Volume 1 contains the code and theory, volume 2 contains the
+user's guide. 
+
+    
+          *  NTIS
+            Springfield, VA 22161
+
+
+
+
+ ==============================================================================
+  Peter Simpson                 (508) 870-9837 voice
+  Data General Corp.            (508) 898-4212 fax
+  4400 Computer Dr. E132
+  Westboro, MA  01580           INTERNET: pzs@ficus.webo.dg.com
+ ==============================================================================
+
