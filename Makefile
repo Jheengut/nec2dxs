@@ -10,3 +10,6 @@ clean:
 test: nec2dxs
 	echo "G5RV.nec\nG5RV.out\n" | ./nec2dxs
 
+discard:
+	git checkout -- .
+
