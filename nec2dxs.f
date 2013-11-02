@@ -1,55 +1,55 @@
-C	av00	01-mar-02	First compile with Gnu77 compiler for windows
-C				(Thanks to Raymond Anderson for letting me know
-C				about this compiler and doing initial compilations)
-C	av01	14-mar-02	Var PI not used in routine GWAVE
-C	av02	14-mar-02	Sub SECOND already intrinsic function
-C	av03	15-mar-02	Multiple changes to include SOMNEC routines in nec2dx.exe
-C	av04	16-mar-02	Status='NEW', somehow seems not to replace existing file.
-C	av05	21-okt-02	Max number of loads (LOADMX) made equal to max-nr of segments.
-C	av06	21-okt-02	Max number of NT cards (NETMX) increased from 30 to 99
-C	av07	21-okt-02	Max number of EX cards (NSMAX) increased from 30 to 99
-C	av08  	22-oct-02	Use of VSRC is uncertain, in some sources equal 10 and some 
-C				equal 30 (=nr EX?). What should be new value ??? 
-C	av09	??		??
-C	av010	30-jan-03	Used DGJJ port of G77 compiler which delivers speed increase
-C				from 30 to 60% for small segment counts
-C	av011	04-sep-03	Logging of NetMX, NSMAX changed
-C	av012	29-sep-03	Enable user-specified NGF file-name.
-C	av013	29-sep-03	MinGW port used for both 11K segs and virtual memory usage.
-C	av014	09-oct-03	Max number of segs at junction/single-seg (JMAX) increased from 30 to 60
-C	av015	05-nov-04	BugFix: Use default NGF name when nothing specified.
-C	av016	09-nov-06	Official Nec2 bugfix by J.Burke, see nec-list at robomod.net
-C	av017	30-jan-08	VSRC (30) var also increase to netmx, see also av08
-C	av018	10-oct-08	av015 did not work properly in all cases.
-C
-C     History:
-C        Date      Change
-C      -------     ----------------------------------------------
-C      5/04/95     Matrix re-transposed in subroutine FACTR.
-C                  FACTR and SOLVE changed for non-transposed matrix.
-C
-C     PROGRAM NEC(INPUT,TAPE5=INPUT,OUTPUT,TAPE11,TAPE12,TAPE13,TAPE14,
-C    1TAPE15,TAPE16,TAPE20,TAPE21)
-C
-C     NUMERICAL ELECTROMAGNETICS CODE (NEC2)  DEVELOPED AT LAWRENCE
-C     LIVERMORE LAB., LIVERMORE, CA.  (CONTACT G. BURKE AT 510-422-8414
-C     FOR PROBLEMS WITH THE NEC CODE.)
-C     FILE CREATED 4/11/80.
-C
-C                ***********NOTICE**********
-C     THIS COMPUTER CODE MATERIAL WAS PREPARED AS AN ACCOUNT OF WORK
-C     SPONSORED BY THE UNITED STATES GOVERNMENT.  NEITHER THE UNITED
-C     STATES NOR THE UNITED STATES DEPARTMENT OF ENERGY, NOR ANY OF
-C     THEIR EMPLOYEES, NOR ANY OF THEIR CONTRACTORS, SUBCONTRACTORS, OR
-C     THEIR EMPLOYEES, MAKES ANY WARRANTY, EXPRESS OR IMPLIED, OR
-C     ASSUMES ANY LEGAL LIABILITY OR RESPONSIBILITY FOR THE ACCURACY,
-C     COMPLETENESS OR USEFULNESS OF ANY INFORMATION, APPARATUS, PRODUCT
-C     OR PROCESS DISCLOSED, OR REPRESENTS THAT ITS USE WOULD NOT
-C     INFRINGE PRIVATELY-OWNED RIGHTS.
-C
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'	! Declares MAXSEG,MAXMAT,LOADMX,NETMX and NSMAX
+!	av00	01-mar-02	First compile with Gnu77 compiler for windows
+!				(Thanks to Raymond Anderson for letting me know
+!				about this compiler and doing initial compilations)
+!	av01	14-mar-02	Var PI not used in routine GWAVE
+!	av02	14-mar-02	Sub SECOND already intrinsic function
+!	av03	15-mar-02	Multiple changes to include SOMNEC routines in nec2dx.exe
+!	av04	16-mar-02	Status='NEW', somehow seems not to replace existing file.
+!	av05	21-okt-02	Max number of loads (LOADMX) made equal to max-nr of segments.
+!	av06	21-okt-02	Max number of NT cards (NETMX) increased from 30 to 99
+!	av07	21-okt-02	Max number of EX cards (NSMAX) increased from 30 to 99
+!	av08  	22-oct-02	Use of VSRC is uncertain, in some sources equal 10 and some 
+!				equal 30 (=nr EX?). What should be new value ??? 
+!	av09	??		??
+!	av010	30-jan-03	Used DGJJ port of G77 compiler which delivers speed increase
+!				from 30 to 60% for small segment counts
+!	av011	04-sep-03	Logging of NetMX, NSMAX changed
+!	av012	29-sep-03	Enable user-specified NGF file-name.
+!	av013	29-sep-03	MinGW port used for both 11K segs and virtual memory usage.
+!	av014	09-oct-03	Max number of segs at junction/single-seg (JMAX) increased from 30 to 60
+!	av015	05-nov-04	BugFix: Use default NGF name when nothing specified.
+!	av016	09-nov-06	Official Nec2 bugfix by J.Burke, see nec-list at robomod.net
+!	av017	30-jan-08	VSRC (30) var also increase to netmx, see also av08
+!	av018	10-oct-08	av015 did not work properly in all cases.
+!
+!     History:
+!        Date      Change
+!      -------     ----------------------------------------------
+!      5/04/95     Matrix re-transposed in subroutine FACTR.
+!                  FACTR and SOLVE changed for non-transposed matrix.
+!
+!     PROGRAM NEC(INPUT,TAPE5=INPUT,OUTPUT,TAPE11,TAPE12,TAPE13,TAPE14,
+!    1TAPE15,TAPE16,TAPE20,TAPE21)
+!
+!     NUMERICAL ELECTROMAGNETICS CODE (NEC2)  DEVELOPED AT LAWRENCE
+!     LIVERMORE LAB., LIVERMORE, CA.  (CONTACT G. BURKE AT 510-422-8414
+!     FOR PROBLEMS WITH THE NEC CODE.)
+!     FILE CREATED 4/11/80.
+!
+!                ***********NOTICE**********
+!     THIS COMPUTER CODE MATERIAL WAS PREPARED AS AN ACCOUNT OF WORK
+!     SPONSORED BY THE UNITED STATES GOVERNMENT.  NEITHER THE UNITED
+!     STATES NOR THE UNITED STATES DEPARTMENT OF ENERGY, NOR ANY OF
+!     THEIR EMPLOYEES, NOR ANY OF THEIR CONTRACTORS, SUBCONTRACTORS, OR
+!     THEIR EMPLOYEES, MAKES ANY WARRANTY, EXPRESS OR IMPLIED, OR
+!     ASSUMES ANY LEGAL LIABILITY OR RESPONSIBILITY FOR THE ACCURACY,
+!     COMPLETENESS OR USEFULNESS OF ANY INFORMATION, APPARATUS, PRODUCT
+!     OR PROCESS DISCLOSED, OR REPRESENTS THAT ITS USE WOULD NOT
+!     INFRINGE PRIVATELY-OWNED RIGHTS.
+!
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'	! Declares MAXSEG,MAXMAT,LOADMX,NETMX and NSMAX
 					! AV05,AV06,AV07
 
       PARAMETER (IRESRV=MAXMAT**2)
@@ -57,11 +57,15 @@ C
       IMPLICIT REAL*8(A-H,O-Z)
       CHARACTER AIN*2,ATST*2,INFILE*80,OUTFILE*80
 	
-C***
+!***
       REAL*8 HPOL,PNET
-C      CHARACTER INMSG*48,OUTMSG*40
-C      INTEGER*2 GPWNXY(2)
-C      LOGICAL*4 GetPut,LGTPT
+      REAL  STARTTIME, ENDTIME, ELAPSED
+      REAL  TIM, TIM1, TIM2
+      REAL*8 TMP1
+
+!      CHARACTER INMSG*48,OUTMSG*40
+!      INTEGER*2 GPWNXY(2)
+!      LOGICAL*4 GetPut,LGTPT
 
 	integer*2	llneg
 
@@ -82,19 +86,19 @@ C      LOGICAL*4 GetPut,LGTPT
      -KSYMP,IFAR,IPERF
       COMMON /ZLOAD/ ZARRAY(MAXSEG),NLOAD,NLODF
       COMMON/YPARM/Y11A(5),Y12A(20),NCOUP,ICOUP,NCTAG(5),NCSEG(5)
-Cav14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,
-Cav14 -IPCON(10),NPCON
+!av14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,
+!av14 -IPCON(10),NPCON
       COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
      -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
 
-Cav07 COMMON/VSORC/VQD(30),VSANT(30),VQDS(30),IVQD(30),ISANT(30),
-Cav07 -IQDS(30),NVQD,NSANT,NQDS
+!av07 COMMON/VSORC/VQD(30),VSANT(30),VQDS(30),IVQD(30),ISANT(30),
+!av07 -IQDS(30),NVQD,NSANT,NQDS
       COMMON/VSORC/VQD(nsmax),VSANT(nsmax),VQDS(nsmax),IVQD(nsmax),
      -ISANT(nsmax),IQDS(nsmax),NVQD,NSANT,NQDS			! av07
 
-Cav06 COMMON/NETCX/ZPED,PIN,PNLS,X11R(30),X11I(30),X12R(30),X12I(30),
-C     -X22R(30),X22I(30),NTYP(30),ISEG1(30),ISEG2(30),NEQ,NPEQ,NEQ2,
-Cav06 -NONET,NTSOL,NPRINT,MASYM
+!av06 COMMON/NETCX/ZPED,PIN,PNLS,X11R(30),X11I(30),X12R(30),X12I(30),
+!     -X22R(30),X22I(30),NTYP(30),ISEG1(30),ISEG2(30),NEQ,NPEQ,NEQ2,
+!av06 -NONET,NTSOL,NPRINT,MASYM
 
       COMMON/NETCX/ZPED,PIN,PNLS,X11R(netmx),X11I(netmx),X12R(netmx),
      -X12I(netmx),X22R(netmx),X22I(netmx),NTYP(netmx),ISEG1(netmx),
@@ -106,20 +110,20 @@ Cav06 -NONET,NTSOL,NPRINT,MASYM
       COMMON /GGRID/ AR1(11,10,4),AR2(17,5,4),AR3(9,8,4),EPSCF,DXA(3),
      -DYA(3),XSA(3),YSA(3),NXA(3),NYA(3)
       COMMON/GWAV/U,U2,XX1,XX2,R1,R2,ZMH,ZPH
-C***
+!***
       COMMON /PLOT/ IPLP1,IPLP2,IPLP3,IPLP4
-C***
+!***
       DIMENSION CAB(1),SAB(1),X2(1),Y2(1),Z2(1)
 
-Cav05 DIMENSION LDTYP(30),LDTAG(30),LDTAGF(30),LDTAGT(30),ZLR(30),
-Cav05 -ZLI(30),ZLC(30)
+!av05 DIMENSION LDTYP(30),LDTAG(30),LDTAGF(30),LDTAGT(30),ZLR(30),
+!av05 -ZLI(30),ZLC(30)
       DIMENSION LDTYP(loadmx),LDTAG(loadmx),LDTAGF(loadmx),
      -LDTAGT(loadmx),ZLR(loadmx),ZLI(loadmx),ZLC(loadmx)	! av05
 
       DIMENSION ATST(22),PNET(6),HPOL(3),IX(2*MAXSEG)
       DIMENSION FNORM(200)
       DIMENSION T1X(1),T1Y(1),T1Z(1),T2X(1),T2Y(1),T2Z(1)
-C***
+!***
       DIMENSION XTEMP(MAXSEG),YTEMP(MAXSEG),ZTEMP(MAXSEG),
      &SITEMP(MAXSEG),BITEMP(MAXSEG)
       EQUIVALENCE (CAB,ALP),(SAB,BET),(X2,SI),(Y2,ALP),(Z2,BET)
@@ -131,10 +135,10 @@ C***
       DATA PNET/6H      ,2H  ,6HSTRAIG,2HHT,6HCROSSE,1HD/
       DATA TA/1.745329252D-02/,CVEL/299.8/
 
-Cav05-7 DATA LOADMX,NSMAX,NETMX/30,30,30/,NORMF/200/
+!av05-7 DATA LOADMX,NSMAX,NETMX/30,30,30/,NORMF/200/
       DATA NORMF/200/							
 
-	INCLUDE 'G77PORT.INC'	! Sets G77 port and version used to compile/link.
+	INCLUDE 'g77port.inc'	! Sets G77 port and version used to compile/link.
 
       print *, ''
       print *, 'Numerical Electromagnetics Code, ',
@@ -142,10 +146,10 @@ Cav05-7 DATA LOADMX,NSMAX,NETMX/30,30,30/,NORMF/200/
       print *, 'developed at Lawrence Livermore Lab., ',
      &'Livermore, CA., by G. Burke'
       print *, '(burke@icdc.llnl.gov) and A. Poggio.'
-Cav03      Write(*,*)
-Cav03      & 'Fortran file was created 4/11/80, last changed: Jan 15, 96, by'
-Cav03      Write(*,*)
-Cav03     & 'J. Bergervoet (bergervo@prl.philips.nl)'
+!av03      Write(*,*)
+!av03      & 'Fortran file was created 4/11/80, last changed: Jan 15, 96, by'
+!av03      Write(*,*)
+!av03     & 'J. Bergervoet (bergervo@prl.philips.nl)'
       print *, 'Maximum number of segments in core : MAXMAT=',MAXMAT
       If(MaxSeg.ne.MaxMat) 
      &print *, 'Maximum when using swap files      : MAXSEG=',MAXSEG
@@ -158,33 +162,33 @@ Cav03     & 'J. Bergervoet (bergervo@prl.philips.nl)'
 	print *,'Using ',G77PORT		! 'XX port for G77 version YY'
       print *, ''
 
-C***VAX
+!***VAX
 706   CONTINUE
       WRITE(*,700)
 700   FORMAT(' ENTER NAME OF INPUT FILE >',$)
-Cav03 READ(*,701,ERR=702) INFILE
+!av03 READ(*,701,ERR=702) INFILE
       READ(*,701,ERR=706,END=708) INFILE				! av03
 701   FORMAT(A)
-C     IF(INFILE.EQ.' ')INFILE='SYS$INPUT'
+!     IF(INFILE.EQ.' ')INFILE='SYS$INPUT'
       OPEN (UNIT=2,FILE=INFILE,STATUS='OLD',ERR=702)
-C     OPEN (UNIT=2,FILE=INFILE,STATUS='OLD',ACTION='READ',ERR=702)
-C     OPEN (UNIT=2,FILE=INFILE,STATUS='OLD',READONLY,ERR=702)
+!     OPEN (UNIT=2,FILE=INFILE,STATUS='OLD',ACTION='READ',ERR=702)
+!     OPEN (UNIT=2,FILE=INFILE,STATUS='OLD',READONLY,ERR=702)
 
 707   CONTINUE
       WRITE(*,703)
 703   FORMAT(' ENTER NAME OF OUTPUT FILE >',$)
 cav03 READ(*,701,ERR=704) OUTFILE
       READ(*,701,ERR=707,end=706) OUTFILE				! av03
-C     IF(OUTFILE.EQ.' ')OUTFILE='SYS$OUTPUT'
-C     OPEN (UNIT=3,FILE=OUTFILE,STATUS='NEW',ERR=704)
+!     IF(OUTFILE.EQ.' ')OUTFILE='SYS$OUTPUT'
+!     OPEN (UNIT=3,FILE=OUTFILE,STATUS='NEW',ERR=704)
       OPEN (UNIT=3,FILE=OUTFILE,STATUS='UNKNOWN',ERR=704)
       GO TO 705
 
-Cav03 702   CALL ERROR
+!av03 702   CALL ERROR
 702	print *, 'Error opening input-file:',infile		! av03
       GO TO 706
 
-Cav03 704   CALL ERROR
+!av03 704   CALL ERROR
 704	print *, 'Error opening output-file:',outfile		! av03
       GO TO 707
 
@@ -192,15 +196,15 @@ Cav03 704   CALL ERROR
 
 705   CONTINUE
       print *,''
-      CALL SECOND(EXTIM)
+      CALL SECOND(STARTTIME)
       FJ=(0.,1.)
       LD=MAXSEG
-Cav03 NXA(1)=0		! NXA is now init by block-data SOMSET
+!av03 NXA(1)=0		! NXA is now init by block-data SOMSET
 1     KCOM=0
-C***
+!***
       IFRTIMW=0
       IFRTIMP=0
-C***
+!***
 2     KCOM=KCOM+1
       IF (KCOM.GT.5) KCOM=5
       READ(2,125)AIN,(COM(I,KCOM),I=1,19)
@@ -223,15 +227,15 @@ C***
 5     ZARRAY(I)=(0.,0.)
       MPCNT=0
       IMAT=0
-C
-C     SET UP GEOMETRY DATA IN SUBROUTINE DATAGN
-C
+!
+!     SET UP GEOMETRY DATA IN SUBROUTINE DATAGN
+!
       CALL DATAGN
       IFLOW=1
       IF(IMAT.EQ.0)GO TO 326
-C
-C     CORE ALLOCATION FOR ARRAYS B, C, AND D FOR N.G.F. SOLUTION
-C
+!
+!     CORE ALLOCATION FOR ARRAYS B, C, AND D FOR N.G.F. SOLUTION
+!
       NEQ=N1+2*M1
       NEQ2=N-N1+2*(M-M1)+NSCON+2*NPCON
       CALL FBNGF(NEQ,NEQ2,IRESRV,IB11,IC11,ID11,IX11)
@@ -246,15 +250,15 @@ C
       ICASX=0
 6     NPEQ=NP+2*MP
       WRITE(3,135)
-C
-C     DEFAULT VALUES FOR INPUT PARAMETERS AND FLAGS
-C
-C***
+!
+!     DEFAULT VALUES FOR INPUT PARAMETERS AND FLAGS
+!
+!***
       IPLP1=0
       IPLP2=0
       IPLP3=0
       IPLP4=0
-C***
+!***
       IGO=1
       FMHZS=CVEL
       NFRQ=1
@@ -280,10 +284,10 @@ C***
       KSYMP=1
       NRADL=0
       IPERF=0
-C
-C     MAIN INPUT SECTION - STANDARD READ STATEMENT - JUMPS TO APPRO-
-C     PRIATE SECTION FOR SPECIFIC PARAMETER SET UP
-C
+!
+!     MAIN INPUT SECTION - STANDARD READ STATEMENT - JUMPS TO APPRO-
+!     PRIATE SECTION FOR SPECIFIC PARAMETER SET UP
+!
 14    CALL READMN(2,AIN,ITMP1,ITMP2,ITMP3,ITMP4,TMP1,TMP2,TMP3,TMP4,
      &TMP5,TMP6)
       MPCNT=MPCNT+1
@@ -307,20 +311,20 @@ C
       IF (AIN.EQ.ATST(12)) GO TO 1	! NX
       IF (AIN.EQ.ATST(20)) GO TO 322 ! WG
       IF (AIN.EQ.ATST(21)) GO TO 304 ! CP
-C***
+!***
       IF (AIN.EQ.ATST(22)) GO TO 330 ! PL ???
-C***
+!***
       IF (AIN.NE.ATST(13)) GO TO 15	! EN
 
-      CALL SECOND(TMP1)
-      TMP1=TMP1-EXTIM
-      WRITE(3,201) TMP1
+      CALL SECOND(ENDTIME)
+      ELAPSED=ENDTIME-STARTTIME
+      WRITE(3,201) ELAPSED
       STOP
 15    WRITE(3,138)
       STOP
-C
-C     FREQUENCY PARAMETERS
-C
+!
+!     FREQUENCY PARAMETERS
+!
 16    IFRQ=ITMP1
       IF(ICASX.EQ.0)GO TO 8
       WRITE(3,303) AIN
@@ -334,24 +338,24 @@ C
       IGO=1
       IFLOW=1
       GO TO 14
-C
-C     MATRIX INTEGRATION LIMIT
-C
+!
+!     MATRIX INTEGRATION LIMIT
+!
 305   RKH=TMP1
       IF(IGO.GT.2)IGO=2
       IFLOW=1
       GO TO 14
-C
-C     EXTENDED THIN WIRE KERNEL OPTION
-C
+!
+!     EXTENDED THIN WIRE KERNEL OPTION
+!
 320   IEXK=1
       IF(ITMP1.EQ.-1)IEXK=0
       IF(IGO.GT.2)IGO=2
       IFLOW=1
       GO TO 14
-C
-C     MAXIMUM COUPLING BETWEEN ANTENNAS
-C
+!
+!     MAXIMUM COUPLING BETWEEN ANTENNAS
+!
 304   IF(IFLOW.NE.2)NCOUP=0
       ICOUP=0
       IFLOW=2
@@ -368,9 +372,9 @@ C
       GO TO 14
 312   WRITE(3,313)
       STOP
-C
-C     LOADING PARAMETERS
-C
+!
+!     LOADING PARAMETERS
+!
 17    IF (IFLOW.EQ.3) GO TO 18
       NLOAD=0
       IFLOW=3
@@ -394,9 +398,9 @@ C
       ZLI(NLOAD)=TMP2
       ZLC(NLOAD)=TMP3
       GO TO 14
-C
-C     GROUND PARAMETERS UNDER THE ANTENNA
-C
+!
+!     GROUND PARAMETERS UNDER THE ANTENNA
+!
 21    IFLOW=4
       IF(ICASX.EQ.0)GO TO 10
       WRITE(3,303) AIN
@@ -428,9 +432,9 @@ C
       CLT=TMP5
       CHT=TMP6
       GO TO 14
-C
-C     EXCITATION PARAMETERS
-C
+!
+!     EXCITATION PARAMETERS
+!
 24    IF (IFLOW.EQ.5) GO TO 25
       NSANT=0
       NVQD=0
@@ -476,9 +480,9 @@ C
       THETIS=XPR1
       PHISS=XPR2
       GO TO 14
-C
-C     NETWORK PARAMETERS
-C
+!
+!     NETWORK PARAMETERS
+!
 28    IF (IFLOW.EQ.6) GO TO 29
       NONET=0
       NTSOL=0
@@ -505,21 +509,21 @@ C
       NTYP(NONET)=3
       X11R(NONET)=-TMP1
       GO TO 14
-C***
-C
-C     PLOT FLAGS
-C
+!***
+!
+!     PLOT FLAGS
+!
 330   IPLP1=ITMP1
       IPLP2=ITMP2
       IPLP3=ITMP3
       IPLP4=ITMP4
-Cav04 OPEN (UNIT=8,FILE='PLTDAT.NEC',STATUS='NEW',ERR=14)
+!av04 OPEN (UNIT=8,FILE='PLTDAT.NEC',STATUS='NEW',ERR=14)
       OPEN (UNIT=8,FILE='PLTDAT.NEC',STATUS='UNKNOWN',ERR=14) ! av04
-C***
+!***
       GO TO 14
-C
-C     PRINT CONTROL FOR CURRENT
-C
+!
+!     PRINT CONTROL FOR CURRENT
+!
 31    IPTFLG=ITMP1
       IPTAG=ITMP2
       IPTAGF=ITMP3
@@ -527,9 +531,9 @@ C
       IF(ITMP3.EQ.0.AND.IPTFLG.NE.-1)IPTFLG=-2
       IF (ITMP4.EQ.0) IPTAGT=IPTAGF
       GO TO 14
-C
-C     WRITE CONTROL FOR CHARGE
-C
+!
+!     WRITE CONTROL FOR CHARGE
+!
 319   IPTFLQ=ITMP1
       IPTAQ=ITMP2
       IPTAQF=ITMP3
@@ -537,9 +541,9 @@ C
       IF(ITMP3.EQ.0.AND.IPTFLQ.NE.-1)IPTFLQ=-2
       IF(ITMP4.EQ.0)IPTAQT=IPTAQF
       GO TO 14
-C
-C     NEAR FIELD CALCULATION PARAMETERS
-C
+!
+!     NEAR FIELD CALCULATION PARAMETERS
+!
 208   NFEH=1
       GO TO 209
 32    NFEH=0
@@ -558,18 +562,18 @@ C
       IFLOW=8
       IF (NFRQ.NE.1) GO TO 14
       GO TO (41,46,53,71,72), IGO
-C
-C     GROUND REPRESENTATION
-C
+!
+!     GROUND REPRESENTATION
+!
 34    EPSR2=TMP1
       SIG2=TMP2
       CLT=TMP3
       CHT=TMP4
       IFLOW=9
       GO TO 14
-C
-C     STANDARD OBSERVATION ANGLE PARAMETERS
-C
+!
+!     STANDARD OBSERVATION ANGLE PARAMETERS
+!
 36    IFAR=ITMP1
       NTH=ITMP2
       NPH=ITMP3
@@ -593,18 +597,18 @@ C
       GNOR=TMP6
       IFLOW=10
       GO TO (41,46,53,71,78), IGO
-C
-C     WRITE NUMERICAL GREEN'S FUNCTION TAPE
-C
+!
+!     WRITE NUMERICAL GREEN'S FUNCTION TAPE
+!
 322   IFLOW=12
       IF(ICASX.EQ.0)GO TO 301
       WRITE(3,302)
       STOP
 301   IRNGF=IRESRV/2
       GO TO (41,46,52,52,52),IGO
-C
-C     EXECUTE CARD  -  CALC. INCLUDING RADIATED FIELDS
-C
+!
+!     EXECUTE CARD  -  CALC. INCLUDING RADIATED FIELDS
+!
 37    IF (IFLOW.EQ.10.AND.ITMP1.EQ.0) GO TO 14
       IF (NFRQ.EQ.1.AND.ITMP1.EQ.0.AND.IFLOW.GT.7) GO TO 14
       IF (ITMP1.NE.0) GO TO 39
@@ -632,13 +636,13 @@ C
       NPH=2
       DPH=90.
 40    GO TO (41,46,53,71,78), IGO
-C
-C     END OF THE MAIN INPUT SECTION
-C
-C     BEGINNING OF THE FREQUENCY DO LOOP
-C
+!
+!     END OF THE MAIN INPUT SECTION
+!
+!     BEGINNING OF THE FREQUENCY DO LOOP
+!
 41    MHZ=1
-C***
+!***
       IF(N.EQ.0 .OR. IFRTIMW .EQ. 1)GO TO 406
       IFRTIMW=1
       DO 445 I=1,N
@@ -661,47 +665,47 @@ C***
 545   CONTINUE
 407   CONTINUE
       FMHZ1=FMHZ
-C***
-C     CORE ALLOCATION FOR PRIMARY INTERACTON MATRIX.  (A)
+!***
+!     CORE ALLOCATION FOR PRIMARY INTERACTON MATRIX.  (A)
       IF(IMAT.EQ.0)CALL FBLOCK(NPEQ,NEQ,IRESRV,IRNGF,IPSYM)
 42    IF (MHZ.EQ.1) GO TO 44
       IF (IFRQ.EQ.1) GO TO 43
-C      FMHZ=FMHZ+DELFRQ
-C***
+!      FMHZ=FMHZ+DELFRQ
+!***
       FMHZ=FMHZ1+(MHZ-1)*DELFRQ
       GO TO 44
 43    FMHZ=FMHZ*DELFRQ
 44    FR=FMHZ/CVEL
-C***
+!***
       WLAM=CVEL/FMHZ		! wavl=299.8/freq
       WRITE(3,145)  FMHZ,WLAM
       WRITE(3,196) RKH
       IF(IEXK.EQ.1)WRITE(3,321)
-C     FREQUENCY SCALING OF GEOMETRIC PARAMETERS
-C***      FMHZS=FMHZ
+!     FREQUENCY SCALING OF GEOMETRIC PARAMETERS
+!***      FMHZS=FMHZ
       IF(N.EQ.0)GO TO 306
       DO 45 I=1,N
-C***
+!***
       X(I)=XTEMP(I)*FR
       Y(I)=YTEMP(I)*FR
       Z(I)=ZTEMP(I)*FR
       SI(I)=SITEMP(I)*FR
 45    BI(I)=BITEMP(I)*FR
-C***
+!***
 306   IF(M.EQ.0)GO TO 307
       FR2=FR*FR
       J=LD+1
       DO 245 I=1,M
       J=J-1
-C***
+!***
       X(J)=XTEMP(J)*FR
       Y(J)=YTEMP(J)*FR
       Z(J)=ZTEMP(J)*FR
 245   BI(J)=BITEMP(J)*FR2
-C***
+!***
 307   IGO=2
 
-C     STRUCTURE SEGMENT LOADING
+!     STRUCTURE SEGMENT LOADING
 
 46    WRITE(3,146)
       IF(NLOAD.NE.0) CALL LOAD(LDTYP,LDTAG,LDTAGF,LDTAGT,ZLR,ZLI,ZLC)
@@ -709,14 +713,14 @@ C     STRUCTURE SEGMENT LOADING
       IF(NLOAD.EQ.0.AND.NLODF.EQ.0)WRITE(3,147)
       IF(NLOAD.EQ.0.AND.NLODF.NE.0)WRITE(3,327)
 
-C     GROUND PARAMETER
+!     GROUND PARAMETER
 
       WRITE(3,148)			! Antenna environment
       IF (KSYMP.EQ.1) GO TO 49
       FRATI=(1.,0.)
       IF (IPERF.EQ.1) GO TO 48
 
-Cav03 IF(SIG.LT.0.) SIG=-SIG/(59.96*WLAM)
+!av03 IF(SIG.LT.0.) SIG=-SIG/(59.96*WLAM)
       IF (SIG.LT.0.) then		! av03, Negative sigma ?
 	   llneg = 1			! Set flag
          SIG=-SIG/(59.96*WLAM)	! Make positive
@@ -738,23 +742,23 @@ Cav03 IF(SIG.LT.0.) SIG=-SIG/(59.96*WLAM)
       WRITE(3,391)			! Finite ground
       GO TO 329
 
-C******************************************************************************
-C	Include SomNec calculations
-C******************************************************************************
+!******************************************************************************
+!	Include SomNec calculations
+!******************************************************************************
 
 328	if (llneg.le.1) then		! Single or first step ?
 	   if (llneg.eq.1) llneg=2	! If negative, only once
    	   call som2d (fmhz,epsr,sig) ! Get SomNec data, av03
 	endif
 
-Cav03 328   IF(NXA(1).EQ.0)THEN
-C         OPEN(UNIT=21,FILE='SOM2D.NEC',STATUS='OLD',FORM='UNFORMATTED',
-C     &   ERR=800)
-C         GO TO 801
-C800      WRITE(3,900)
-C         STOP
-C801      READ(21)AR1,AR2,AR3,EPSCF,DXA,DYA,XSA,YSA,NXA,NYA
-Cav03      END IF
+!av03 328   IF(NXA(1).EQ.0)THEN
+!         OPEN(UNIT=21,FILE='SOM2D.NEC',STATUS='OLD',FORM='UNFORMATTED',
+!     &   ERR=800)
+!         GO TO 801
+!800      WRITE(3,900)
+!         STOP
+!801      READ(21)AR1,AR2,AR3,EPSCF,DXA,DYA,XSA,YSA,NXA,NYA
+!av03      END IF
 
       FRATI=(EPSC-1.)/(EPSC+1.)
       IF(ABS((EPSCF-EPSC)/EPSC).LT.1.D-3)GO TO 400
@@ -771,9 +775,9 @@ Cav03      END IF
 
 49    WRITE(3,152)	! Free space
 50    CONTINUE
-C * * *
-C     FILL AND FACTOR PRIMARY INTERACTION MATRIX
-C
+! * * *
+!     FILL AND FACTOR PRIMARY INTERACTION MATRIX
+!
       CALL SECOND (TIM1)
       IF(ICASX.NE.0)GO TO 324
       CALL CMSET(NEQ,CM,RKH,IEXK)
@@ -781,12 +785,12 @@ C
       TIM=TIM2-TIM1
       CALL FACTRS(NPEQ,NEQ,CM,IP,IX,11,12,13,14)
       GO TO 323
-C
-C     N.G.F. - FILL B, C, AND D AND FACTOR D-C(INV(A)B)
-C
-C ****
+!
+!     N.G.F. - FILL B, C, AND D AND FACTOR D-C(INV(A)B)
+!
+! ****
 324   IF(NEQ2.EQ.0)GO TO 333
-C ****
+! ****
       CALL CMNGF(CM(IB11),CM(IC11),CM(ID11),NPBX,NEQ,NEQ2,RKH,IEXK)
       CALL SECOND (TIM2)
       TIM=TIM2-TIM1
@@ -798,12 +802,12 @@ C ****
 333   IGO=3
       NTSOL=0
       IF(IFLOW.NE.12)GO TO 53
-C     WRITE N.G.F. FILE
+!     WRITE N.G.F. FILE
 52    CALL GFOUT
       GO TO 14
-C
-C     EXCITATION SET UP (RIGHT HAND SIDE, -E INC.)
-C
+!
+!     EXCITATION SET UP (RIGHT HAND SIDE, -E INC.)
+!
 53    NTHIC=1
       NPHIC=1
       INC=1
@@ -825,9 +829,9 @@ C
       TMP6=XPR6
       IF (IPTFLG.LE.0) WRITE(3,155)  XPR1,XPR2,XPR3,HPOL(IXTYP),XPR6
 56    CALL ETMNS (TMP1,TMP2,TMP3,TMP4,TMP5,TMP6,IXTYP,CUR)
-C
-C     MATRIX SOLVING  (NETWK CALLS SOLVES)
-C
+!
+!     MATRIX SOLVING  (NETWK CALLS SOLVES)
+!
       IF (NONET.EQ.0.OR.INC.GT.1) GO TO 60
       WRITE(3,158)
       ITMP3=0
@@ -865,9 +869,9 @@ C
       IF (IPED.EQ.2) GO TO 61
       IF (FNORM(ITMP1+2).GT.ZPNORM) ZPNORM=FNORM(ITMP1+2)
 61    CONTINUE
-C
-C     PRINTING STRUCTURE CURRENTS
-C
+!
+!     PRINTING STRUCTURE CURRENTS
+!
       IF(N.EQ.0)GO TO 308
       IF (IPTFLG.EQ.(-1)) GO TO 63
       IF (IPTFLG.GT.0) GO TO 62
@@ -898,11 +902,11 @@ C
 67    IF (IPTFLG.NE.3) WRITE(3,164)  XPR1,XPR2,CMAG,PH,I
       GO TO 69
 68    WRITE(3,165)  I,ITAG(I),X(I),Y(I),Z(I),SI(I),CURI,CMAG,PH
-C***
+!***
       IF(IPLP1 .NE. 1) GO TO 69
       IF(IPLP2 .EQ. 1) WRITE(8,*) CURI
       IF(IPLP2 .EQ. 2) WRITE(8,*) CMAG,PH
-C***
+!***
 69    CONTINUE
       IF(IPTFLQ.EQ.(-1))GO TO 308
       WRITE(3,315)
@@ -935,9 +939,9 @@ C***
       ETHA=CANG(ETH)
       EPHM=ABS(EPH)
       EPHA=CANG(EPH)
-C309   WRITE(3,198) I,X(ITMP1),Y(ITMP1),Z(ITMP1),ETHM,ETHA,EPHM,EPHA,E
-C     1X,EY, EZ
-C***
+!309   WRITE(3,198) I,X(ITMP1),Y(ITMP1),Z(ITMP1),ETHM,ETHA,EPHM,EPHA,E
+!     1X,EY, EZ
+!***
       WRITE(3,198) I,X(ITMP1),Y(ITMP1),Z(ITMP1),ETHM,ETHA,EPHM,EPHA,E
      1X,EY,EZ
       IF(IPLP1 .NE. 1) GO TO 309
@@ -946,7 +950,7 @@ C***
       IF(IPLP3 .EQ. 3) WRITE(8,*) EZ
       IF(IPLP3 .EQ. 4) WRITE(8,*) EX,EY,EZ
 309   CONTINUE
-C***
+!***
 310   IF (IXTYP.NE.0.AND.IXTYP.NE.5) GO TO 70
       TMP1=PIN-PNLS-PLOSS
       TMP2=100.*TMP1/PIN
@@ -960,18 +964,18 @@ C***
       WRITE(3,135)
       GO TO 14
 71    IGO=5
-C
-C     NEAR FIELD CALCULATION
-C
+!
+!     NEAR FIELD CALCULATION
+!
 72    IF (NEAR.EQ.(-1)) GO TO 78
       CALL NFPAT
       IF (MHZ.EQ.NFRQ) NEAR=-1
       IF (NFRQ.NE.1) GO TO 78
       WRITE(3,135)
       GO TO 14
-C
-C     STANDARD FAR FIELD CALCULATION
-C
+!
+!     STANDARD FAR FIELD CALCULATION
+!
 78    IF(IFAR.EQ.-1)GO TO 113
       PINR=PIN
       PNLR=PNLS
@@ -989,7 +993,7 @@ C
       NPHIC=1
       XPR2=PHISS
       IF (IPTFLG.LT.2) GO TO 119
-C     NORMALIZED RECEIVING PATTERN PRINTED
+!     NORMALIZED RECEIVING PATTERN PRINTED
       ITMP1=NTHI*NPHI
       IF (ITMP1.LE.NORMF) GO TO 114
       ITMP1=NORMF
@@ -1170,14 +1174,16 @@ C     NORMALIZED RECEIVING PATTERN PRINTED
 900   FORMAT(' ERROR OPENING SOMMERFELD GROUND FILE - SOM2D.NEC')
       END
 
-Cav03 ################## START OF SOM2D INCLUDE ########################
+!av03 ################## START OF SOM2D INCLUDE ########################
 
-C***********************************************************************
+!***********************************************************************
+!----------------------------------------------------------------------------
+
       SUBROUTINE SOM2D (rmhz, repr, rsig)
-C***********************************************************************
+!***********************************************************************
 
       IMPLICIT REAL*8(A-H,O-Z)
-C***
+!***
       COMPLEX*16 CK1,CK1SQ,ERV,EZV,ERH,EPH,CKSM,CT1,CT2,CT3,CL1,CL2,CON,
      -AR1,AR2,AR3,EPSCF
       COMMON /EVLCOM/ CKSM,CT1,CT2,CT3,CK1,CK1SQ,CK2,CK2SQ,TKMAG,TSMAG,C
@@ -1187,42 +1193,42 @@ C***
 
       CHARACTER*3  LCOMP(4)
       DATA LCOMP/'ERV','EZV','ERH','EPH'/
-C
-Cav03 999   WRITE(*,21)
-Cav03 READ(*,*,ERR=999) EPR,SIG,FMHZ,IPT
+!
+!av03 999   WRITE(*,21)
+!av03 READ(*,*,ERR=999) EPR,SIG,FMHZ,IPT
 
 	epr = repr		! av03
 	sig = rsig		! av03
 	fmhz = rmhz		! av03
 	ipt=0			! No printing, av03
 
-Cdeb	write (*,100) fmhz,epr,sig
-Cdeb  100 format (' Som2d: Freq=',d10.5,' Diel=',d10.5,' Cond=',d10.5)
+!deb	write (*,100) fmhz,epr,sig
+!deb  100 format (' Som2d: Freq=',d10.5,' Diel=',d10.5,' Cond=',d10.5)
 
-Cav03      WRITE(*,100) EPR
-Cav03100   FORMAT("  RELATIVE DIELECTRIC CONSTANT (EPR)  = ", D20.5)
-Cav03      WRITE(*,101) SIG
-Cav03101   FORMAT("  SIGMA [CONDUCTIVITY IN MHOS/METER]  = ", D20.5)
-Cav03      WRITE(*,102) FMHZ
-Cav03102   FORMAT("                     FREQUENCY IN MHZ = ", D20.5)
-Cav03      IF(IPT == 1) WRITE(*,*) "   GRID FILE [SOM2D.OUT] WILL BE CREATED"
-Cav03      IF(IPT == 0) WRITE(*,*) "   NO GRID FILE WILL BE CREATED"
-Cav03      WRITE(*,*)
-C***
+!av03      WRITE(*,100) EPR
+!av03100   FORMAT("  RELATIVE DIELECTRIC CONSTANT (EPR)  = ", D20.5)
+!av03      WRITE(*,101) SIG
+!av03101   FORMAT("  SIGMA [CONDUCTIVITY IN MHOS/METER]  = ", D20.5)
+!av03      WRITE(*,102) FMHZ
+!av03102   FORMAT("                     FREQUENCY IN MHZ = ", D20.5)
+!av03      IF(IPT == 1) WRITE(*,*) "   GRID FILE [SOM2D.OUT] WILL BE CREATED"
+!av03      IF(IPT == 0) WRITE(*,*) "   NO GRID FILE WILL BE CREATED"
+!av03      WRITE(*,*)
+!***
       IF (SIG.LT.0.) GO TO 1
       WLAM=299.8/FMHZ
       EPSCF=DCMPLX(EPR,-SIG*WLAM*59.96)
       GO TO 2
 1     EPSCF=DCMPLX(EPR,SIG)
 2     CONTINUE
-Cav03 2     CALL SECOND (TST)
+!av03 2     CALL SECOND (TST)
       CK2=6.283185308
       CK2SQ=CK2*CK2
-C
-C     SOMMERFELD INTEGRAL EVALUATION USES EXP(-JWT), NEC USES EXP(+JWT),
-C     HENCE NEED CONJG(EPSCF).  CONJUGATE OF FIELDS OCCURS IN SUBROUTINE
-C     EVLUA.
-C
+!
+!     SOMMERFELD INTEGRAL EVALUATION USES EXP(-JWT), NEC USES EXP(+JWT),
+!     HENCE NEED CONJG(EPSCF).  CONJUGATE OF FIELDS OCCURS IN SUBROUTINE
+!     EVLUA.
+!
       CK1SQ=CK2SQ*DCONJG(EPSCF)
       CK1=SQRT(CK1SQ)
       CK1R=DREAL(CK1)
@@ -1236,9 +1242,9 @@ C
       ERV=ERV*CK1SQ
       EZV=EZV*CK2SQ
       CT3=.0625*(ERV-EZV)
-C
-C     LOOP OVER 3 GRID REGIONS
-C
+!
+!     LOOP OVER 3 GRID REGIONS
+!
       DO 6 K=1,3
       NR=NXA(K)
       NTH=NYA(K)
@@ -1248,15 +1254,15 @@ C
       IRS=1
       IF (K.EQ.1) R=XSA(K)
       IF (K.EQ.1) IRS=2
-C
-C     LOOP OVER R.  (R=SQRT(RHO**2 + (Z+H)**2))
-C
+!
+!     LOOP OVER R.  (R=SQRT(RHO**2 + (Z+H)**2))
+!
       DO 6 IR=IRS,NR
       R=R+DR
       THET=YSA(K)-DTH
-C
-C     LOOP OVER THETA.  (THETA=ATAN((Z+H)/RHO))
-C
+!
+!     LOOP OVER THETA.  (THETA=ATAN((Z+H)/RHO))
+!
       DO 6 ITH=1,NTH
       THET=THET+DTH
       RHO=R*COS(THET)
@@ -1282,9 +1288,9 @@ C
       AR3(IR,ITH,3)=ERH*CON
       AR3(IR,ITH,4)=EPH*CON
 6     CONTINUE
-C
-C     FILL GRID 1 FOR R EQUAL TO ZERO.
-C
+!
+!     FILL GRID 1 FOR R EQUAL TO ZERO.
+!
       CL2=-(0.,188.370)*(EPSCF-1.)/(EPSCF+1.)
       CL1=CL2/(EPSCF+1.)
       EZV=EPSCF*CL1
@@ -1307,19 +1313,19 @@ C
       AR1(1,ITH,2)=EZV
       AR1(1,ITH,3)=ERH
 9     AR1(1,ITH,4)=EPH
-Cav03 CALL SECOND (TIM)
-C
-C     WRITE GRID ON TAPE21
-C
-Cav03      OPEN(UNIT=21,FILE='SOM2D.NEC',STATUS='UNKNOWN',FORM='UNFORMATTED')
-Cav03      WRITE (21) AR1,AR2,AR3,EPSCF,DXA,DYA,XSA,YSA,NXA,NYA
-Cav03      REWIND 21
-Cav03      IF (IPT.EQ.0) GO TO 14
+!av03 CALL SECOND (TIM)
+!
+!     WRITE GRID ON TAPE21
+!
+!av03      OPEN(UNIT=21,FILE='SOM2D.NEC',STATUS='UNKNOWN',FORM='UNFORMATTED')
+!av03      WRITE (21) AR1,AR2,AR3,EPSCF,DXA,DYA,XSA,YSA,NXA,NYA
+!av03      REWIND 21
+!av03      IF (IPT.EQ.0) GO TO 14
       IF (IPT.EQ.0) RETURN						! av03
-C
-C     PRINT GRID
-C
-Cav03 OPEN (UNIT=3,FILE='SOM2D.OUT',STATUS='NEW',ERR=14)
+!
+!     PRINT GRID
+!
+!av03 OPEN (UNIT=3,FILE='SOM2D.OUT',STATUS='NEW',ERR=14)
 cAV04 OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='NEW',ERR=14)	! av03
       OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='UNKNOWN',ERR=14)! av04
       WRITE(3,17) EPSCF
@@ -1337,11 +1343,11 @@ cAV04 OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='NEW',ERR=14)	! av03
       GO TO 13
 12    WRITE(9,20) IR,(AR3(IR,ITH,L),ITH=1,NTH)
 13    CONTINUE
-Cav03 14    TIM=TIM-TST
-Cav03 WRITE(*,16) TIM
-Cav03	STOP
+!av03 14    TIM=TIM-TST
+!av03 WRITE(*,16) TIM
+!av03	STOP
 14	return								! av03
-C
+!
 16    FORMAT (6H TIME=,1PE12.5)
 17    FORMAT (30H1NEC GROUND INTERPOLATION GRID,/,21H DIELECTRIC CONSTAN
      1T=,1P2E12.5)
@@ -1349,13 +1355,13 @@ C
      1,/,9H THET(1)=,F7.4,3X,4HDTH=,F7.4,3X,4HNTH=,I3,//)
 19    FORMAT (///,1X,A3)
 20    FORMAT (4H IR=,I3,/,1X,(1P10E12.5))
-21    FORMAT($,' ENTER EPR,SIG,FMHZ,IPT > ')
+! hwh 21    FORMAT($,' ENTER EPR,SIG,FMHZ,IPT > ')
 22    FORMAT(' STARTING COMPUTATION OF SOMMERFELD INTEGRAL TABLES')
       END
 
-C***********************************************************************
+!***********************************************************************
       BLOCK DATA SOMSET
-C***********************************************************************
+!***********************************************************************
 
       IMPLICIT REAL*8(A-H,O-Z)
       COMPLEX*16 AR1,AR2,AR3,EPSCF
@@ -1366,21 +1372,23 @@ C***********************************************************************
 
       END
 
-C***********************************************************************
+!***********************************************************************
+!----------------------------------------------------------------------------
+
       SUBROUTINE BESSEL (Z,J0,J0P)
-C***********************************************************************
-C
-C     BESSEL EVALUATES THE ZERO-ORDER BESSEL FUNCTION AND ITS DERIVATIVE
-C     FOR COMPLEX ARGUMENT Z.
-C
+!***********************************************************************
+!
+!     BESSEL EVALUATES THE ZERO-ORDER BESSEL FUNCTION AND ITS DERIVATIVE
+!     FOR COMPLEX ARGUMENT Z.
+!
       IMPLICIT REAL*8(A-H,O-Z)
       SAVE
       COMPLEX*16 J0,J0P,P0Z,P1Z,Q0Z,Q1Z,Z,ZI,ZI2,ZK,FJ,CZ,SZ,J0X,J0PX
       DIMENSION M(101), A1(25), A2(25), FJX(2)
       EQUIVALENCE (FJ,FJX)
 
-Cav03      DATA PI,C3,P10,P20,Q10,Q20/3.141592654,.7978845608,.0703125,.11215
-Cav03     120996,.125,.0732421875/
+!av03      DATA PI,C3,P10,P20,Q10,Q20/3.141592654,.7978845608,.0703125,.11215
+!av03     120996,.125,.0732421875/
       DATA C3,P10,P20,Q10,Q20/.7978845608,.0703125,.11215
      -20996,.125,.0732421875/
 
@@ -1397,7 +1405,7 @@ Cav03     120996,.125,.0732421875/
 2     IB=0
       IF (ZMS.GT.37.21) GO TO 4
       IF (ZMS.GT.36.) IB=1
-C     SERIES EXPANSION
+!     SERIES EXPANSION
       IZ=1.+ZMS
       MIZ=M(IZ)
       J0=(1.,0.)
@@ -1412,7 +1420,7 @@ C     SERIES EXPANSION
       IF (IB.EQ.0) RETURN
       J0X=J0
       J0PX=J0P
-C     ASYMPTOTIC EXPANSION
+!     ASYMPTOTIC EXPANSION
 4     ZI=1./Z
       ZI2=ZI*ZI
       P0Z=1.+(P20*ZI2-P10)*ZI2
@@ -1432,7 +1440,7 @@ C     ASYMPTOTIC EXPANSION
       J0P=.5*(J0PX*(1.+ZMS)+J0P*(1.-ZMS))
       RETURN
 
-C     INITIALIZATION OF CONSTANTS
+!     INITIALIZATION OF CONSTANTS
 5     DO 6 K=1,25
       A1(K)=-.25D0/(K*K)
 6     A2(K)=1.D0/(K+1.D0)
@@ -1447,13 +1455,15 @@ C     INITIALIZATION OF CONSTANTS
       GO TO 1
       END
 
-C***********************************************************************
+!***********************************************************************
+!----------------------------------------------------------------------------
+
       SUBROUTINE EVLUA (ERV,EZV,ERH,EPH)
-C***********************************************************************
-C
-C     EVALUA CONTROLS THE INTEGRATION CONTOUR IN THE COMPLEX LAMBDA
-C     PLANE FOR EVALUATION OF THE SOMMERFELD INTEGRALS.
-C
+!***********************************************************************
+!
+!     EVALUA CONTROLS THE INTEGRATION CONTOUR IN THE COMPLEX LAMBDA
+!     PLANE FOR EVALUATION OF THE SOMMERFELD INTEGRALS.
+!
       IMPLICIT REAL*8(A-H,O-Z)
       SAVE
       COMPLEX*16 ERV,EZV,ERH,EPH,A,B,CK1,CK1SQ,BK,SUM,DELTA,ANS,DELTA2,
@@ -1466,9 +1476,9 @@ C
       DEL=ZPH
       IF (RHO.GT.DEL) DEL=RHO
       IF (ZPH.LT.2.*RHO) GO TO 4
-C
-C     BESSEL FUNCTION FORM OF SOMMERFELD INTEGRALS
-C
+!
+!     BESSEL FUNCTION FORM OF SOMMERFELD INTEGRALS
+!
       JH=0
       A=(0.,0.)
       DEL=1./DEL
@@ -1486,9 +1496,9 @@ C
 3     DELTA=PTP*DEL
       CALL GSHANK (B,DELTA,ANS,6,SUM,0,B,B)
       GO TO 10
-C
-C     HANKEL FUNCTION FORM OF SOMMERFELD INTEGRALS
-C
+!
+!     HANKEL FUNCTION FORM OF SOMMERFELD INTEGRALS
+!
 4     JH=1
       CP1=DCMPLX(0.D0,.4*CK2)
       CP2=DCMPLX(.6*CK2,-.2*CK2)
@@ -1501,7 +1511,7 @@ C
       CALL ROM1 (6,ANS,2)
       DO 5 I=1,6
 5     SUM(I)=-(SUM(I)+ANS(I))
-C     PATH FROM IMAGINARY AXIS TO -INFINITY
+!     PATH FROM IMAGINARY AXIS TO -INFINITY
       SLOPE=1000.
       IF (ZPH.GT..001*RHO) SLOPE=RHO/ZPH
       DEL=PTP/DEL
@@ -1515,7 +1525,7 @@ C     PATH FROM IMAGINARY AXIS TO -INFINITY
       BK=DCMPLX(-ZPH,RHO)*(CK1-CP3)
       RMIS=-DREAL(BK)/ABS(DIMAG(BK))
       IF(RMIS.GT.4.*RHO/ZPH)GO TO 8
-C     INTEGRATE UP BETWEEN BRANCH CUTS, THEN TO + INFINITY
+!     INTEGRATE UP BETWEEN BRANCH CUTS, THEN TO + INFINITY
 6     CP1=CK1-(.1,.2)
       CP2=CP1+.2
       BK=DCMPLX(0.D0,DEL)
@@ -1528,7 +1538,7 @@ C     INTEGRATE UP BETWEEN BRANCH CUTS, THEN TO + INFINITY
       CALL GSHANK (CP3,BK,SUM,6,ANS,0,BK,BK)
       CALL GSHANK (CP2,DELTA2,ANS,6,SUM,0,BK,BK)
       GO TO 10
-C     INTEGRATE BELOW BRANCH POINTS, THEN TO + INFINITY
+!     INTEGRATE BELOW BRANCH POINTS, THEN TO + INFINITY
 8     DO 9 I=1,6
 9     SUM(I)=-ANS(I)
       RMIS=DREAL(CK1)*1.01
@@ -1538,7 +1548,7 @@ C     INTEGRATE BELOW BRANCH POINTS, THEN TO + INFINITY
       DELTA=DELTA*DEL/ABS(DELTA)
       CALL GSHANK (CP3,DELTA,ANS,6,SUM,1,BK,DELTA2)
 10    ANS(6)=ANS(6)*CK1
-C     CONJUGATE SINCE NEC USES EXP(+JWT)
+!     CONJUGATE SINCE NEC USES EXP(+JWT)
       ERV=DCONJG(CK1SQ*ANS(3))
       EZV=DCONJG(CK1SQ*(ANS(2)+CK2SQ*ANS(5)))
       ERH=DCONJG(CK2SQ*(ANS(1)+ANS(6)))
@@ -1546,16 +1556,18 @@ C     CONJUGATE SINCE NEC USES EXP(+JWT)
       RETURN
       END
 
-C***********************************************************************
+!***********************************************************************
+!----------------------------------------------------------------------------
+
       SUBROUTINE GSHANK (START,DELA,SUM,NANS,SEED,IBK,BK,DELB)
-C***********************************************************************
-C
-C     GSHANK INTEGRATES THE 6 SOMMERFELD INTEGRALS FROM START TO
-C     INFINITY (UNTIL CONVERGENCE) IN LAMBDA.  AT THE BREAK POINT, BK,
-C     THE STEP INCREMENT MAY BE CHANGED FROM DELA TO DELB.  SHANK S
-C     ALGORITHM TO ACCELERATE CONVERGENCE OF A SLOWLY CONVERGING SERIES
-C     IS USED
-C
+!***********************************************************************
+!
+!     GSHANK INTEGRATES THE 6 SOMMERFELD INTEGRALS FROM START TO
+!     INFINITY (UNTIL CONVERGENCE) IN LAMBDA.  AT THE BREAK POINT, BK,
+!     THE STEP INCREMENT MAY BE CHANGED FROM DELA TO DELB.  SHANK S
+!     ALGORITHM TO ACCELERATE CONVERGENCE OF A SLOWLY CONVERGING SERIES
+!     IS USED
+!
       IMPLICIT REAL*8(A-H,O-Z)
       SAVE
       COMPLEX*16 START,DELA,SUM,SEED,BK,DELB,A,B,Q1,Q2,ANS1,ANS2,A1,A2,
@@ -1585,7 +1597,7 @@ C
       DO 4 I=1,NANS
 4     ANS2(I)=ANS1(I)+SUM(I)
       GO TO 11
-C     HIT BREAK POINT.  RESET SEED AND START OVER.
+!     HIT BREAK POINT.  RESET SEED AND START OVER.
 5     IBX=1
       GO TO 7
 6     IBX=2
@@ -1647,18 +1659,20 @@ C     HIT BREAK POINT.  RESET SEED AND START OVER.
 22    DO 23 I=1,NANS
 23    SUM(I)=.5*(Q1(I,INX)+Q2(I,INX))
       RETURN
-C
+!
 24    FORMAT (46H **** NO CONVERGENCE IN SUBROUTINE GSHANK ****)
 25    FORMAT (1X,1P10E12.5)
       END
 
-C***********************************************************************
+!***********************************************************************
+!----------------------------------------------------------------------------
+
       SUBROUTINE HANKEL (Z,H0,H0P)
-C***********************************************************************
-C
-C     HANKEL EVALUATES HANKEL FUNCTION OF THE FIRST KIND, ORDER ZERO,
-C     AND ITS DERIVATIVE FOR COMPLEX ARGUMENT Z.
-C
+!***********************************************************************
+!
+!     HANKEL EVALUATES HANKEL FUNCTION OF THE FIRST KIND, ORDER ZERO,
+!     AND ITS DERIVATIVE FOR COMPLEX ARGUMENT Z.
+!
       IMPLICIT REAL*8(A-H,O-Z)
       SAVE
       COMPLEX*16 CLOGZ,H0,H0P,J0,J0P,P0Z,P1Z,Q0Z,Q1Z,Y0,Y0P,Z,ZI,ZI2,ZK,
@@ -1678,7 +1692,7 @@ C
 2     IB=0
       IF (ZMS.GT.16.81) GO TO 4
       IF (ZMS.GT.16.) IB=1
-C     SERIES EXPANSION
+!     SERIES EXPANSION
       IZ=1.+ZMS
       MIZ=M(IZ)
       J0=(1.,0.)
@@ -1702,7 +1716,7 @@ C     SERIES EXPANSION
       IF (IB.EQ.0) RETURN
       Y0=H0
       Y0P=H0P
-C     ASYMPTOTIC EXPANSION
+!     ASYMPTOTIC EXPANSION
 4     ZI=1./Z
       ZI2=ZI*ZI
       P0Z=1.+(P20*ZI2-P10)*ZI2
@@ -1718,7 +1732,7 @@ C     ASYMPTOTIC EXPANSION
       H0P=.5*(Y0P*(1.+ZMS)+H0P*(1.-ZMS))
       RETURN
 
-C     INITIALIZATION OF CONSTANTS
+!     INITIALIZATION OF CONSTANTS
 5     PSI=-GAMMA
       DO 6 K=1,25
       A1(K)=-.25D0/(K*K)
@@ -1735,16 +1749,18 @@ C     INITIALIZATION OF CONSTANTS
 7     CONTINUE
 8     M(I)=INIT
       GO TO 1
-C
+!
 9     FORMAT (34H ERROR - HANKEL NOT VALID FOR Z=0.)
       END
 
-C***********************************************************************
+!***********************************************************************
+!----------------------------------------------------------------------------
+
       SUBROUTINE LAMBDA (T,XLAM,DXLAM)
-C***********************************************************************
-C
-C     COMPUTE INTEGRATION PARAMETER XLAM=LAMBDA FROM PARAMETER T.
-C
+!***********************************************************************
+!
+!     COMPUTE INTEGRATION PARAMETER XLAM=LAMBDA FROM PARAMETER T.
+!
       IMPLICIT REAL*8(A-H,O-Z)
       SAVE
       COMPLEX*16 A,B,XLAM,DXLAM
@@ -1754,13 +1770,15 @@ C
       RETURN
       END
 
-C***********************************************************************
+!***********************************************************************
+!----------------------------------------------------------------------------
+
       SUBROUTINE ROM1 (N,SUM,NX)
-C***********************************************************************
-C
-C     ROM1 INTEGRATES THE 6 SOMMERFELD INTEGRALS FROM A TO B IN LAMBDA.
-C     THE METHOD OF VARIABLE INTERVAL WIDTH ROMBERG INTEGRATION IS USED.
-C
+!***********************************************************************
+!
+!     ROM1 INTEGRATES THE 6 SOMMERFELD INTEGRALS FROM A TO B IN LAMBDA.
+!     THE METHOD OF VARIABLE INTERVAL WIDTH ROMBERG INTEGRATION IS USED.
+!
       IMPLICIT REAL*8(A-H,O-Z)
       SAVE
       COMPLEX*16 A,B,SUM,G1,G2,G3,G4,G5,T00,T01,T10,T02,T11,T20
@@ -1791,7 +1809,7 @@ C
       T00=(G1(I)+G5(I))*DZOT
       T01(I)=(T00+DZ*G3(I))*.5
       T10(I)=(4.*T01(I)-T00)/3.
-C     TEST CONVERGENCE OF 3 POINT ROMBERG RESULT
+!     TEST CONVERGENCE OF 3 POINT ROMBERG RESULT
       CALL TEST (DREAL(T01(I)),DREAL(T10(I)),TR,DIMAG(T01(I)),DIMAG(T10
      1(I)),TI,0.d0)
       IF (TR.GT.RX.OR.TI.GT.RX) NOGO=1
@@ -1808,7 +1826,7 @@ C     TEST CONVERGENCE OF 3 POINT ROMBERG RESULT
       T02=(T01(I)+DZOT*(G2(I)+G4(I)))*.5
       T11=(4.*T02-T01(I))/3.
       T20(I)=(16.*T11-T10(I))/15.
-C     TEST CONVERGENCE OF 5 POINT ROMBERG RESULT
+!     TEST CONVERGENCE OF 5 POINT ROMBERG RESULT
       CALL TEST (DREAL(T11),DREAL(T20(I)),TR,DIMAG(T11),DIMAG(T20(I)),TI
      1,0.d0)
       IF (TR.GT.RX.OR.TI.GT.RX) NOGO=1
@@ -1844,18 +1862,20 @@ C     TEST CONVERGENCE OF 5 POINT ROMBERG RESULT
       GO TO 4
 17    CONTINUE
       RETURN
-C
+!
 18    FORMAT (38H ROM1 -- STEP SIZE LIMITED AT LAMBDA =,1P2E12.5)
 19    FORMAT (1X,1P10E12.5)
       END
 
-C***********************************************************************
+!***********************************************************************
+!----------------------------------------------------------------------------
+
       SUBROUTINE SAOA (T,ANS)
-C***********************************************************************
-C
-C     SAOA COMPUTES THE INTEGRAND FOR EACH OF THE 6
-C     SOMMERFELD INTEGRALS FOR SOURCE AND OBSERVER ABOVE GROUND
-C
+!***********************************************************************
+!
+!     SAOA COMPUTES THE INTEGRAND FOR EACH OF THE 6
+!     SOMMERFELD INTEGRALS FOR SOURCE AND OBSERVER ABOVE GROUND
+!
       IMPLICIT REAL*8(A-H,O-Z)
       SAVE
       COMPLEX*16 ANS,XL,DXL,CGAM1,CGAM2,B0,B0P,COM,CK1,CK1SQ,CKSM,CT1,
@@ -1865,7 +1885,7 @@ C
       DIMENSION ANS(6)
       CALL LAMBDA (T,XL,DXL)
       IF (JH.GT.0) GO TO 1
-C     BESSEL FUNCTION FORM
+!     BESSEL FUNCTION FORM
       CALL BESSEL (XL*RHO,B0,B0P)
       B0=2.*B0
       B0P=2.*B0P
@@ -1874,7 +1894,7 @@ C     BESSEL FUNCTION FORM
       IF (DREAL(CGAM1).EQ.0.) CGAM1=DCMPLX(0.D0,-ABS(DIMAG(CGAM1)))
       IF (DREAL(CGAM2).EQ.0.) CGAM2=DCMPLX(0.D0,-ABS(DIMAG(CGAM2)))
       GO TO 2
-C     HANKEL FUNCTION FORM
+!     HANKEL FUNCTION FORM
 1     CALL HANKEL (XL*RHO,B0,B0P)
       COM=XL-CK1
       CGAM1=SQRT(XL+CK1)*SQRT(COM)
@@ -1913,60 +1933,64 @@ C     HANKEL FUNCTION FORM
       RETURN
       END
 
-C***********************************************************************
-Cav03 SUBROUTINE TEST (F1R,F2R,TR,F1I,F2I,TI,DMIN)
-C
-Cav03	Routine already available, note however the SAVE statement.
-C
-C***********************************************************************
-C
-C     TEST FOR CONVERGENCE IN NUMERICAL INTEGRATION
-C
-Cav03      IMPLICIT REAL*8(A-H,O-Z)
-Cav03      SAVE
-Cav03      DEN=ABS(F2R)
-Cav03      TR=ABS(F2I)
-Cav03      IF (DEN.LT.TR) DEN=TR
-Cav03      IF (DEN.LT.DMIN) DEN=DMIN
-Cav03      IF (DEN.LT.1.E-37) GO TO 1
-Cav03      TR=ABS((F1R-F2R)/DEN)
-Cav03      TI=ABS((F1I-F2I)/DEN)
-Cav03      RETURN
-Cav03
-Cav031     TR=0.
-Cav03      TI=0.
-Cav03      RETURN
-Cav03      END
+!***********************************************************************
+!----------------------------------------------------------------------------
 
-Cav03      SUBROUTINE SECOND (CPUSECD)
-C     Purpose:
-C     SECOND returns cpu time in seconds.  Must be customized!!!
-Cav03      REAL*8 CPUSECD
-Cav03      integer Iticks
-Cav03
-C--   Not customized:
-C       Cpusecd = 0.0            ! if we have no clock routine
-C--   MACINTOSH:
-C       CPUSECD= LONG(362)/60.0
-C--   Lahey fortran
-C        Call Timer(Iticks)
-Cav03        cpusecd = Iticks/100.d0
-Cav03      END
+!av03 SUBROUTINE TEST (F1R,F2R,TR,F1I,F2I,TI,DMIN)
+!
+!av03	Routine already available, note however the SAVE statement.
+!
+!***********************************************************************
+!
+!     TEST FOR CONVERGENCE IN NUMERICAL INTEGRATION
+!
+!av03      IMPLICIT REAL*8(A-H,O-Z)
+!av03      SAVE
+!av03      DEN=ABS(F2R)
+!av03      TR=ABS(F2I)
+!av03      IF (DEN.LT.TR) DEN=TR
+!av03      IF (DEN.LT.DMIN) DEN=DMIN
+!av03      IF (DEN.LT.1.E-37) GO TO 1
+!av03      TR=ABS((F1R-F2R)/DEN)
+!av03      TI=ABS((F1I-F2I)/DEN)
+!av03      RETURN
+!av03
+!av031     TR=0.
+!av03      TI=0.
+!av03      RETURN
+!av03      END
 
-Cav03 ################## END OF SOM2D INCLUDE ##########################
+!av03      SUBROUTINE SECOND (CPUSECD)
+!     Purpose:
+!     SECOND returns cpu time in seconds.  Must be customized!!!
+!av03      REAL*8 CPUSECD
+!av03      integer Iticks
+!av03
+!--   Not customized:
+!       Cpusecd = 0.0            ! if we have no clock routine
+!--   MACINTOSH:
+!       CPUSECD= LONG(362)/60.0
+!--   Lahey fortran
+!        Call Timer(Iticks)
+!av03        cpusecd = Iticks/100.d0
+!av03      END
 
-C***********************************************************************
+!av03 ################## END OF SOM2D INCLUDE ##########################
+
+!***********************************************************************
+!----------------------------------------------------------------------------
+
       SUBROUTINE ARC (ITG,NS,RADA,ANG1,ANG2,RAD)
-C***********************************************************************
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+!***********************************************************************
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     ARC GENERATES SEGMENT GEOMETRY DATA FOR AN ARC OF NS SEGMENTS
-C
+! ***
+!
+!     ARC GENERATES SEGMENT GEOMETRY DATA FOR AN ARC OF NS SEGMENTS
+!
       COMMON /DATA/ X(MAXSEG),Y(MAXSEG),Z(MAXSEG),SI(MAXSEG),BI(MAXSEG),
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
@@ -2001,18 +2025,18 @@ C
       BI(I)=RAD
 2     ITAG(I)=ITG
       RETURN
-C
+!
 3     FORMAT (40H ERROR -- ARC ANGLE EXCEEDS 360. DEGREES)
       END
       FUNCTION ATGN2 (X,Y)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     ATGN2 IS ARCTANGENT FUNCTION MODIFIED TO RETURN 0. WHEN X=Y=0.
-C
+! ***
+!
+!     ATGN2 IS ARCTANGENT FUNCTION MODIFIED TO RETURN 0. WHEN X=Y=0.
+!
       IF (X) 3,1,3
 1     IF (Y) 3,2,3
 2     ATGN2=0.
@@ -2020,16 +2044,18 @@ C
 3     ATGN2=ATAN2(X,Y)
       RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE BLCKOT (AR,NUNIT,IX1,IX2,NBLKS,NEOF)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     BLCKOT CONTROLS THE READING AND WRITING OF MATRIX BLOCKS ON FILES
-C     FOR THE OUT-OF-CORE MATRIX SOLUTION.
-C
+! ***
+!
+!     BLCKOT CONTROLS THE READING AND WRITING OF MATRIX BLOCKS ON FILES
+!     FOR THE OUT-OF-CORE MATRIX SOLUTION.
+!
       COMPLEX*16 AR
       DIMENSION AR(1)
       I1=(IX1+1)/2
@@ -2047,34 +2073,36 @@ C
       IF (NEOF.NE.777) STOP
       NEOF=0
       RETURN
-C
+!
 4     FORMAT (13H  EOF ON UNIT,I3,9H  NBLKS= ,I3,8H  NEOF= ,I5)
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE CABC (CURX)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     CABC COMPUTES COEFFICIENTS OF THE CONSTANT (A), SINE (B), AND
-C     COSINE (C) TERMS IN THE CURRENT INTERPOLATION FUNCTIONS FOR THE
-C     CURRENT VECTOR CUR.
-C
+! ***
+!
+!     CABC COMPUTES COEFFICIENTS OF THE CONSTANT (A), SINE (B), AND
+!     COSINE (C) TERMS IN THE CURRENT INTERPOLATION FUNCTIONS FOR THE
+!     CURRENT VECTOR CUR.
+!
       COMPLEX*16 CUR,CURX,VQDS,CURD,CCJ,VSANT,VQD,CS1,CS2
       COMMON /DATA/ X(MAXSEG),Y(MAXSEG),Z(MAXSEG),SI(MAXSEG),BI(MAXSEG),
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
       COMMON /CRNT/ AIR(MAXSEG),AII(MAXSEG),BIR(MAXSEG),BII(MAXSEG),
      &CIR(MAXSEG),CII(MAXSEG),CUR(3*MAXSEG)
-Cav14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
-Cav14-CON(10),NPCON
+!av14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
+!av14-CON(10),NPCON
       COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
      -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
 
-Cav07 COMMON /VSORC/ VQD(30),VSANT(30),VQDS(30),IVQD(30),ISANT(30),IQDS(
-Cav07 130),NVQD,NSANT,NQDS
+!av07 COMMON /VSORC/ VQD(30),VSANT(30),VQDS(30),IVQD(30),ISANT(30),IQDS(
+!av07 130),NVQD,NSANT,NQDS
       COMMON /VSORC/ VQD(nsmax),VSANT(nsmax),VQDS(nsmax),IVQD(nsmax),
      &ISANT(nsmax),IQDS(nsmax),NVQD,NSANT,NQDS			! av07
 
@@ -2128,7 +2156,7 @@ Cav07 130),NVQD,NSANT,NQDS
 4     DO 5 I=1,N
 5     CURX(I)=DCMPLX(AIR(I)+CIR(I),AII(I)+CII(I))
 6     IF (M.EQ.0) RETURN
-C     CONVERT SURFACE CURRENTS FROM T1,T2 COMPONENTS TO X,Y,Z COMPONENTS
+!     CONVERT SURFACE CURRENTS FROM T1,T2 COMPONENTS TO X,Y,Z COMPONENTS
       K=LD-M
       JCO1=N+2*M+1
       JCO2=JCO1+M
@@ -2144,33 +2172,35 @@ C     CONVERT SURFACE CURRENTS FROM T1,T2 COMPONENTS TO X,Y,Z COMPONENTS
       RETURN
       END
       FUNCTION CANG (Z)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     CANG RETURNS THE PHASE ANGLE OF A COMPLEX NUMBER IN DEGREES.
-C
+! ***
+!
+!     CANG RETURNS THE PHASE ANGLE OF A COMPLEX NUMBER IN DEGREES.
+!
       COMPLEX*16 Z
       CANG=ATGN2(DIMAG(Z),DREAL(Z))*57.29577951D+0
       RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE CMNGF (CB,CC,CD,NB,NC,ND,RKHX,IEXKX)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C     CMNGF FILLS INTERACTION MATRICIES B, C, AND D FOR N.G.F. SOLUTION
+! ***
+!     CMNGF FILLS INTERACTION MATRICIES B, C, AND D FOR N.G.F. SOLUTION
       COMPLEX*16 CB,CC,CD,ZARRAY,EXK,EYK,EZK,EXS,EYS,EZS,EXC,EYC,EZC
       COMMON /DATA/ X(MAXSEG),Y(MAXSEG),Z(MAXSEG),SI(MAXSEG),BI(MAXSEG),
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
       COMMON /ZLOAD/ ZARRAY(MAXSEG),NLOAD,NLODF
-Cav14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
-Cav14-CON(10),NPCON
+!av14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
+!av14-CON(10),NPCON
       COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
      -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
 
@@ -2205,7 +2235,7 @@ Cav14-CON(10),NPCON
 5     IST=N-N1+1
       IT=NPBX
       ISV=-NPBX
-C     LOOP THRU 24 FILLS B.  FOR ICASX=1 OR 2 ALSO FILLS D(WW), D(WS)
+!     LOOP THRU 24 FILLS B.  FOR ICASX=1 OR 2 ALSO FILLS D(WW), D(WS)
       DO 24 IBLK=1,NBBX
       ISV=ISV+NPBX
       IF (IBLK.EQ.NBBX) IT=NLBX
@@ -2223,16 +2253,16 @@ C     LOOP THRU 24 FILLS B.  FOR ICASX=1 OR 2 ALSO FILLS D(WW), D(WS)
       IMX=1
       IF (I1.LE.N1) IMX=N1-I1+2
       IF (N2.GT.N) GO TO 12
-C     FILL B(WW),B(WS).  FOR ICASX=1,2 FILL D(WW),D(WS)
+!     FILL B(WW),B(WS).  FOR ICASX=1,2 FILL D(WW),D(WS)
       DO 11 J=N2,N
       CALL TRIO (J)
       DO 9 I=1,JSNO
       JSS=JCO(I)
       IF (JSS.LT.N2) GO TO 8
-C     SET JCO WHEN SOURCE IS NEW BASIS FUNCTION ON NEW SEGMENT
+!     SET JCO WHEN SOURCE IS NEW BASIS FUNCTION ON NEW SEGMENT
       JCO(I)=JSS-N1
       GO TO 9
-C     SOURCE IS PORTION OF MODIFIED BASIS FUNCTION ON NEW SEGMENT
+!     SOURCE IS PORTION OF MODIFIED BASIS FUNCTION ON NEW SEGMENT
 8     JCO(I)=NEQS+ICONX(JSS)
 9     CONTINUE
       IF (I1.LE.IN2) CALL CMWW (J,I1,IN2,CB,NB,CB,NB,0)
@@ -2240,7 +2270,7 @@ C     SOURCE IS PORTION OF MODIFIED BASIS FUNCTION ON NEW SEGMENT
       IF (ICASX.GT.2) GO TO 11
       CALL CMWW (J,N2,N,CD,ND,CD,ND,1)
       IF (M2.LE.M) CALL CMWS (J,M2EQ,MEQ,CD(1,IST),ND,CD,ND,1)
-C     LOADING IN D(WW)
+!     LOADING IN D(WW)
       IF (NLOAD.EQ.0) GO TO 11
       IR=J-N1
       EXK=ZARRAY(J)
@@ -2249,11 +2279,11 @@ C     LOADING IN D(WW)
 10    CD(JSS,IR)=CD(JSS,IR)-(AX(I)+CX(I))*EXK
 11    CONTINUE
 12    IF (NSCON.EQ.0) GO TO 20
-C     FILL B(WW)PRIME
+!     FILL B(WW)PRIME
       DO 19 I=1,NSCON
       J=ISCON(I)
-C     SOURCES ARE NEW OR MODIFIED BASIS FUNCTIONS ON OLD SEGMENTS WHICH
-C     CONNECT TO NEW SEGMENTS
+!     SOURCES ARE NEW OR MODIFIED BASIS FUNCTIONS ON OLD SEGMENTS WHICH
+!     CONNECT TO NEW SEGMENTS
       CALL TRIO (J)
       JSS=0
       DO 15 IX=1,JSNO
@@ -2273,9 +2303,9 @@ C     CONNECT TO NEW SEGMENTS
       JSNO=JSS
       IF (I1.LE.IN2) CALL CMWW (J,I1,IN2,CB,NB,CB,NB,0)
       IF (IM1.LE.IM2) CALL CMWS (J,IM1,IM2,CB(IMX,1),NB,CB,NB,0)
-C     SOURCE IS SINGULAR COMPONENT OF PATCH CURRENT THAT IS PART OF
-C     MODIFIED BASIS FUNCTION FOR OLD SEGMENT THAT CONNECTS TO A NEW
-C     SEGMENT ON END OPPOSITE PATCH.
+!     SOURCE IS SINGULAR COMPONENT OF PATCH CURRENT THAT IS PART OF
+!     MODIFIED BASIS FUNCTION FOR OLD SEGMENT THAT CONNECTS TO A NEW
+!     SEGMENT ON END OPPOSITE PATCH.
       IF (I1.LE.IN2) CALL CMSW (J,I,I1,IN2,CB,CB,0,NB,-1)
       IF (NLODF.EQ.0) GO TO 17
       JX=J-ISV
@@ -2284,8 +2314,8 @@ C     SEGMENT ON END OPPOSITE PATCH.
       DO 16 IX=1,JSNO
       JSS=JCO(IX)
 16    CB(JX,JSS)=CB(JX,JSS)-(AX(IX)+CX(IX))*EXK
-C     SOURCES ARE PORTIONS OF MODIFIED BASIS FUNCTION J ON OLD SEGMENTS
-C     EXCLUDING OLD SEGMENTS THAT DIRECTLY CONNECT TO NEW SEGMENTS.
+!     SOURCES ARE PORTIONS OF MODIFIED BASIS FUNCTION J ON OLD SEGMENTS
+!     EXCLUDING OLD SEGMENTS THAT DIRECTLY CONNECT TO NEW SEGMENTS.
 17    CALL TBF (J,1)
       JSX=JSNO
       JSNO=1
@@ -2301,7 +2331,7 @@ C     EXCLUDING OLD SEGMENTS THAT DIRECTLY CONNECT TO NEW SEGMENTS.
       IF (ICONX(IR).NE.0) GO TO 19
       IF (I1.LE.IN2) CALL CMWW (IR,I1,IN2,CB,NB,CB,NB,0)
       IF (IM1.LE.IM2) CALL CMWS (IR,IM1,IM2,CB(IMX,1),NB,CB,NB,0)
-C     LOADING FOR B(WW)PRIME
+!     LOADING FOR B(WW)PRIME
       IF (NLODF.EQ.0) GO TO 19
       JX=IR-ISV
       IF (JX.LT.1.OR.JX.GT.IT) GO TO 19
@@ -2311,8 +2341,8 @@ C     LOADING FOR B(WW)PRIME
 19    CONTINUE
 20    IF (NPCON.EQ.0) GO TO 22
       JSS=NEQP
-C     FILL B(SS)PRIME TO SET OLD PATCH BASIS FUNCTIONS TO ZERO FOR
-C     PATCHES THAT CONNECT TO NEW SEGMENTS
+!     FILL B(SS)PRIME TO SET OLD PATCH BASIS FUNCTIONS TO ZERO FOR
+!     PATCHES THAT CONNECT TO NEW SEGMENTS
       DO 21 I=1,NPCON
       IX=IPCON(I)*2+N1-ISV
       IR=IX-1
@@ -2322,13 +2352,13 @@ C     PATCHES THAT CONNECT TO NEW SEGMENTS
       IF (IX.GT.0.AND.IX.LE.IT) CB(IX,JSS)=(1.,0.)
 21    CONTINUE
 22    IF (M2.GT.M) GO TO 23
-C     FILL B(SW) AND B(SS)
+!     FILL B(SW) AND B(SS)
       IF (I1.LE.IN2) CALL CMSW (M2,M,I1,IN2,CB(1,IST),CB,N1,NB,0)
       IF (IM1.LE.IM2) CALL CMSS (M2,M,IM1,IM2,CB(IMX,IST),NB,0)
 23    IF (ICASX.EQ.1) GO TO 24
       WRITE (14) ((CB(I,J),I=1,IT),J=1,ND)
 24    CONTINUE
-C     FILLING B COMPLETE.  START ON C AND D
+!     FILLING B COMPLETE.  START ON C AND D
       IT=NPBL
       ISV=-NPBL
       DO 43 IBLK=1,NBBL
@@ -2354,7 +2384,7 @@ C     FILLING B COMPLETE.  START ON C AND D
       IF (IN1.LE.IN2) IMX=NEQN-I1+2
       IF (ICASX.LT.3) GO TO 32
       IF (N2.GT.N) GO TO 32
-C     SAME AS DO 24 LOOP TO FILL D(WW) FOR ICASX GREATER THAN 2
+!     SAME AS DO 24 LOOP TO FILL D(WW) FOR ICASX GREATER THAN 2
       DO 31 J=N2,N
       CALL TRIO (J)
       DO 29 I=1,JSNO
@@ -2375,11 +2405,11 @@ C     SAME AS DO 24 LOOP TO FILL D(WW) FOR ICASX GREATER THAN 2
 30    CD(JSS,IR)=CD(JSS,IR)-(AX(I)+CX(I))*EXK
 31    CONTINUE
 32    IF (M2.GT.M) GO TO 33
-C     FILL D(SW) AND D(SS)
+!     FILL D(SW) AND D(SS)
       IF (IN1.LE.IN2) CALL CMSW (M2,M,IN1,IN2,CD(IST,1),CD,N1,ND,1)
       IF (IM1.LE.IM2) CALL CMSS (M2,M,IM1,IM2,CD(IST,IMX),ND,1)
 33    IF (N1.LT.1) GO TO 39
-C     FILL C(WW),C(WS), D(WW)PRIME, AND D(WS)PRIME.
+!     FILL C(WW),C(WS), D(WW)PRIME, AND D(WS)PRIME.
       DO 37 J=1,N1
       CALL TRIO (J)
       IF (NSCON.EQ.0) GO TO 36
@@ -2396,7 +2426,7 @@ C     FILL C(WW),C(WS), D(WW)PRIME, AND D(WS)PRIME.
      1)
 37    CONTINUE
       IF (NSCON.EQ.0) GO TO 39
-C     FILL C(WW)PRIME
+!     FILL C(WW)PRIME
       DO 38 IX=1,NSCON
       IR=ISCON(IX)
       JSS=NEQS+IX-ISV
@@ -2404,7 +2434,7 @@ C     FILL C(WW)PRIME
 38    CONTINUE
 39    IF (NPCON.EQ.0) GO TO 41
       JSS=NEQP-ISV
-C     FILL C(SS)PRIME
+!     FILL C(SS)PRIME
       DO 40 I=1,NPCON
       IX=IPCON(I)*2+N1
       IR=IX-1
@@ -2414,7 +2444,7 @@ C     FILL C(SS)PRIME
       IF (JSS.GT.0.AND.JSS.LE.IT) CC(IX,JSS)=(1.,0.)
 40    CONTINUE
 41    IF (M1.LT.1) GO TO 42
-C     FILL C(SW) AND C(SS)
+!     FILL C(SW) AND C(SS)
       IF (IN1.LE.IN2) CALL CMSW (1,M1,IN1,IN2,CC(N2,1),CC,0,NC,1)
       IF (IM1.LE.IM2) CALL CMSS (1,M1,IM1,IM2,CC(N2,IMX),NC,1)
 42    CONTINUE
@@ -2429,16 +2459,18 @@ C     FILL C(SW) AND C(SS)
       RETURN
       END
 
+!----------------------------------------------------------------------------
+
       SUBROUTINE CMSET (NROW,CM,RKHX,IEXKX)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     CMSET SETS UP THE COMPLEX STRUCTURE MATRIX IN THE ARRAY CM
-C
+! ***
+!
+!     CMSET SETS UP THE COMPLEX STRUCTURE MATRIX IN THE ARRAY CM
+!
       COMPLEX*16 CM,ZARRAY,ZAJ,EXK,EYK,EZK,EXS,EYS,EZS,EXC,EYC,EZC,SSX,
      &D,DETER
       COMMON /DATA/ X(MAXSEG),Y(MAXSEG),Z(MAXSEG),SI(MAXSEG),BI(MAXSEG),
@@ -2450,8 +2482,8 @@ C
       COMMON /SCRATM/ D(2*MAXSEG)
       COMMON /ZLOAD/ ZARRAY(MAXSEG),NLOAD,NLODF
 
-Cav14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
-Cav14-CON(10),NPCON
+!av14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
+!av14-CON(10),NPCON
       COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
      -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
 
@@ -2467,9 +2499,9 @@ Cav14-CON(10),NPCON
       IEXK=IEXKX
       IOUT=2*NPBLK*NROW
       IT=NPBLK
-C
-C     CYCLE OVER MATRIX BLOCKS
-C
+!
+!     CYCLE OVER MATRIX BLOCKS
+!
       DO 13 IXBLK1=1,NBLOKS
       ISV=(IXBLK1-1)*NPBLK
       IF (IXBLK1.EQ.NBLOKS) IT=NLAST
@@ -2486,9 +2518,9 @@ C
       IST=1
       IF (I1.LE.NP) IST=NP-I1+2
       IF (N.EQ.0) GO TO 5
-C
-C     WIRE SOURCE LOOP
-C
+!
+!     WIRE SOURCE LOOP
+!
       DO 4 J=1,N
       CALL TRIO (J)
       DO 2 I=1,JSNO
@@ -2497,9 +2529,9 @@ C
       IF (I1.LE.IN2) CALL CMWW (J,I1,IN2,CM,NROW,CM,NROW,1)
       IF (IM1.LE.IM2) CALL CMWS (J,IM1,IM2,CM(1,IST),NROW,CM,NROW,1)
       IF (NLOAD.EQ.0) GO TO 4
-C
-C     MATRIX ELEMENTS MODIFIED BY LOADING
-C
+!
+!     MATRIX ELEMENTS MODIFIED BY LOADING
+!
       IF (J.GT.NP) GO TO 4
       IPR=J-ISV
       IF (IPR.LT.1.OR.IPR.GT.IT) GO TO 4
@@ -2509,7 +2541,7 @@ C
 3     CM(JSS,IPR)=CM(JSS,IPR)-(AX(I)+CX(I))*ZAJ
 4     CONTINUE
 5     IF (M.EQ.0) GO TO 7
-C     MATRIX ELEMENTS FOR PATCH CURRENT SOURCES
+!     MATRIX ELEMENTS FOR PATCH CURRENT SOURCES
       JM1=1-MP
       JM2=0
       JST=1-MP2
@@ -2522,7 +2554,7 @@ C     MATRIX ELEMENTS FOR PATCH CURRENT SOURCES
 6     CONTINUE
 7     IF (ICASE.EQ.1) GO TO 13
       IF (ICASE.EQ.3) GO TO 12
-C     COMBINE ELEMENTS FOR SYMMETRY MODES
+!     COMBINE ELEMENTS FOR SYMMETRY MODES
       DO 11 I=1,IT
       DO 11 J=1,NPEQ
       DO 8 K=1,NOP
@@ -2540,20 +2572,22 @@ C     COMBINE ELEMENTS FOR SYMMETRY MODES
       CM(KA,I)=DETER
 11    CONTINUE
       IF (ICASE.LT.3) GO TO 13
-C     WRITE BLOCK FOR OUT-OF-CORE CASES.
+!     WRITE BLOCK FOR OUT-OF-CORE CASES.
 12    CALL BLCKOT (CM,11,1,IOUT,1,31)
 13    CONTINUE
       IF (ICASE.GT.2) REWIND 11
       RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE CMSS (J1,J2,IM1,IM2,CM,NROW,ITRP)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C     CMSS COMPUTES MATRIX ELEMENTS FOR SURFACE-SURFACE INTERACTIONS.
+! ***
+!     CMSS COMPUTES MATRIX ELEMENTS FOR SURFACE-SURFACE INTERACTIONS.
       COMPLEX*16 G11,G12,G21,G22,CM,EXK,EYK,EZK,EXS,EYS,EZS,EXC,EYC,EZC
       COMMON /DATA/ X(MAXSEG),Y(MAXSEG),Z(MAXSEG),SI(MAXSEG),BI(MAXSEG),
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
@@ -2573,7 +2607,7 @@ C     CMSS COMPUTES MATRIX ELEMENTS FOR SURFACE-SURFACE INTERACTIONS.
       ICOMP=I1*2-3
       II1=-1
       IF (ICOMP+2.LT.IM1) II1=-2
-C     LOOP OVER OBSERVATION PATCHES
+!     LOOP OVER OBSERVATION PATCHES
       DO 5 I=I1,I2
       IL=LDP-I
       ICOMP=ICOMP+2
@@ -2589,7 +2623,7 @@ C     LOOP OVER OBSERVATION PATCHES
       YI=Y(IL)
       ZI=Z(IL)
       JJ1=-1
-C     LOOP OVER SOURCE PATCHES
+!     LOOP OVER SOURCE PATCHES
       DO 5 J=J1,J2
       JL=LDP-J
       JJ1=JJ1+2
@@ -2613,7 +2647,7 @@ C     LOOP OVER SOURCE PATCHES
       G11=G11-.5
       G22=G22+.5
 1     IF (ITRP.NE.0) GO TO 3
-C     NORMAL FILL
+!     NORMAL FILL
       IF (ICOMP.LT.IM1) GO TO 2
       CM(II1,JJ1)=G11
       CM(II1,JJ2)=G12
@@ -2621,7 +2655,7 @@ C     NORMAL FILL
       CM(II2,JJ1)=G21
       CM(II2,JJ2)=G22
       GO TO 5
-C     TRANSPOSED FILL
+!     TRANSPOSED FILL
 3     IF (ICOMP.LT.IM1) GO TO 4
       CM(JJ1,II1)=G11
       CM(JJ2,II1)=G12
@@ -2631,14 +2665,16 @@ C     TRANSPOSED FILL
 5     CONTINUE
       RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE CMSW (J1,J2,I1,I2,CM,CW,NCW,NROW,ITRP)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C     COMPUTES MATRIX ELEMENTS FOR E ALONG WIRES DUE TO PATCH CURRENT
+! ***
+!     COMPUTES MATRIX ELEMENTS FOR E ALONG WIRES DUE TO PATCH CURRENT
       COMPLEX*16 CM,ZRATI,ZRATI2,T1,EXK,EYK,EZK,EXS,EYS,EZS,EXC,EYC,EZC
      1,EMEL,CW,FRATI
       COMMON /DATA/ X(MAXSEG),Y(MAXSEG),Z(MAXSEG),SI(MAXSEG),BI(MAXSEG),
@@ -2650,8 +2686,8 @@ C     COMPUTES MATRIX ELEMENTS FOR E ALONG WIRES DUE TO PATCH CURRENT
       COMMON /DATAJ/ S,B,XJ,YJ,ZJ,CABJ,SABJ,SALPJ,EXK,EYK,EZK,EXS,EYS,
      &EZS,EXC,EYC,EZC,RKH,IND1,INDD1,IND2,INDD2,IEXK,IPGND
 
-Cav14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
-Cav14-CON(10),NPCON
+!av14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
+!av14-CON(10),NPCON
       COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
      -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
 
@@ -2667,7 +2703,7 @@ Cav14-CON(10),NPCON
       IF (ITRP.LT.0) GO TO 13
       K=0
       ICGO=1
-C     OBSERVATION LOOP
+!     OBSERVATION LOOP
       DO 12 I=I1,I2
       K=K+1
       XI=X(I)
@@ -2684,7 +2720,7 @@ C     OBSERVATION LOOP
       IPCH=ICON2(I)-10000
       FSIGN=1.
 2     JL=0
-C     SOURCE LOOP
+!     SOURCE LOOP
       DO 12 J=J1,J2
       JS=LDP-J
       JL=JL+2
@@ -2698,7 +2734,7 @@ C     SOURCE LOOP
       YJ=Y(JS)
       ZJ=Z(JS)
       S=BI(JS)
-C     GROUND LOOP
+!     GROUND LOOP
       DO 12 IP=1,KSYMP
       IPGND=IP
       IF (IPCH.NE.J.AND.ICGO.EQ.1) GO TO 9
@@ -2730,18 +2766,18 @@ C     GROUND LOOP
       GO TO 11
 9     CALL UNERE (XI,YI,ZI)
       IF (ITRP.NE.0) GO TO 10
-C     NORMAL FILL
+!     NORMAL FILL
       CM(K,JL-1)=CM(K,JL-1)+EXK*CABI+EYK*SABI+EZK*SALPI
       CM(K,JL)=CM(K,JL)+EXS*CABI+EYS*SABI+EZS*SALPI
       GO TO 11
-C     TRANSPOSED FILL
+!     TRANSPOSED FILL
 10    CM(JL-1,K)=CM(JL-1,K)+EXK*CABI+EYK*SABI+EZK*SALPI
       CM(JL,K)=CM(JL,K)+EXS*CABI+EYS*SABI+EZS*SALPI
 11    CONTINUE
 12    CONTINUE
       RETURN
-C     FOR OLD SEG. CONNECTING TO OLD PATCH ON ONE END AND NEW SEG. ON
-C     OTHER END INTEGRATE SINGULAR COMPONENT (9) OF SURFACE CURRENT ONLY
+!     FOR OLD SEG. CONNECTING TO OLD PATCH ON ONE END AND NEW SEG. ON
+!     OTHER END INTEGRATE SINGULAR COMPONENT (9) OF SURFACE CURRENT ONLY
 13    IF (J1.LT.I1.OR.J1.GT.I2) GO TO 16
       IPCH=ICON1(J1)
       IF (IPCH.LT.10000) GO TO 14
@@ -2781,24 +2817,26 @@ C     OTHER END INTEGRATE SINGULAR COMPONENT (9) OF SURFACE CURRENT ONLY
       CW(K,IL)=CW(K,IL)+EXC*(AX(JSNO)+BX(JSNO)*PX+CX(JSNO)*PY)
 16    RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE CMWS (J,I1,I2,CM,NR,CW,NW,ITRP)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     CMWS COMPUTES MATRIX ELEMENTS FOR WIRE-SURFACE INTERACTIONS
-C
+! ***
+!
+!     CMWS COMPUTES MATRIX ELEMENTS FOR WIRE-SURFACE INTERACTIONS
+!
       COMPLEX*16 CM,CW,ETK,ETS,ETC,EXK,EYK,EZK,EXS,EYS,EZS,EXC,EYC,EZC
       COMMON /DATA/ X(MAXSEG),Y(MAXSEG),Z(MAXSEG),SI(MAXSEG),BI(MAXSEG),
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
       COMMON /ANGL/ SALP(MAXSEG)
 
-Cav14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
-Cav14-CON(10),NPCON
+!av14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
+!av14-CON(10),NPCON
       COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
      -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
 
@@ -2817,9 +2855,9 @@ Cav14-CON(10),NPCON
       CABJ=CAB(J)
       SABJ=SAB(J)
       SALPJ=SALP(J)
-C
-C     OBSERVATION LOOP
-C
+!
+!     OBSERVATION LOOP
+!
       IPR=0
       DO 9 I=I1,I2
       IPR=IPR+1
@@ -2842,23 +2880,23 @@ C
 2     ETK=-(EXK*TX+EYK*TY+EZK*TZ)*SALP(JS)
       ETS=-(EXS*TX+EYS*TY+EZS*TZ)*SALP(JS)
       ETC=-(EXC*TX+EYC*TY+EZC*TZ)*SALP(JS)
-C
-C     FILL MATRIX ELEMENTS.  ELEMENT LOCATIONS DETERMINED BY CONNECTION
-C     DATA.
-C
+!
+!     FILL MATRIX ELEMENTS.  ELEMENT LOCATIONS DETERMINED BY CONNECTION
+!     DATA.
+!
       IF (ITRP.NE.0) GO TO 4
-C     NORMAL FILL
+!     NORMAL FILL
       DO 3 IJ=1,JSNO
       JX=JCO(IJ)
 3     CM(IPR,JX)=CM(IPR,JX)+ETK*AX(IJ)+ETS*BX(IJ)+ETC*CX(IJ)
       GO TO 9
 4     IF (ITRP.EQ.2) GO TO 6
-C     TRANSPOSED FILL
+!     TRANSPOSED FILL
       DO 5 IJ=1,JSNO
       JX=JCO(IJ)
 5     CM(JX,IPR)=CM(JX,IPR)+ETK*AX(IJ)+ETS*BX(IJ)+ETC*CX(IJ)
       GO TO 9
-C     TRANSPOSED FILL - C(WS) AND D(WS)PRIME (=CW)
+!     TRANSPOSED FILL - C(WS) AND D(WS)PRIME (=CW)
 6     DO 8 IJ=1,JSNO
       JX=JCO(IJ)
       IF (JX.GT.NR) GO TO 7
@@ -2871,24 +2909,26 @@ C     TRANSPOSED FILL - C(WS) AND D(WS)PRIME (=CW)
       RETURN
       END
 
+!----------------------------------------------------------------------------
+
       SUBROUTINE CMWW (J,I1,I2,CM,NR,CW,NW,ITRP)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     CMWW COMPUTES MATRIX ELEMENTS FOR WIRE-WIRE INTERACTIONS
-C
+! ***
+!
+!     CMWW COMPUTES MATRIX ELEMENTS FOR WIRE-WIRE INTERACTIONS
+!
       COMPLEX*16 CM,CW,ETK,ETS,ETC,EXK,EYK,EZK,EXS,EYS,EZS,EXC,EYC,EZC
       COMMON /DATA/ X(MAXSEG),Y(MAXSEG),Z(MAXSEG),SI(MAXSEG),BI(MAXSEG),
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
       COMMON /ANGL/ SALP(MAXSEG)
 
-Cav14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
-Cav14-CON(10),NPCON
+!av14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
+!av14-CON(10),NPCON
       COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
      -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
 
@@ -2897,7 +2937,7 @@ Cav14-CON(10),NPCON
       DIMENSION CM(NR,1), CW(NW,1), CAB(1), SAB(1)
       EQUIVALENCE (CAB,ALP), (SAB,BET)
 
-C     SET SOURCE SEGMENT PARAMETERS
+!     SET SOURCE SEGMENT PARAMETERS
 
       S=SI(J)
       B=BI(J)
@@ -2909,7 +2949,7 @@ C     SET SOURCE SEGMENT PARAMETERS
       SALPJ=SALP(J)
       IF (IEXK.EQ.0) GO TO 16
 
-C     DECIDE WETHER EXT. T.W. APPROX. CAN BE USED
+!     DECIDE WETHER EXT. T.W. APPROX. CAN BE USED
 
       IPR=ICON1(J)
       IF(IPR.GT.10000)GO TO 5      !<---NEW, av016
@@ -2951,9 +2991,9 @@ C     DECIDE WETHER EXT. T.W. APPROX. CAN BE USED
       GO TO 16
 15    IND2=2
 16    CONTINUE
-C
-C     OBSERVATION LOOP
-C
+!
+!     OBSERVATION LOOP
+!
       IPR=0
       DO 23 I=I1,I2
       IPR=IPR+1
@@ -2969,23 +3009,23 @@ C
       ETK=EXK*CABI+EYK*SABI+EZK*SALPI
       ETS=EXS*CABI+EYS*SABI+EZS*SALPI
       ETC=EXC*CABI+EYC*SABI+EZC*SALPI
-C
-C     FILL MATRIX ELEMENTS.  ELEMENT LOCATIONS DETERMINED BY CONNECTION
-C     DATA.
-C
+!
+!     FILL MATRIX ELEMENTS.  ELEMENT LOCATIONS DETERMINED BY CONNECTION
+!     DATA.
+!
       IF (ITRP.NE.0) GO TO 18
-C     NORMAL FILL
+!     NORMAL FILL
       DO 17 IJ=1,JSNO
       JX=JCO(IJ)
 17    CM(IPR,JX)=CM(IPR,JX)+ETK*AX(IJ)+ETS*BX(IJ)+ETC*CX(IJ)
       GO TO 23
 18    IF (ITRP.EQ.2) GO TO 20
-C     TRANSPOSED FILL
+!     TRANSPOSED FILL
       DO 19 IJ=1,JSNO
       JX=JCO(IJ)
 19    CM(JX,IPR)=CM(JX,IPR)+ETK*AX(IJ)+ETS*BX(IJ)+ETC*CX(IJ)
       GO TO 23
-C     TRANS. FILL FOR C(WW) - TEST FOR ELEMENTS FOR D(WW)PRIME.  (=CW)
+!     TRANS. FILL FOR C(WW) - TEST FOR ELEMENTS FOR D(WW)PRIME.  (=CW)
 20    DO 22 IJ=1,JSNO
       JX=JCO(IJ)
       IF (JX.GT.NR) GO TO 21
@@ -2997,31 +3037,34 @@ C     TRANS. FILL FOR C(WW) - TEST FOR ELEMENTS FOR D(WW)PRIME.  (=CW)
 23    CONTINUE
       RETURN
       END
+
+!----------------------------------------------------------------------------
+
       SUBROUTINE CONECT (IGND)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     CONNECT SETS UP SEGMENT CONNECTION DATA IN ARRAYS ICON1 AND ICON2
-C     BY SEARCHING FOR SEGMENT ENDS THAT ARE IN CONTACT.
-C
+! ***
+!
+!     CONNECT SETS UP SEGMENT CONNECTION DATA IN ARRAYS ICON1 AND ICON2
+!     BY SEARCHING FOR SEGMENT ENDS THAT ARE IN CONTACT.
+!
       COMMON /DATA/ X(MAXSEG),Y(MAXSEG),Z(MAXSEG),SI(MAXSEG),BI(MAXSEG),
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
 
-Cav14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
-Cav14-CON(10),NPCON
+!av14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
+!av14-CON(10),NPCON
       COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
      -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
 
       DIMENSION X2(1), Y2(1), Z2(1)
       EQUIVALENCE (X2,SI), (Y2,ALP), (Z2,BET)
 
-Cav07 DATA JMAX/30/,SMIN/1.D-3/,NSMAX/50/,NPMAX/10/
-Cav14 DATA JMAX/30/,SMIN/1.D-3/,NPMAX/10/
+!av07 DATA JMAX/30/,SMIN/1.D-3/,NSMAX/50/,NPMAX/10/
+!av14 DATA JMAX/30/,SMIN/1.D-3/,NPMAX/10/
       DATA SMIN/1.D-3/,NPMAX/10/
 
       NSCON=0
@@ -3047,9 +3090,9 @@ Cav14 DATA JMAX/30/,SMIN/1.D-3/,NPMAX/10/
       YI2=Y2(I)
       ZI2=Z2(I)
       SLEN=SQRT((XI2-XI1)**2+(YI2-YI1)**2+(ZI2-ZI1)**2)*SMIN
-C
-C     DETERMINE CONNECTION DATA FOR END 1 OF SEGMENT.
-C
+!
+!     DETERMINE CONNECTION DATA FOR END 1 OF SEGMENT.
+!
       IF (IGND.LT.1) GO TO 5
       IF (ZI1.GT.-SLEN) GO TO 4
       WRITE(3,56)  I
@@ -3073,9 +3116,9 @@ C
 7     CONTINUE
       IF (I.LT.N2.AND.ICON1(I).GT.10000) GO TO 8
       ICON1(I)=0
-C
-C     DETERMINE CONNECTION DATA FOR END 2 OF SEGMENT.
-C
+!
+!     DETERMINE CONNECTION DATA FOR END 2 OF SEGMENT.
+!
 8     IF (IGND.LT.1) GO TO 12
 9     IF (ZI2.GT.-SLEN) GO TO 10
       WRITE(3,56)  I
@@ -3104,7 +3147,7 @@ C
       ICON2(I)=0
 15    CONTINUE
       IF (M.EQ.0) GO TO 26
-C     FIND WIRE-SURFACE CONNECTIONS FOR NEW PATCHES
+!     FIND WIRE-SURFACE CONNECTIONS FOR NEW PATCHES
       IX=LD+1-M1
       I=M2
 16    IF (I.GT.M) GO TO 20
@@ -3120,10 +3163,10 @@ C     FIND WIRE-SURFACE CONNECTIONS FOR NEW PATCHES
       YI2=Y2(ISEG)
       ZI2=Z2(ISEG)
       SLEN=(ABS(XI2-XI1)+ABS(YI2-YI1)+ABS(ZI2-ZI1))*SMIN
-C     FOR FIRST END OF SEGMENT
+!     FOR FIRST END OF SEGMENT
       SEP=ABS(XI1-XS)+ABS(YI1-YS)+ABS(ZI1-ZS)
       IF (SEP.GT.SLEN) GO TO 17
-C     CONNECTION - DIVIDE PATCH INTO 4 PATCHES AT PRESENT ARRAY LOC.
+!     CONNECTION - DIVIDE PATCH INTO 4 PATCHES AT PRESENT ARRAY LOC.
       ICON1(ISEG)=10000+I
       IC=0
       CALL SUBPH (I,IC,XI1,YI1,ZI1,XI2,YI2,ZI2,XA,YA,ZA,XS,YS,ZS)
@@ -3137,7 +3180,7 @@ C     CONNECTION - DIVIDE PATCH INTO 4 PATCHES AT PRESENT ARRAY LOC.
 18    CONTINUE
 19    I=I+1
       GO TO 16
-C     REPEAT SEARCH FOR NEW SEGMENTS CONNECTED TO NGF PATCHES.
+!     REPEAT SEARCH FOR NEW SEGMENTS CONNECTED TO NGF PATCHES.
 20    IF (M1.EQ.0.OR.N2.GT.N) GO TO 26
       IX=LD+1
       I=1
@@ -3190,8 +3233,8 @@ C     REPEAT SEARCH FOR NEW SEGMENTS CONNECTED TO NGF PATCHES.
 30    IF (N.EQ.0) GO TO 48
       WRITE(3,50)
       ISEG=0
-C     ADJUST CONNECTED SEG. ENDS TO EXACTLY COINCIDE.  PRINT JUNCTIONS
-C     OF 3 OR MORE SEG.  ALSO FIND OLD SEG. CONNECTING TO NEW SEG.
+!     ADJUST CONNECTED SEG. ENDS TO EXACTLY COINCIDE.  PRINT JUNCTIONS
+!     OF 3 OR MORE SEG.  ALSO FIND OLD SEG. CONNECTING TO NEW SEG.
       DO 44 J=1,N
       IEND=-1
       JEND=-1
@@ -3271,7 +3314,7 @@ C     OF 3 OR MORE SEG.  ALSO FIND OLD SEG. CONNECTING TO NEW SEG.
 44    CONTINUE
       IF (ISEG.EQ.0) WRITE(3,52)
       IF (N1.EQ.0.OR.M1.EQ.M) GO TO 48
-C     FIND OLD SEGMENTS THAT CONNECT TO NEW PATCHES
+!     FIND OLD SEGMENTS THAT CONNECT TO NEW PATCHES
       DO 47 J=1,N1
       IX=ICON1(J)
       IF (IX.LT.10000) GO TO 45
@@ -3290,7 +3333,7 @@ C     FIND OLD SEGMENTS THAT CONNECT TO NEW PATCHES
       RETURN
 49    WRITE(3,53)  IX
       STOP
-C
+!
 50    FORMAT (//,9X,27H- MULTIPLE WIRE JUNCTIONS -,/,1X,8HJUNCTION,4X,36
      1HSEGMENTS  (- FOR END 1, + FOR END 2))
 51    FORMAT (1X,I5,5X,20I5,/,(11X,20I5))
@@ -3314,22 +3357,24 @@ C
       END
 
 
+!----------------------------------------------------------------------------
+
       SUBROUTINE COUPLE (CUR,WLAM)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'					! av07
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'					! av07
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     COUPLE COMPUTES THE MAXIMUM COUPLING BETWEEN PAIRS OF SEGMENTS.
-C
+! ***
+!
+!     COUPLE COMPUTES THE MAXIMUM COUPLING BETWEEN PAIRS OF SEGMENTS.
+!
       COMPLEX*16 Y11A,Y12A,CUR,Y11,Y12,Y22,YL,YIN,ZL,ZIN,RHO,VQD,VSANT
      1,VQDS
       COMMON/YPARM/Y11A(5),Y12A(20),NCOUP,ICOUP,NCTAG(5),NCSEG(5)
 
-Cav07 COMMON /VSORC/ VQD(30),VSANT(30),VQDS(30),IVQD(30),ISANT(30),IQDS(
-Cav07 130),NVQD,NSANT,NQDS
+!av07 COMMON /VSORC/ VQD(30),VSANT(30),VQDS(30),IVQD(30),ISANT(30),IQDS(
+!av07 130),NVQD,NSANT,NQDS
       COMMON /VSORC/ VQD(nsmax),VSANT(nsmax),VQDS(nsmax),IVQD(nsmax),
      &ISANT(nsmax),IQDS(nsmax),NVQD,NSANT,NQDS			! av07
 
@@ -3383,7 +3428,7 @@ Cav07 130),NVQD,NSANT,NQDS
 4     WRITE(3,8)  ITT1,ITS1,ISG1,ITT2,ITS2,ISG2,C
 5     CONTINUE
       RETURN
-C
+!
 6     FORMAT (///,36X,26H- - - ISOLATION DATA - - -,//,6X,24H- - COUPLIN
      1G BETWEEN - -,8X,7HMAXIMUM,15X,32H- - - FOR MAXIMUM COUPLING - - -
      2,/,12X,4HSEG.,14X,4HSEG.,3X,8HCOUPLING,4X,25HLOAD IMPEDANCE (2ND S
@@ -3393,35 +3438,37 @@ C
 8     FORMAT (2(1X,I4,1X,I4,1X,I5,2X),45H**ERROR** COUPLING IS NOT BETWE
      1EN 0 AND 1. (=,1P,E12.5,1H))
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE DATAGN
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     DATAGN IS THE MAIN ROUTINE FOR INPUT OF GEOMETRY DATA.
-C
-C***
+! ***
+!
+!     DATAGN IS THE MAIN ROUTINE FOR INPUT OF GEOMETRY DATA.
+!
+!***
       CHARACTER*2 GM,ATST
-C***
+!***
       COMMON /DATA/ X(MAXSEG),Y(MAXSEG),Z(MAXSEG),SI(MAXSEG),BI(MAXSEG),
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
       COMMON /ANGL/ SALP(MAXSEG)
-C***
+!***
       COMMON /PLOT/ IPLP1,IPLP2,IPLP3,IPLP4
-C***
+!***
       DIMENSION X2(1), Y2(1), Z2(1), T1X(1), T1Y(1), T1Z(1), T2X(1), T2Y
      1(1), T2Z(1), ATST(13), IFX(2), IFY(2), IFZ(2), CAB(1), SAB(1), IPT
      2(4)
       EQUIVALENCE (T1X,SI), (T1Y,ALP), (T1Z,BET), (T2X,ICON1), (T2Y,ICON
      12), (T2Z,ITAG), (X2,SI), (Y2,ALP), (Z2,BET), (CAB,ALP), (SAB,BET)
-C***
+!***
       DATA ATST/'GW','GX','GR','GS','GE','GM','SP','SM','GF','GA','SC',
      1'GC','GH'/
-C***
+!***
       DATA IFX/1H ,1HX/,IFY/1H ,1HY/,IFZ/1H ,1HZ/
       DATA TA/0.01745329252D+0/,TD/57.29577951D+0/,IPT/1HP,1HR,1HT,1HQ/
       IPSYM=0
@@ -3436,10 +3483,10 @@ C***
       M2=1
       ISCT=0
       IPHD=0
-C
-C     READ GEOMETRY DATA CARD AND BRANCH TO SECTION FOR OPERATION
-C     REQUESTED
-C
+!
+!     READ GEOMETRY DATA CARD AND BRANCH TO SECTION FOR OPERATION
+!     REQUESTED
+!
 1     CALL READGM(2,GM,ITG,NS,XW1,YW1,ZW1,XW2,YW2,ZW2,RAD)
       IF (N+M.GT.LD) GO TO 37
       IF (GM.EQ.ATST(9)) GO TO 27
@@ -3458,13 +3505,13 @@ C
       IF (GM.EQ.ATST(5)) GO TO 29
       IF (GM.EQ.ATST(6)) GO TO 26
       IF (GM.EQ.ATST(10)) GO TO 8
-C***
+!***
       IF (GM.EQ.ATST(13)) GO TO 123
-C***
+!***
       GO TO 36
-C
-C     GENERATE SEGMENT DATA FOR STRAIGHT WIRE.
-C
+!
+!     GENERATE SEGMENT DATA FOR STRAIGHT WIRE.
+!
 3     NWIRE=NWIRE+1
       I1=N+1
       I2=N+NS
@@ -3474,7 +3521,7 @@ C
       YS1=1.
       GO TO 7
 4     CALL READGM(2,GM,IX,IY,XS1,YS1,ZS1,DUMMY,DUMMY,DUMMY,DUMMY)
-C***
+!***
       IF (GM.EQ.ATST(12)) GO TO 6
 5     WRITE(3,48)
       STOP
@@ -3484,33 +3531,33 @@ C***
       YS1=(ZS1/YS1)**(1./(NS-1.))
 7     CALL WIRE (XW1,YW1,ZW1,XW2,YW2,ZW2,RAD,XS1,YS1,NS,ITG)
       GO TO 1
-C
-C     GENERATE SEGMENT DATA FOR WIRE ARC
-C
+!
+!     GENERATE SEGMENT DATA FOR WIRE ARC
+!
 8     NWIRE=NWIRE+1
       I1=N+1
       I2=N+NS
       WRITE(3,38)  NWIRE,XW1,YW1,ZW1,XW2,NS,I1,I2,ITG
       CALL ARC (ITG,NS,XW1,YW1,ZW1,XW2)
       GO TO 1
-C***
-C
-C     GENERATE HELIX
-C
+!***
+!
+!     GENERATE HELIX
+!
 123   NWIRE=NWIRE+1
       I1=N+1
       I2=N+NS
       WRITE(3,124) XW1,YW1,NWIRE,ZW1,XW2,YW2,ZW2,RAD,NS,I1,I2,ITG
       CALL HELIX(XW1,YW1,ZW1,XW2,YW2,ZW2,RAD,NS,ITG)
       GO TO 1
-C
+!
 124   FORMAT(5X,'HELIX STRUCTURE-   AXIAL SPACING BETWEEN TURNS =',F8.3,
      1' TOTAL AXIAL LENGTH =',F8.3/1X,I5,2X,'RADIUS OF HELIX =',4(2X,
      2F8.3),7X,F11.5,I8,4X,I5,1X,I5,3X,I5)
-C***
-C
-C     GENERATE SINGLE NEW PATCH
-C
+!***
+!
+!     GENERATE SINGLE NEW PATCH
+!
 9     I1=M+1
       NS=NS+1
       IF (ITG.NE.0) GO TO 17
@@ -3551,9 +3598,9 @@ C
 12    WRITE(3,51)  I1,IPT(NS),XW1,YW1,ZW1,XW2,YW2,ZW2
       WRITE(3,39)  X3,Y3,Z3,X4,Y4,Z4
       GO TO 16
-C
-C     GENERATE MULTIPLE-PATCH SURFACE
-C
+!
+!     GENERATE MULTIPLE-PATCH SURFACE
+!
 13    I1=M+1
       WRITE(3,59)  I1,IPT(2),XW1,YW1,ZW1,XW2,YW2,ZW2,ITG,NS
       IF (ITG.LT.1.OR.NS.LT.1) GO TO 17
@@ -3568,9 +3615,9 @@ C
       GO TO 1
 17    WRITE(3,60)
       STOP
-C
-C     REFLECT STRUCTURE ALONG X,Y, OR Z AXES OR ROTATE TO FORM CYLINDER.
-C
+!
+!     REFLECT STRUCTURE ALONG X,Y, OR Z AXES OR ROTATE TO FORM CYLINDER.
+!
 18    IY=NS/10
       IZ=NS-IY*10
       IX=IY/10
@@ -3584,9 +3631,9 @@ C
       IX=-1
 20    CALL REFLC (IX,IY,IZ,ITG,NS)
       GO TO 1
-C
-C     SCALE STRUCTURE DIMENSIONS BY FACTOR XW1.
-C
+!
+!     SCALE STRUCTURE DIMENSIONS BY FACTOR XW1.
+!
 21    IF (N.LT.N2) GO TO 23
       DO 22 I=N2,N
       X(I)=X(I)*XW1
@@ -3607,18 +3654,18 @@ C
 24    BI(I)=BI(I)*YW1
 25    WRITE(3,46)  XW1
       GO TO 1
-C
-C     MOVE STRUCTURE OR REPRODUCE ORIGINAL STRUCTURE IN NEW POSITIONS.
-C
+!
+!     MOVE STRUCTURE OR REPRODUCE ORIGINAL STRUCTURE IN NEW POSITIONS.
+!
 26    WRITE(3,47)  ITG,NS,XW1,YW1,ZW1,XW2,YW2,ZW2,RAD
       XW1=XW1*TA
       YW1=YW1*TA
       ZW1=ZW1*TA
       CALL MOVE (XW1,YW1,ZW1,XW2,YW2,ZW2,INT(RAD+.5),NS,ITG)
       GO TO 1
-C
-C     READ NUMERICAL GREEN'S FUNCTION TAPE
-C
+!
+!     READ NUMERICAL GREEN'S FUNCTION TAPE
+!
 27    IF (N+M.EQ.0) GO TO 28
       WRITE(3,52)
       STOP
@@ -3627,15 +3674,15 @@ C
       MPSAV=MP
       IPSAV=IPSYM
       GO TO 1
-C
-C     TERMINATE STRUCTURE GEOMETRY INPUT.
-C
-C***
+!
+!     TERMINATE STRUCTURE GEOMETRY INPUT.
+!
+!***
 29    IF(NS.EQ.0) GO TO 290
       IPLP1=1
       IPLP2=1
 290   IX=N1+M1
-C***
+!***
       IF (IX.EQ.0) GO TO 30
       NP=N
       MP=M
@@ -3670,11 +3717,11 @@ C***
       YW2=ATGN2(YW1,XW1)*TD
       WRITE(3,55) I,X(I),Y(I),Z(I),SI(I),XW2,YW2,BI(I),ICON1(I),I,
      1ICON2(I),ITAG(I)
-C***
+!***
       IF(IPLP1.NE.1) GO TO 320
       WRITE(8,*)X(I),Y(I),Z(I),SI(I),XW2,YW2,BI(I),ICON1(I),I,ICON2(I)
 320   CONTINUE
-C***
+!***
       IF (SI(I).GT.1.D-20.AND.BI(I).GT.0.) GO TO 32
       WRITE(3,56)
       STOP
@@ -3696,7 +3743,7 @@ C***
       STOP
 37    WRITE(3,50)
       STOP
-C
+!
 38    FORMAT (1X,I5,2X,12HARC RADIUS =,F9.5,2X,4HFROM,F8.3,3H TO,F8.3,8H
      1 DEGREES,11X,F11.5,2X,I5,4X,I5,1X,I5,3X,I5)
 39    FORMAT (6X,3F11.5,1X,3F11.5)
@@ -3743,14 +3790,14 @@ C
      13X,11HRADIUS FROM,F9.5,3H TO,F9.5)
       END
       FUNCTION DB10 (X)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     FUNCTION DB-- RETURNS DB FOR MAGNITUDE (FIELD) OR MAG**2 (POWER) I
-C
+! ***
+!
+!     FUNCTION DB-- RETURNS DB FOR MAGNITUDE (FIELD) OR MAG**2 (POWER) I
+!
       F=10.
       GO TO 1
       ENTRY DB20(X)
@@ -3761,16 +3808,18 @@ C
 2     DB10=-999.99
       RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE EFLD (XI,YI,ZI,AI,IJ)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     COMPUTE NEAR E FIELDS OF A SEGMENT WITH SINE, COSINE, AND
-C     CONSTANT CURRENTS.  GROUND EFFECT INCLUDED.
-C
+! ***
+!
+!     COMPUTE NEAR E FIELDS OF A SEGMENT WITH SINE, COSINE, AND
+!     CONSTANT CURRENTS.  GROUND EFFECT INCLUDED.
+!
       COMPLEX*16 TXK,TYK,TZK,TXS,TYS,TZS,TXC,TYC,TZC,EXK,EYK,EZK,EXS,EYS
      1,EZS,EXC,EYC,EZC,EPX,EPY,ZRATI,REFS,REFPS,ZRSIN,ZRATX,T1,ZSCRN
      2,ZRATI2,TEZS,TERS,TEZC,TERC,TEZK,TERK,EGND,FRATI
@@ -3808,9 +3857,9 @@ C
       RHOZ=RHOZ/RH
 2     R=SQRT(ZP*ZP+RH*RH)
       IF (R.LT.RKH) GO TO 3
-C
-C     LUMPED CURRENT ELEMENT APPROX. FOR LARGE SEPARATIONS
-C
+!
+!     LUMPED CURRENT ELEMENT APPROX. FOR LARGE SEPARATIONS
+!
       RMAG=TP*R
       CTH=ZP/R
       PX=RH/R
@@ -3830,9 +3879,9 @@ C
       TZS=(0.,0.)
       GO TO 6
 3     IF (IEXK.EQ.1) GO TO 4
-C
-C     EKSC FOR THIN WIRE APPROX. OR EKSCX FOR EXTENDED T.W. APPROX.
-C
+!
+!     EKSC FOR THIN WIRE APPROX. OR EKSCX FOR EXTENDED T.W. APPROX.
+!
       CALL EKSC (S,ZP,RH,TP,IJX,TEZS,TERS,TEZC,TERC,TEZK,TERK)
       GO TO 5
 4     CALL EKSCX (B,S,ZP,RH,TP,IJX,IND1,IND2,TEZS,TERS,TEZC,TERC,TEZK,TE
@@ -3851,9 +3900,9 @@ C
       ZRATX=ZRATI
       RMAG=R
       XYMAG=SQRT(XIJ*XIJ+YIJ*YIJ)
-C
-C     SET PARAMETERS FOR RADIAL WIRE GROUND SCREEN.
-C
+!
+!     SET PARAMETERS FOR RADIAL WIRE GROUND SCREEN.
+!
       IF (NRADL.EQ.0) GO TO 7
       XSPEC=(XI*ZJ+ZI*XJ)/(ZI+ZJ)
       YSPEC=(YI*ZJ+ZI*YJ)/(ZI+ZJ)
@@ -3862,9 +3911,9 @@ C
       ZSCRN=T1*RHOSPC*LOG(RHOSPC/T2)
       ZRATX=(ZSCRN*ZRATI)/(ETA*ZRATI+ZSCRN)
 7     IF (XYMAG.GT.1.D-6) GO TO 8
-C
-C     CALCULATION OF REFLECTION COEFFICIENTS WHEN GROUND IS SPECIFIED.
-C
+!
+!     CALCULATION OF REFLECTION COEFFICIENTS WHEN GROUND IS SPECIFIED.
+!
       PX=0.
       PY=0.
       CTH=1.
@@ -3917,9 +3966,9 @@ C
 12    CONTINUE
       IF (IPERF.EQ.2) GO TO 13
       RETURN
-C
-C     FIELD DUE TO GROUND USING SOMMERFELD/NORTON
-C
+!
+!     FIELD DUE TO GROUND USING SOMMERFELD/NORTON
+!
 13    SN=SQRT(CABJ*CABJ+SABJ*SABJ)
       IF (SN.LT.1.D-5) GO TO 14
       XSN=CABJ/SN
@@ -3928,9 +3977,9 @@ C
 14    SN=0.
       XSN=1.
       YSN=0.
-C
-C     DISPLACE OBSERVATION POINT FOR THIN WIRE APPROXIMATION
-C
+!
+!     DISPLACE OBSERVATION POINT FOR THIN WIRE APPROXIMATION
+!
 15    ZIJ=ZI+ZJ
       SALPR=-SALPJ
       RHOX=SABJ*ZIJ-SALPR*YIJ
@@ -3949,18 +3998,18 @@ C
       ZO=ZI+RH*RHOZ
 17    R=XIJ*XIJ+YIJ*YIJ+ZIJ*ZIJ
       IF (R.GT..95) GO TO 18
-C
-C     FIELD FROM INTERPOLATION IS INTEGRATED OVER SEGMENT
-C
+!
+!     FIELD FROM INTERPOLATION IS INTEGRATED OVER SEGMENT
+!
       ISNOR=1
       DMIN=EXK*DCONJG(EXK)+EYK*DCONJG(EYK)+EZK*DCONJG(EZK)
       DMIN=.01*SQRT(DMIN)
       SHAF=.5*S
       CALL ROM2 (-SHAF,SHAF,EGND,DMIN)
       GO TO 19
-C
-C     NORTON FIELD EQUATIONS AND LUMPED CURRENT ELEMENT APPROXIMATION
-C
+!
+!     NORTON FIELD EQUATIONS AND LUMPED CURRENT ELEMENT APPROXIMATION
+!
 18    ISNOR=2
       CALL SFLDS (0.D0,EGND)
       GO TO 22
@@ -3995,14 +4044,16 @@ C
       EZC=EZC+TZC
       RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE EKSC (S,Z,RH,XK,IJ,EZS,ERS,EZC,ERC,EZK,ERK)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C     COMPUTE E FIELD OF SINE, COSINE, AND CONSTANT CURRENT FILAMENTS BY
-C     THIN WIRE APPROXIMATION.
+! ***
+!     COMPUTE E FIELD OF SINE, COSINE, AND CONSTANT CURRENT FILAMENTS BY
+!     THIN WIRE APPROXIMATION.
       COMPLEX*16 CON,GZ1,GZ2,GP1,GP2,GZP1,GZP2,EZS,ERS,EZC,ERC,EZK,ERK
       COMMON /TMI/ ZPK,RKB2,IJX
       DIMENSION CONX(2)
@@ -4037,15 +4088,17 @@ C     THIN WIRE APPROXIMATION.
       ERC=(0.,0.)
       RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE EKSCX (BX,S,Z,RHX,XK,IJ,INX1,INX2,EZS,ERS,EZC,ERC,EZK,E
      1RK)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C     COMPUTE E FIELD OF SINE, COSINE, AND CONSTANT CURRENT FILAMENTS BY
-C     EXTENDED THIN WIRE APPROXIMATION.
+! ***
+!     COMPUTE E FIELD OF SINE, COSINE, AND CONSTANT CURRENT FILAMENTS BY
+!     EXTENDED THIN WIRE APPROXIMATION.
       COMPLEX*16 CON,GZ1,GZ2,GZP1,GZP2,GR1,GR2,GRP1,GRP2,EZS,EZC,ERS,ERC
      1,GRK1,GRK2,EZK,ERK,GZZ1,GZZ2
       COMMON /TMI/ ZPK,RKB2,IJX
@@ -4102,34 +4155,38 @@ C     EXTENDED THIN WIRE APPROXIMATION.
       RETURN
       END
 
-Cav03 SUBROUTINE ERROR
-C ***
-C     GET REASON FOR FILE ERROR (VAX ONLY).  ERROR SHOULD BE REDUCED TO 
-C     "RETURN END" FOR MACINTOSH.
-C
-C      IMPLICIT INTEGER (A-Z)
-C      CHARACTER MSG*80
-C      CALL ERRSNS(FNUM,RMSSTS,RMSSTV,IUNIT,CONDVAL)
-C      CALL SYS$GETMSG(%VAL(RMSSTS),MSGLEN,MSG,,,)
-C      CALL STR$UPCASE(MSG,MSG)
-C      IND=INDEX(MSG,',')
-C      TYPE 1,MSG(IND+2:MSGLEN)
-C1     FORMAT(//,'  ****  ERROR  ****   ',//,5X,A,//)
-Cav03 RETURN
-Cav03 END
+!----------------------------------------------------------------------------
+
+!av03 SUBROUTINE ERROR
+! ***
+!     GET REASON FOR FILE ERROR (VAX ONLY).  ERROR SHOULD BE REDUCED TO 
+!     "RETURN END" FOR MACINTOSH.
+!
+!      IMPLICIT INTEGER (A-Z)
+!      CHARACTER MSG*80
+!      CALL ERRSNS(FNUM,RMSSTS,RMSSTV,IUNIT,CONDVAL)
+!      CALL SYS$GETMSG(%VAL(RMSSTS),MSGLEN,MSG,,,)
+!      CALL STR$UPCASE(MSG,MSG)
+!      IND=INDEX(MSG,',')
+!      TYPE 1,MSG(IND+2:MSGLEN)
+!1     FORMAT(//,'  ****  ERROR  ****   ',//,5X,A,//)
+!av03 RETURN
+!av03 END
+
+!----------------------------------------------------------------------------
 
       SUBROUTINE ETMNS (P1,P2,P3,P4,P5,P6,IPR,E)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     ETMNS FILLS THE ARRAY E WITH THE NEGATIVE OF THE ELECTRIC FIELD
-C     INCIDENT ON THE STRUCTURE.  E IS THE RIGHT HAND SIDE OF THE MATRIX
-C     EQUATION.
-C
+! ***
+!
+!     ETMNS FILLS THE ARRAY E WITH THE NEGATIVE OF THE ELECTRIC FIELD
+!     INCIDENT ON THE STRUCTURE.  E IS THE RIGHT HAND SIDE OF THE MATRIX
+!     EQUATION.
+!
       COMPLEX*16 E,CX,CY,CZ,VSANT,ER,ET,EZH,ERH,VQD,VQDS,ZRATI
      1,ZRATI2,RRV,RRH,T1,TT1,TT2,FRATI
       COMMON /DATA/ X(MAXSEG),Y(MAXSEG),Z(MAXSEG),SI(MAXSEG),BI(MAXSEG),
@@ -4137,8 +4194,8 @@ C
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
       COMMON /ANGL/ SALP(MAXSEG)
 
-Cav07 COMMON /VSORC/ VQD(30),VSANT(30),VQDS(30),IVQD(30),ISANT(30),IQDS(
-Cav07 130),NVQD,NSANT,NQDS
+!av07 COMMON /VSORC/ VQD(30),VSANT(30),VQDS(30),IVQD(30),ISANT(30),IQDS(
+!av07 130),NVQD,NSANT,NQDS
       COMMON /VSORC/ VQD(nsmax),VSANT(nsmax),VQDS(nsmax),IVQD(nsmax),
      &ISANT(nsmax),IQDS(nsmax),NVQD,NSANT,NQDS			! av07
 
@@ -4153,9 +4210,9 @@ Cav07 130),NVQD,NSANT,NQDS
       NEQ=N+2*M
       NQDS=0
       IF (IPR.GT.0.AND.IPR.NE.5) GO TO 5
-C
-C     APPLIED FIELD OF VOLTAGE SOURCES FOR TRANSMITTING CASE
-C
+!
+!     APPLIED FIELD OF VOLTAGE SOURCES FOR TRANSMITTING CASE
+!
       DO 1 I=1,NEQ
 1     E(I)=(0.,0.)
       IF (NSANT.EQ.0) GO TO 3
@@ -4168,9 +4225,9 @@ C
 4     CALL QDSRC (IS,VQD(I),E)
       RETURN
 5     IF (IPR.GT.3) GO TO 19
-C
-C     INCIDENT PLANE WAVE, LINEARLY POLARIZED.
-C
+!
+!     INCIDENT PLANE WAVE, LINEARLY POLARIZED.
+!
       CTH=COS(P1)
       STH=SIN(P1)
       CPH=COS(P2)
@@ -4237,9 +4294,9 @@ C
       E(I2)=E(I2)+(CX*T1X(I)+CY*T1Y(I)+CZ*T1Z(I))*TT1
 12    E(I1)=E(I1)+(CX*T2X(I)+CY*T2Y(I)+CZ*T2Z(I))*TT1
       RETURN
-C
-C     INCIDENT PLANE WAVE, ELLIPTIC POLARIZATION.
-C
+!
+!     INCIDENT PLANE WAVE, ELLIPTIC POLARIZATION.
+!
 13    TT1=-(0.,1.)*P6
       IF (IPR.EQ.3) TT1=-TT1
       IF (N.EQ.0) GO TO 16
@@ -4288,9 +4345,9 @@ C
       E(I2)=E(I2)+(CX*T1X(I)+CY*T1Y(I)+CZ*T1Z(I))*TT1
 18    E(I1)=E(I1)+(CX*T2X(I)+CY*T2Y(I)+CZ*T2Z(I))*TT1
       RETURN
-C
-C     INCIDENT FIELD OF AN ELEMENTARY CURRENT SOURCE.
-C
+!
+!     INCIDENT FIELD OF AN ELEMENTARY CURRENT SOURCE.
+!
 19    WZ=COS(P4)
       WX=WZ*COS(P5)
       WY=WZ*SIN(P5)
@@ -4355,13 +4412,15 @@ C
 24    CONTINUE
       RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE FACGF (A,B,C,D,BX,IP,IX,NP,N1,MP,M1,N1C,N2C)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C     FACGF COMPUTES AND FACTORS D-C(INV(A)B).
+! ***
+!     FACGF COMPUTES AND FACTORS D-C(INV(A)B).
       COMPLEX*16 A,B,C,D,BX,SUM
       COMMON /MATPAR/ ICASE,NBLOKS,NPBLK,NLAST,NBLSYM,NPSYM,NLSYM,IMAT,I
      1CASX,NBBX,NPBX,NLBX,NBBL,NPBL,NLBL
@@ -4370,12 +4429,12 @@ C     FACGF COMPUTES AND FACTORS D-C(INV(A)B).
       IF (N2C.EQ.0) RETURN
       IBFL=14
       IF (ICASX.LT.3) GO TO 1
-C     CONVERT B FROM BLOCKS OF ROWS ON T14 TO BLOCKS OF COL. ON T16
+!     CONVERT B FROM BLOCKS OF ROWS ON T14 TO BLOCKS OF COL. ON T16
       CALL REBLK (B,C,N1C,NPBX,N2C)
       IBFL=16
 1     NPB=NPBL
       IF (ICASX.EQ.2) REWIND 14
-C     COMPUTE INV(A)B AND WRITE ON TAPE14
+!     COMPUTE INV(A)B AND WRITE ON TAPE14
       DO 2 IB=1,NBBL
       IF (IB.EQ.NBBL) NPB=NLBL
       IF (ICASX.GT.1) READ (IBFL) ((BX(I,J),I=1,N1C),J=1,NPB)
@@ -4389,7 +4448,7 @@ C     COMPUTE INV(A)B AND WRITE ON TAPE14
       REWIND 15
       REWIND IBFL
 3     NPC=NPBL
-C     COMPUTE D-C(INV(A)B) AND WRITE ON TAPE11
+!     COMPUTE D-C(INV(A)B) AND WRITE ON TAPE11
       DO 8 IC=1,NBBL
       IF (IC.EQ.NBBL) NPC=NLBL
       IF (ICASX.EQ.1) GO TO 4
@@ -4417,7 +4476,7 @@ C     COMPUTE D-C(INV(A)B) AND WRITE ON TAPE11
       REWIND 14
       REWIND 15
 9     N1CP=N1C+1
-C     FACTOR D-C(INV(A)B)
+!     FACTOR D-C(INV(A)B)
       IF (ICASX.GT.1) GO TO 10
       CALL FACTR (N2C,D,IP(N1CP),N2C)
       GO TO 13
@@ -4451,15 +4510,19 @@ C     FACTOR D-C(INV(A)B)
       ICASE=ICASS
 13    RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE FACIO (A,NROW,NOP,IP,IU1,IU2,IU3,IU4)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     FACIO CONTROLS I/O FOR OUT-OF-CORE FACTORIZATION
-C
+! ***
+!
+!     FACIO CONTROLS I/O FOR OUT-OF-CORE FACTORIZATION
+!
+      REAL T1, T2, TIME         ! hwh
+
       COMPLEX*16 A
       COMMON /MATPAR/ ICASE,NBLOKS,NPBLK,NLAST,NBLSYM,NPSYM,NLSYM,IMAT,I
      1CASX,NBBX,NPBX,NLBX,NBBL,NPBL,NLBL
@@ -4505,30 +4568,32 @@ C
       REWIND IU4
       WRITE(3,4)  TIME
       RETURN
-C
+!
 4     FORMAT (35H CP TIME TAKEN FOR FACTORIZATION = ,1P,E12.5)
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE FACTR (N,A,IP,NDIM)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     SUBROUTINE TO FACTOR A MATRIX INTO A UNIT LOWER TRIANGULAR MATRIX
-C     AND AN UPPER TRIANGULAR MATRIX USING THE GAUSS-DOOLITTLE ALGORITHM
-C     PRESENTED ON PAGES 411-416 OF A. RALSTON--A FIRST COURSE IN
-C     NUMERICAL ANALYSIS.  COMMENTS BELOW REFER TO COMMENTS IN RALSTONS
-C     TEXT.    (MATRIX TRANSPOSED.
-C
+! ***
+!
+!     SUBROUTINE TO FACTOR A MATRIX INTO A UNIT LOWER TRIANGULAR MATRIX
+!     AND AN UPPER TRIANGULAR MATRIX USING THE GAUSS-DOOLITTLE ALGORITHM
+!     PRESENTED ON PAGES 411-416 OF A. RALSTON--A FIRST COURSE IN
+!     NUMERICAL ANALYSIS.  COMMENTS BELOW REFER TO COMMENTS IN RALSTONS
+!     TEXT.    (MATRIX TRANSPOSED.
+!
       COMPLEX*16 A,D,ARJ
       DIMENSION A(NDIM,NDIM), IP(NDIM)
       COMMON /SCRATM/ D(2*MAXSEG)
       INTEGER R,RM1,RP1,PJ,PR
-C
-C     Un-transpose the matrix for Gauss elimination
-C
+!
+!     Un-transpose the matrix for Gauss elimination
+!
       DO 12 I=2,N
          DO 11 J=1,I-1
             ARJ=A(I,J)
@@ -4538,15 +4603,15 @@ C
 12    CONTINUE
       IFLG=0
       DO 9 R=1,N
-C
-C     STEP 1
-C
+!
+!     STEP 1
+!
       DO 1 K=1,N
       D(K)=A(K,R)
 1     CONTINUE
-C
-C     STEPS 2 AND 3
-C
+!
+!     STEPS 2 AND 3
+!
       RM1=R-1
       IF (RM1.LT.1) GO TO 4
       DO 3 J=1,RM1
@@ -4560,9 +4625,9 @@ C
 2     CONTINUE
 3     CONTINUE
 4     CONTINUE
-C
-C     STEP 4
-C
+!
+!     STEP 4
+!
       DMAX=DREAL(D(R)*DCONJG(D(R)))
       IP(R)=R
       RP1=R+1
@@ -4578,9 +4643,9 @@ C
       PR=IP(R)
       A(R,R)=D(PR)
       D(PR)=D(R)
-C
-C     STEP 5
-C
+!
+!     STEP 5
+!
       IF (RP1.GT.N) GO TO 8
       ARJ=1./A(R,R)
       DO 7 I=RP1,N
@@ -4592,21 +4657,23 @@ C
       IFLG=0
 9     CONTINUE
       RETURN
-C
+!
 10    FORMAT (1H ,6HPIVOT(,I3,2H)=,1P,E16.8)
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE FACTRS (NP,NROW,A,IP,IX,IU1,IU2,IU3,IU4)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     FACTRS, FOR SYMMETRIC STRUCTURE, TRANSFORMS SUBMATRICIES TO FORM
-C     MATRICIES OF THE SYMMETRIC MODES AND CALLS ROUTINE TO FACTOR
-C     MATRICIES.  IF NO SYMMETRY, THE ROUTINE IS CALLED TO FACTOR THE
-C     COMPLETE MATRIX.
-C
+! ***
+!
+!     FACTRS, FOR SYMMETRIC STRUCTURE, TRANSFORMS SUBMATRICIES TO FORM
+!     MATRICIES OF THE SYMMETRIC MODES AND CALLS ROUTINE TO FACTOR
+!     MATRICIES.  IF NO SYMMETRY, THE ROUTINE IS CALLED TO FACTOR THE
+!     COMPLETE MATRIX.
+!
       COMPLEX*16 A
       COMMON /MATPAR/ ICASE,NBLOKS,NPBLK,NLAST,NBLSYM,NPSYM,NLSYM,IMAT,I
      1CASX,NBBX,NPBX,NLBX,NBBL,NPBL,NLBL
@@ -4618,16 +4685,16 @@ C
 1     CALL FACTR (NP,A(KA),IP(KA),NROW)
       RETURN
 2     IF (ICASE.GT.3) GO TO 3
-C
-C     FACTOR SUBMATRICIES, OR FACTOR COMPLETE MATRIX IF NO SYMMETRY
-C     EXISTS.
-C
+!
+!     FACTOR SUBMATRICIES, OR FACTOR COMPLETE MATRIX IF NO SYMMETRY
+!     EXISTS.
+!
       CALL FACIO (A,NROW,NOP,IX,IU1,IU2,IU3,IU4)
       CALL LUNSCR (A,NROW,NOP,IP,IX,IU2,IU3,IU4)
       RETURN
-C
-C     REWRITE THE MATRICES BY COLUMNS ON TAPE 13
-C
+!
+!     REWRITE THE MATRICES BY COLUMNS ON TAPE 13
+!
 3     I2=2*NPBLK*NROW
       REWIND IU2
       DO 5 K=1,NOP
@@ -4683,14 +4750,14 @@ C
       RETURN
       END
       COMPLEX*16 FUNCTION FBAR(P)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     FBAR IS SOMMERFELD ATTENUATION FUNCTION FOR NUMERICAL DISTANCE P
-C
+! ***
+!
+!     FBAR IS SOMMERFELD ATTENUATION FUNCTION FOR NUMERICAL DISTANCE P
+!
       COMPLEX*16 Z,ZS,SUM,POW,TERM,P,FJ
       DIMENSION FJX(2)
       EQUIVALENCE (FJ,FJX)
@@ -4698,9 +4765,9 @@ C
      1,FJX/0.,1./
       Z=FJ*SQRT(P)
       IF (ABS(Z).GT.3.) GO TO 3
-C
-C     SERIES EXPANSION
-C
+!
+!     SERIES EXPANSION
+!
       ZS=Z*Z
       SUM=Z
       POW=Z
@@ -4714,9 +4781,9 @@ C
 1     CONTINUE
 2     FBAR=1.-(1.-SUM*TOSP)*Z*EXP(ZS)*SP
       RETURN
-C
-C     ASYMPTOTIC EXPANSION
-C
+!
+!     ASYMPTOTIC EXPANSION
+!
 3     IF (DREAL(Z).GE.0.) GO TO 4
       MINUS=1
       Z=-Z
@@ -4732,14 +4799,16 @@ C
       FBAR=-SUM
       RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE FBLOCK (NROW,NCOL,IMAX,IRNGF,IPSYM)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C     FBLOCK SETS PARAMETERS FOR OUT-OF-CORE SOLUTION FOR THE PRIMARY
-C     MATRIX (A)
+! ***
+!     FBLOCK SETS PARAMETERS FOR OUT-OF-CORE SOLUTION FOR THE PRIMARY
+!     MATRIX (A)
       COMPLEX*16 SSX,DETER
       COMMON /MATPAR/ ICASE,NBLOKS,NPBLK,NLAST,NBLSYM,NPSYM,NLSYM,IMAT,I
      1CASX,NBBX,NPBX,NLBX,NBBL,NPBL,NLBL
@@ -4798,9 +4867,9 @@ C     MATRIX (A)
 5     NOP=NCOL/NROW
       IF (NOP*NROW.NE.NCOL) GO TO 13
       IF (IPSYM.GT.0) GO TO 7
-C
-C     SET UP SSX MATRIX FOR ROTATIONAL SYMMETRY.
-C
+!
+!     SET UP SSX MATRIX FOR ROTATIONAL SYMMETRY.
+!
       PHAZ=6.2831853072D+0/NOP
       DO 6 I=2,NOP
       DO 6 J=I,NOP
@@ -4808,9 +4877,9 @@ C
       SSX(I,J)=DCMPLX(COS(ARG),SIN(ARG))
 6     SSX(J,I)=SSX(I,J)
       GO TO 11
-C
-C     SET UP SSX MATRIX FOR PLANE SYMMETRY
-C
+!
+!     SET UP SSX MATRIX FOR PLANE SYMMETRY
+!
 7     KK=1
       SSX(1,1)=(1.,0.)
       IF ((NOP.EQ.2).OR.(NOP.EQ.4).OR.(NOP.EQ.8)) GO TO 8
@@ -4830,7 +4899,7 @@ C
       STOP
 13    WRITE(3,18)  NROW,NCOL
       STOP
-C
+!
 14    FORMAT (//35H MATRIX FILE STORAGE -  NO. BLOCKS=,I5,19H COLUMNS PE
      1R BLOCK=,I5,23H COLUMNS IN LAST BLOCK=,I5)
 15    FORMAT (25H SUBMATRICIES FIT IN CORE)
@@ -4839,14 +4908,16 @@ C
 17    FORMAT (40H ERROR - INSUFFICIENT STORAGE FOR MATRIX,2I5)
 18    FORMAT (28H SYMMETRY ERROR - NROW,NCOL=,2I5)
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE FBNGF (NEQ,NEQ2,IRESRV,IB11,IC11,ID11,IX11)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C     FBNGF SETS THE BLOCKING PARAMETERS FOR THE B, C, AND D ARRAYS FOR
-C     OUT-OF-CORE STORAGE.
+! ***
+!     FBNGF SETS THE BLOCKING PARAMETERS FOR THE B, C, AND D ARRAYS FOR
+!     OUT-OF-CORE STORAGE.
       COMMON /MATPAR/ ICASE,NBLOKS,NPBLK,NLAST,NBLSYM,NPSYM,NLSYM,IMAT,I
      1CASX,NBBX,NPBX,NLBX,NBBL,NPBL,NLBL
       IRESX=IRESRV-IMAT
@@ -4903,7 +4974,7 @@ C     OUT-OF-CORE STORAGE.
       RETURN
 6     WRITE(3,7)  IRESRV,IMAT,NEQ,NEQ2
       STOP
-C
+!
 7     FORMAT (55H ERROR - INSUFFICIENT STORAGE FOR INTERACTION MATRICIES
      1,24H  IRESRV,IMAT,NEQ,NEQ2 =,4I5)
 8     FORMAT (48H FILE STORAGE FOR NEW MATRIX SECTIONS -  ICASX =,I2)
@@ -4913,17 +4984,19 @@ C
      14X,15HR/C PER BLOCK =,I3,4X,19HR/C IN LAST BLOCK =,I3)
 11    FORMAT (//,35H N.G.F. - NUMBER OF NEW UNKNOWNS IS,I4)
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE FFLD (THET,PHI,ETH,EPH)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     FFLD CALCULATES THE FAR ZONE RADIATED ELECTRIC FIELDS,
-C     THE FACTOR EXP(J*K*R)/(R/LAMDA) NOT INCLUDED
-C
+! ***
+!
+!     FFLD CALCULATES THE FAR ZONE RADIATED ELECTRIC FIELDS,
+!     THE FACTOR EXP(J*K*R)/(R/LAMDA) NOT INCLUDED
+!
       COMPLEX*16 CIX,CIY,CIZ,EXA,ETH,EPH,CONST,CCX,CCY,CCZ,CDP,CUR
       COMPLEX*16 ZRATI,ZRSIN,RRV,RRH,RRV1,RRH1,RRV2,RRH2,ZRATI2,TIX,TIY
      1,TIZ,T1,ZSCRN,EX,EY,EZ,GX,GY,GZ,FRATI
@@ -4949,31 +5022,31 @@ C
       ROX=-THZ*PHY
       ROY=THZ*PHX
       IF (N.EQ.0) GO TO 20
-C
-C     LOOP FOR STRUCTURE IMAGE IF ANY
-C
+!
+!     LOOP FOR STRUCTURE IMAGE IF ANY
+!
       DO 19 K=1,KSYMP
-C
-C     CALCULATION OF REFLECTION COEFFECIENTS
-C
+!
+!     CALCULATION OF REFLECTION COEFFECIENTS
+!
       IF (K.EQ.1) GO TO 4
       IF (IPERF.NE.1) GO TO 1
-C
-C     FOR PERFECT GROUND
-C
+!
+!     FOR PERFECT GROUND
+!
       RRV=-(1.,0.)
       RRH=-(1.,0.)
       GO TO 2
-C
-C     FOR INFINITE PLANAR GROUND
-C
+!
+!     FOR INFINITE PLANAR GROUND
+!
 1     ZRSIN=SQRT(1.-ZRATI*ZRATI*THZ*THZ)
       RRV=-(ROZ-ZRATI*ZRSIN)/(ROZ+ZRATI*ZRSIN)
       RRH=(ZRATI*ROZ-ZRSIN)/(ZRATI*ROZ+ZRSIN)
 2     IF (IFAR.LE.1) GO TO 3
-C
-C     FOR THE CLIFF PROBLEM, TWO REFLCTION COEFFICIENTS CALCULATED
-C
+!
+!     FOR THE CLIFF PROBLEM, TWO REFLCTION COEFFICIENTS CALCULATED
+!
       RRV1=RRV
       RRH1=RRH
       TTHET=TAN(THET)
@@ -4989,9 +5062,9 @@ C
 4     CIX=(0.,0.)
       CIY=(0.,0.)
       CIZ=(0.,0.)
-C
-C     LOOP OVER STRUCTURE SEGMENTS
-C
+!
+!     LOOP OVER STRUCTURE SEGMENTS
+!
       DO 17 I=1,N
       OMEGA=-(ROX*CAB(I)+ROY*SAB(I)+ROZ*SALP(I))
       EL=PI*SI(I)
@@ -5017,29 +5090,29 @@ C
       ARG=TP*(X(I)*ROX+Y(I)*ROY+Z(I)*ROZ)
       IF (K.EQ.2.AND.IFAR.GE.2) GO TO 11
       EXA=DCMPLX(COS(ARG),SIN(ARG))*DCMPLX(RR,RI)
-C
-C     SUMMATION FOR FAR FIELD INTEGRAL
-C
+!
+!     SUMMATION FOR FAR FIELD INTEGRAL
+!
       CIX=CIX+EXA*CAB(I)
       CIY=CIY+EXA*SAB(I)
       CIZ=CIZ+EXA*SALP(I)
       GO TO 17
-C
-C     CALCULATION OF IMAGE CONTRIBUTION IN CLIFF AND GROUND SCREEN
-C     PROBLEMS.
-C
+!
+!     CALCULATION OF IMAGE CONTRIBUTION IN CLIFF AND GROUND SCREEN
+!     PROBLEMS.
+!
 11    DR=Z(I)*TTHET
-C
-C     SPECULAR POINT DISTANCE
-C
+!
+!     SPECULAR POINT DISTANCE
+!
       D=DR*PHY+X(I)
       IF (IFAR.EQ.2) GO TO 13
       D=SQRT(D*D+(Y(I)-DR*PHX)**2)
       IF (IFAR.EQ.3) GO TO 13
       IF ((SCRWL-D).LT.0.) GO TO 12
-C
-C     RADIAL WIRE GROUND SCREEN REFLECTION COEFFICIENT
-C
+!
+!     RADIAL WIRE GROUND SCREEN REFLECTION COEFFICIENT
+!
       D=D+T2
       ZSCRN=T1*D*LOG(D/T2)
       ZSCRN=(ZSCRN*ZRATI)/(ETA*ZRATI+ZSCRN)
@@ -5057,10 +5130,10 @@ C
       RRH=RRH2
       ARG=ARG+DARG
 16    EXA=DCMPLX(COS(ARG),SIN(ARG))*DCMPLX(RR,RI)
-C
-C     CONTRIBUTION OF EACH IMAGE SEGMENT MODIFIED BY REFLECTION COEF. ,
-C     FOR CLIFF AND GROUND SCREEN PROBLEMS
-C
+!
+!     CONTRIBUTION OF EACH IMAGE SEGMENT MODIFIED BY REFLECTION COEF. ,
+!     FOR CLIFF AND GROUND SCREEN PROBLEMS
+!
       TIX=EXA*CAB(I)
       TIY=EXA*SAB(I)
       TIZ=EXA*SALP(I)
@@ -5071,9 +5144,9 @@ C
 17    CONTINUE
       IF (K.EQ.1) GO TO 19
       IF (IFAR.GE.2) GO TO 18
-C
-C     CALCULATION OF CONTRIBUTION OF STRUCTURE IMAGE FOR INFINITE GROUND
-C
+!
+!     CALCULATION OF CONTRIBUTION OF STRUCTURE IMAGE FOR INFINITE GROUND
+!
       CDP=(CIX*PHX+CIY*PHY)*(RRH-RRV)
       CIX=CCX+CIX*RRV+CDP*PHX
       CIY=CCY+CIY*RRV+CDP*PHY
@@ -5091,9 +5164,9 @@ C
       CIY=(0.,0.)
       CIZ=(0.,0.)
 21    ROZ=ROZS
-C
-C     ELECTRIC FIELD COMPONENTS
-C
+!
+!     ELECTRIC FIELD COMPONENTS
+!
       RFL=-1.
       DO 25 IP=1,KSYMP
       RFL=-RFL
@@ -5129,15 +5202,17 @@ C
       EPH=EX*PHX+EY*PHY
       RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE FFLDS (ROX,ROY,ROZ,SCUR,EX,EY,EZ)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C     CALCULATES THE XYZ COMPONENTS OF THE ELECTRIC FIELD DUE TO
-C     SURFACE CURRENTS
+! ***
+!     CALCULATES THE XYZ COMPONENTS OF THE ELECTRIC FIELD DUE TO
+!     SURFACE CURRENTS
       COMPLEX*16 CT,CONS,SCUR,EX,EY,EZ
       COMMON /DATA/ X(MAXSEG),Y(MAXSEG),Z(MAXSEG),SI(MAXSEG),BI(MAXSEG),
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
@@ -5164,15 +5239,17 @@ C     SURFACE CURRENTS
       EZ=CONS*(CT*ROZ-EZ)
       RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE GF (ZK,CO,SI)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     GF COMPUTES THE INTEGRAND EXP(JKR)/(KR) FOR NUMERICAL INTEGRATION.
-C
+! ***
+!
+!     GF COMPUTES THE INTEGRAND EXP(JKR)/(KR) FOR NUMERICAL INTEGRATION.
+!
       COMMON /TMI/ ZPK,RKB2,IJ
       ZDK=ZK-ZPK
       RK=SQRT(RKB2+ZDK*ZDK)
@@ -5188,17 +5265,19 @@ C
       RETURN
       END
 
+!----------------------------------------------------------------------------
+
       SUBROUTINE GFIL (IPRT)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       PARAMETER (IRESRV=MAXMAT**2)
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     GFIL READS THE N.G.F. FILE
-C
+! ***
+!
+!     GFIL READS THE N.G.F. FILE
+!
       COMPLEX*16 CM,SSX,ZRATI,ZRATI2,T1,ZARRAY,AR1,AR2,AR3,EPSCF,FRATI
       COMMON /DATA/ X(MAXSEG),Y(MAXSEG),Z(MAXSEG),SI(MAXSEG),BI(MAXSEG),
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
@@ -5218,15 +5297,15 @@ C
 
 	character ngfnam*80		! av12
 	common /ngfnam/ ngfnam		! av12
-C
-C*** ERROR CORRECTED 11/20/89 *******************************
+!
+!*** ERROR CORRECTED 11/20/89 *******************************
       DIMENSION T2X(1),T2Y(1),T2Z(1)
       EQUIVALENCE (T2X,ICON1),(T2Y,ICON2),(T2Z,ITAG)
-C***
+!***
       DATA IGFL/20/
-Cav12 OPEN(UNIT=IGFL,FILE='NGF2D.NEC',FORM='UNFORMATTED',STATUS='OLD')
+!av12 OPEN(UNIT=IGFL,FILE='NGF2D.NEC',FORM='UNFORMATTED',STATUS='OLD')
 
-Cav018	write (3, '(2A)') 'Opening NGF-file : ',ngfnam			! av12
+!av018	write (3, '(2A)') 'Opening NGF-file : ',ngfnam			! av12
 
 	OPEN(UNIT=IGFL,FILE=NGFNAM,FORM='UNFORMATTED',STATUS='OLD',ERR=30)! av12
 	goto 31										! av12
@@ -5242,7 +5321,7 @@ Cav018	write (3, '(2A)') 'Opening NGF-file : ',ngfnam			! av12
       N2=N1+1
       M2=M1+1
       IF (N1.EQ.0) GO TO 2
-C     READ SEG. DATA AND CONVERT BACK TO END COORD. IN UNITS OF METERS
+!     READ SEG. DATA AND CONVERT BACK TO END COORD. IN UNITS OF METERS
       READ (IGFL) (X(I),I=1,N1),(Y(I),I=1,N1),(Z(I),I=1,N1)
       READ (IGFL) (SI(I),I=1,N1),(BI(I),I=1,N1),(ALP(I),I=1,N1)
       READ (IGFL) (BET(I),I=1,N1),(SALP(I),I=1,N1)
@@ -5264,16 +5343,16 @@ C     READ SEG. DATA AND CONVERT BACK TO END COORD. IN UNITS OF METERS
 1     CONTINUE
 2     IF (M1.EQ.0) GO TO 4
       J=LD-M1+1
-C     READ PATCH DATA AND CONVERT TO METERS
+!     READ PATCH DATA AND CONVERT TO METERS
       READ (IGFL) (X(I),I=J,LD),(Y(I),I=J,LD),(Z(I),I=J,LD)
       READ (IGFL) (SI(I),I=J,LD),(BI(I),I=J,LD),(ALP(I),I=J,LD)
       READ (IGFL) (BET(I),I=J,LD),(SALP(I),I=J,LD)
-C*** ERROR CORRECTED 11/20/89 *******************************
+!*** ERROR CORRECTED 11/20/89 *******************************
       READ (IGFL) (T2X(I),I=J,LD),(T2Y(I),I=J,LD)
       READ (IGFL) (T2Z(I),I=J,LD)
-C      READ (IGFL) (ICON1(I),I=J,LD),(ICON2(I),I=J,LD)
-C      READ (IGFL) (ITAG(I),I=J,LD)
-C
+!      READ (IGFL) (ICON1(I),I=J,LD),(ICON2(I),I=J,LD)
+!      READ (IGFL) (ITAG(I),I=J,LD)
+!
       DX=WLAM*WLAM
       DO 3 I=J,LD
       X(I)=X(I)*WLAM
@@ -5288,7 +5367,7 @@ C
       NOP=NEQ/NPEQ
       IF (NOP.GT.1) READ (IGFL) ((SSX(I,J),I=1,NOP),J=1,NOP)
       READ (IGFL) (IP(I),I=1,NEQ),COM
-C     READ MATRIX A AND WRITE TAPE13 FOR OUT OF CORE
+!     READ MATRIX A AND WRITE TAPE13 FOR OUT OF CORE
       IF (ICASE.GT.2) GO TO 5
       IOUT=NEQ*NPEQ
       READ (IGFL) (CM(I),I=1,IOUT)
@@ -5308,7 +5387,7 @@ C     READ MATRIX A AND WRITE TAPE13 FOR OUT OF CORE
 8     CALL BLCKOT (CM,13,1,IOUT,1,205)
 9     REWIND 13
 10    REWIND IGFL
-C     WRITE(3,N) G.F. HEADING
+!     WRITE(3,N) G.F. HEADING
       WRITE(3,16)
       WRITE(3,14)
       WRITE(3,14)
@@ -5336,7 +5415,7 @@ C     WRITE(3,N) G.F. HEADING
       DO 13 I=1,N1
 13    WRITE(3,26)  I,X(I),Y(I),Z(I),SI(I),ALP(I),BET(I)
       RETURN
-C
+!
 14    FORMAT (5X,50H**************************************************,
      &34H**********************************)
 15    FORMAT (5X,3H** ,19A4,3H **)
@@ -5363,16 +5442,18 @@ C
      1ION,27X,2H**)
 28    FORMAT (5X,38H** FINITE GROUND.  SOMMERFELD SOLUTION,44X,2H**)
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE GFLD (RHO,PHI,RZ,ETH,EPI,ERD,UX,KSYMP)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     GFLD COMPUTES THE RADIATED FIELD INCLUDING GROUND WAVE.
-C
+! ***
+!
+!     GFLD COMPUTES THE RADIATED FIELD INCLUDING GROUND WAVE.
+!
       COMPLEX*16 CUR,EPI,CIX,CIY,CIZ,EXA,XX1,XX2,U,U2,ERV,EZV,ERH,EPH
       COMPLEX*16 EZH,EX,EY,ETH,UX,ERD
       COMMON /DATA/ X(MAXSEG),Y(MAXSEG),Z(MAXSEG),SI(MAXSEG),BI(MAXSEG),
@@ -5390,9 +5471,9 @@ C
       IF (ABS(UX).GT..5) GO TO 1
       IF (R.GT.1.E5) GO TO 1
       GO TO 4
-C
-C     COMPUTATION OF SPACE WAVE ONLY
-C
+!
+!     COMPUTATION OF SPACE WAVE ONLY
+!
 1     IF (RZ.LT.1.D-20) GO TO 2
       THET=ATAN(RHO/RZ)
       GO TO 3
@@ -5404,9 +5485,9 @@ C
       EPI=EPI*EXA
       ERD=(0.,0.)
       RETURN
-C
-C     COMPUTATION OF SPACE AND GROUND WAVES.
-C
+!
+!     COMPUTATION OF SPACE AND GROUND WAVES.
+!
 4     U=UX
       U2=U*U
       PHX=-SIN(PHI)
@@ -5416,9 +5497,9 @@ C
       CIX=(0.,0.)
       CIY=(0.,0.)
       CIZ=(0.,0.)
-C
-C     SUMMATION OF FIELD FROM INDIVIDUAL SEGMENTS
-C
+!
+!     SUMMATION OF FIELD FROM INDIVIDUAL SEGMENTS
+!
       DO 17 I=1,N
       DX=CAB(I)
       DY=SAB(I)
@@ -5445,10 +5526,10 @@ C
       SPH=RHY
 8     EL=PI*SI(I)
       RFL=-1.
-C
-C     INTEGRATION OF (CURRENT)*(PHASE FACTOR) OVER SEGMENT AND IMAGE FOR
-C     CONSTANT, SINE, AND COSINE CURRENT DISTRIBUTIONS
-C
+!
+!     INTEGRATION OF (CURRENT)*(PHASE FACTOR) OVER SEGMENT AND IMAGE FOR
+!     CONSTANT, SINE, AND COSINE CURRENT DISTRIBUTIONS
+!
       DO 16 K=1,2
       RFL=-RFL
       RIZ=RZ-Z(I)*RFL
@@ -5487,10 +5568,10 @@ C
       R2=RXYZ
       ZPH=RIZ
 16    CONTINUE
-C
-C     CALL SUBROUTINE TO COMPUTE THE FIELD OF SEGMENT INCLUDING GROUND
-C     WAVE.
-C
+!
+!     CALL SUBROUTINE TO COMPUTE THE FIELD OF SEGMENT INCLUDING GROUND
+!     WAVE.
+!
       CALL GWAVE (ERV,EZV,ERH,EZH,EPH)
       ERH=ERH*CPH*CALP+ERV*DZ
       EPH=EPH*SPH*CALP
@@ -5517,17 +5598,19 @@ C
       RETURN
       END
 
+!----------------------------------------------------------------------------
+
       SUBROUTINE GFOUT
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       PARAMETER (IRESRV=MAXMAT**2)
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     WRITE N.G.F. FILE
-C
+! ***
+!
+!     WRITE N.G.F. FILE
+!
       COMPLEX*16 CM,SSX,ZRATI,ZRATI2,T1,ZARRAY,AR1,AR2,AR3,EPSCF,FRATI
       COMMON /DATA/ X(MAXSEG),Y(MAXSEG),Z(MAXSEG),SI(MAXSEG),BI(MAXSEG),
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
@@ -5547,18 +5630,18 @@ C
 
 	character ngfnam*80		! av12
 	common /ngfnam/ ngfnam		! av12
-C
-C*** ERROR CORRECTED 11/20/89 *******************************
+!
+!*** ERROR CORRECTED 11/20/89 *******************************
       DIMENSION T2X(1),T2Y(1),T2Z(1)
       EQUIVALENCE (T2X,ICON1),(T2Y,ICON2),(T2Z,ITAG)
-C***
+!***
       DATA IGFL/20/
-Cav04 OPEN(UNIT=IGFL,FILE='NGF2D.NEC',FORM='UNFORMATTED',STATUS='NEW')
+!av04 OPEN(UNIT=IGFL,FILE='NGF2D.NEC',FORM='UNFORMATTED',STATUS='NEW')
 
-Cav12 OPEN(UNIT=IGFL,FILE='NGF2D.NEC',
-Cav12 &FORM='UNFORMATTED',STATUS='UNKNOWN')
+!av12 OPEN(UNIT=IGFL,FILE='NGF2D.NEC',
+!av12 &FORM='UNFORMATTED',STATUS='UNKNOWN')
 
-C      write (3, '(2A)') 'Writing NGF-file : ',ngfnam			! av12
+!      write (3, '(2A)') 'Writing NGF-file : ',ngfnam			! av12
 
 	OPEN(UNIT=IGFL,FILE=NGFNAM,
      &FORM='UNFORMATTED',STATUS='UNKNOWN')	! av12
@@ -5580,14 +5663,14 @@ C      write (3, '(2A)') 'Writing NGF-file : ',ngfnam			! av12
       WRITE (IGFL) (X(I),I=J,LD),(Y(I),I=J,LD),(Z(I),I=J,LD)
       WRITE (IGFL) (SI(I),I=J,LD),(BI(I),I=J,LD),(ALP(I),I=J,LD)
       WRITE (IGFL) (BET(I),I=J,LD),(SALP(I),I=J,LD)
-C
-C*** ERROR CORRECTED 11/20/89 *******************************
+!
+!*** ERROR CORRECTED 11/20/89 *******************************
                                                              
       WRITE (IGFL) (T2X(I),I=J,LD),(T2Y(I),I=J,LD)
       WRITE (IGFL) (T2Z(I),I=J,LD)
-C      WRITE (IGFL) (ICON1(I),I=J,LD),(ICON2(I),I=J,LD)
-C      WRITE (IGFL) (ITAG(I),I=J,LD)
-C
+!      WRITE (IGFL) (ICON1(I),I=J,LD),(ICON2(I),I=J,LD)
+!      WRITE (IGFL) (ITAG(I),I=J,LD)
+!
 2     WRITE (IGFL) ICASE,NBLOKS,NPBLK,NLAST,NBLSYM,NPSYM,NLSYM,IMAT
       IF (IPERF.EQ.2) WRITE (IGFL) AR1,AR2,AR3,EPSCF,DXA,DYA,XSA,YSA,NXA
      1,NYA
@@ -5630,17 +5713,19 @@ C
 12    REWIND IGFL
       WRITE(3,13)  IGFL,IMAT
       RETURN
-C
+!
 13    FORMAT (///,44H ****NUMERICAL GREEN'S FUNCTION FILE ON TAPE,I3,5H
      1****,/,5X,16HMATRIX STORAGE -,I7,16H COMPLEX NUMBERS,///)
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE GH (ZK,HR,HI)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C     INTEGRAND FOR H FIELD OF A WIRE
+! ***
+!     INTEGRAND FOR H FIELD OF A WIRE
       COMMON /TMH/ ZPK,RHKS
       RS=ZK-ZPK
       RS=RHKS+RS*RS
@@ -5654,17 +5739,19 @@ C     INTEGRAND FOR H FIELD OF A WIRE
       RETURN
       END
 
+!----------------------------------------------------------------------------
+
       SUBROUTINE GWAVE (ERV,EZV,ERH,EZH,EPH)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     GWAVE COMPUTES THE ELECTRIC FIELD, INCLUDING GROUND WAVE, OF A
-C     CURRENT ELEMENT OVER A GROUND PLANE USING FORMULAS OF K.A. NORTON
-C     (PROC. IRE, SEPT., 1937, PP.1203,1236.)
-C
+! ***
+!
+!     GWAVE COMPUTES THE ELECTRIC FIELD, INCLUDING GROUND WAVE, OF A
+!     CURRENT ELEMENT OVER A GROUND PLANE USING FORMULAS OF K.A. NORTON
+!     (PROC. IRE, SEPT., 1937, PP.1203,1236.)
+!
       COMPLEX*16 FJ,TPJ,U2,U,RK1,RK2,T1,T2,T3,T4,P1,RV,OMR,W,F,Q1,RH,V,G
      -,XR1,XR2,X1,X2,X3,X4,X5,X6,X7,EZV,ERV,EZH,ERH,EPH,XX1,XX2,ECON,
      -FBAR
@@ -5672,7 +5759,7 @@ C
       COMMON /GWAV/ U,U2,XX1,XX2,R1,R2,ZMH,ZPH
       DIMENSION FJX(2), TPJX(2), ECONX(2)
       EQUIVALENCE (FJ,FJX), (TPJ,TPJX), (ECON,ECONX)
-Cav01 DATA PI/3.141592654D+0/,FJX/0.,1./,TPJX/0.,6.283185308D+0/
+!av01 DATA PI/3.141592654D+0/,FJX/0.,1./,TPJX/0.,6.283185308D+0/
 	DATA FJX/0.,1./,TPJX/0.,6.283185308D+0/
       DATA ECONX/0.,-188.367/
       SPPP=ZMH/R1
@@ -5736,13 +5823,15 @@ Cav01 DATA PI/3.141592654D+0/,FJX/0.,1./,TPJX/0.,6.283185308D+0/
       EPH=-(X1-X2+X3-X4+X5+X6)*ECON
       RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE GX (ZZ,RH,XK,GZ,GZP)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C     SEGMENT END CONTRIBUTIONS FOR THIN WIRE APPROX.
+! ***
+!     SEGMENT END CONTRIBUTIONS FOR THIN WIRE APPROX.
       COMPLEX*16 GZ,GZP
       R2=ZZ*ZZ+RH*RH
       R=SQRT(R2)
@@ -5751,13 +5840,15 @@ C     SEGMENT END CONTRIBUTIONS FOR THIN WIRE APPROX.
       GZP=-DCMPLX(1.D+0,RK)*GZ/R2
       RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE GXX (ZZ,RH,A,A2,XK,IRA,G1,G1P,G2,G2P,G3,GZP)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C     SEGMENT END CONTRIBUTIONS FOR EXT. THIN WIRE APPROX.
+! ***
+!     SEGMENT END CONTRIBUTIONS FOR EXT. THIN WIRE APPROX.
       COMPLEX*16 GZ,C1,C2,C3,G1,G1P,G2,G2P,G3,GZP
       R2=ZZ*ZZ+RH*RH
       R=SQRT(R2)
@@ -5796,15 +5887,17 @@ C     SEGMENT END CONTRIBUTIONS FOR EXT. THIN WIRE APPROX.
       GZP=-ZZ*C1*GZ
       RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE HELIX(S,HL,A1,B1,A2,B2,RAD,NS,ITG)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C     SUBROUTINE HELIX GENERATES SEGMENT GEOMETRY DATA FOR A HELIX OF NS
-C     SEGMENTS
+! ***
+!     SUBROUTINE HELIX GENERATES SEGMENT GEOMETRY DATA FOR A HELIX OF NS
+!     SEGMENTS
       COMMON /DATA/ X(MAXSEG),Y(MAXSEG),Z(MAXSEG),SI(MAXSEG),BI(MAXSEG),
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
@@ -5871,14 +5964,16 @@ C     SEGMENTS
      1S',F10.4)
       RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE HFK (EL1,EL2,RHK,ZPKX,SGR,SGI)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C     HFK COMPUTES THE H FIELD OF A UNIFORM CURRENT FILAMENT BY
-C     NUMERICAL INTEGRATION
+! ***
+!     HFK COMPUTES THE H FIELD OF A UNIFORM CURRENT FILAMENT BY
+!     NUMERICAL INTEGRATION
       COMMON /TMH/ ZPK,RHKS
       DATA NX,NM,NTS,RX/1,65536,4,1.D-4/
       ZPK=ZPKX
@@ -5957,16 +6052,18 @@ C     NUMERICAL INTEGRATION
       SGR=SGR*RHK*.5
       SGI=SGI*RHK*.5
       RETURN
-C
+!
 18    FORMAT (24H STEP SIZE LIMITED AT Z=,F10.5)
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE HINTG (XI,YI,ZI)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C     HINTG COMPUTES THE H FIELD OF A PATCH CURRENT
+! ***
+!     HINTG COMPUTES THE H FIELD OF A PATCH CURRENT
       COMPLEX*16 EXK,EYK,EZK,EXS,EYS,EZS,EXC,EYC,EZC,ZRATI,ZRATI2,GAM
      1,F1X,F1Y,F1Z,F2X,F2Y,F2Z,RRV,RRH,T1,FRATI
       COMMON /DATAJ/ S,B,XJ,YJ,ZJ,CABJ,SABJ,SALPJ,EXK,EYK,EZK,EXS,EYS,
@@ -6047,14 +6144,16 @@ C     HINTG COMPUTES THE H FIELD OF A PATCH CURRENT
 5     CONTINUE
       RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE HSFLD (XI,YI,ZI,AI)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C     HSFLD COMPUTES THE H FIELD FOR CONSTANT, SINE, AND COSINE CURRENT
-C     ON A SEGMENT INCLUDING GROUND EFFECTS.
+! ***
+!     HSFLD COMPUTES THE H FIELD FOR CONSTANT, SINE, AND COSINE CURRENT
+!     ON A SEGMENT INCLUDING GROUND EFFECTS.
       COMPLEX*16 EXK,EYK,EZK,EXS,EYS,EZS,EXC,EYC,EZC,ZRATI,ZRATI2,T1
      1,HPK,HPS,HPC,QX,QY,QZ,RRV,RRH,ZRATX,FRATI
       COMMON /DATAJ/ S,B,XJ,YJ,ZJ,CABJ,SABJ,SALPJ,EXK,EYK,EZK,EXS,EYS,
@@ -6097,9 +6196,9 @@ C     ON A SEGMENT INCLUDING GROUND EFFECTS.
       ZRATX=ZRATI
       RMAG=SQRT(ZP*ZP+RH*RH)
       XYMAG=SQRT(XIJ*XIJ+YIJ*YIJ)
-C
-C     SET PARAMETERS FOR RADIAL WIRE GROUND SCREEN.
-C
+!
+!     SET PARAMETERS FOR RADIAL WIRE GROUND SCREEN.
+!
       IF (NRADL.EQ.0) GO TO 2
       XSPEC=(XI*ZJ+ZI*XJ)/(ZI+ZJ)
       YSPEC=(YI*ZJ+ZI*YJ)/(ZI+ZJ)
@@ -6108,9 +6207,9 @@ C
       RRV=T1*RHOSPC*LOG(RHOSPC/T2)
       ZRATX=(RRV*ZRATI)/(ETA*ZRATI+RRV)
 2     IF (XYMAG.GT.1.D-6) GO TO 3
-C
-C     CALCULATION OF REFLECTION COEFFICIENTS WHEN GROUND IS SPECIFIED.
-C
+!
+!     CALCULATION OF REFLECTION COEFFICIENTS WHEN GROUND IS SPECIFIED.
+!
       PX=0.
       PY=0.
       CTH=1.
@@ -6160,13 +6259,15 @@ C
 7     CONTINUE
       RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE HSFLX (S,RH,ZPX,HPK,HPS,HPC)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C     CALCULATES H FIELD OF SINE COSINE, AND CONSTANT CURRENT OF SEGMENT
+! ***
+!     CALCULATES H FIELD OF SINE COSINE, AND CONSTANT CURRENT OF SEGMENT
       COMPLEX*16 FJ,FJK,EKR1,EKR2,T1,T2,CONS,HPS,HPC,HPK
       DIMENSION FJX(2), FJKX(2)
       EQUIVALENCE (FJ,FJX), (FJK,FJKX)
@@ -6217,16 +6318,18 @@ C     CALCULATES H FIELD OF SINE COSINE, AND CONSTANT CURRENT OF SEGMENT
       HPK=(0.,0.)
       RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE INTRP (X,Y,F1,F2,F3,F4)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     INTRP USES BIVARIATE CUBIC INTERPOLATION TO OBTAIN THE VALUES OF
-C     4 FUNCTIONS AT THE POINT (X,Y).
-C
+! ***
+!
+!     INTRP USES BIVARIATE CUBIC INTERPOLATION TO OBTAIN THE VALUES OF
+!     4 FUNCTIONS AT THE POINT (X,Y).
+!
       COMPLEX*16 F1,F2,F3,F4,A,B,C,D,FX1,FX2,FX3,FX4,P1,P2,P3,P4,A11,A12
      1,A13,A14,A21,A22,A23,A24,A31,A32,A33,A34,A41,A42,A43,A44,B11,B12
      2,B13,B14,B21,B22,B23,B24,B31,B32,B33,B34,B41,B42,B43,B44,C11,C12
@@ -6261,15 +6364,15 @@ C
       IF (X.LT.XS.OR.Y.LT.YS) GO TO 1
       IX=INT((X-XS)/DX)+1
       IY=INT((Y-YS)/DY)+1
-C
-C     IF POINT LIES IN SAME 4 BY 4 POINT REGION AS PREVIOUS POINT, OLD
-C     VALUES ARE REUSED
-C
+!
+!     IF POINT LIES IN SAME 4 BY 4 POINT REGION AS PREVIOUS POINT, OLD
+!     VALUES ARE REUSED
+!
       IF (IX.LT.IXEG.OR.IY.LT.IYEG) GO TO 1
       IF (IABS(IX-IXS).LT.2.AND.IABS(IY-IYS).LT.2) GO TO 12
-C
-C     DETERMINE CORRECT GRID AND GRID REGION
-C
+!
+!     DETERMINE CORRECT GRID AND GRID REGION
+!
 1     IF (X.GT.XS2) GO TO 2
       IGR=1
       GO TO 3
@@ -6301,10 +6404,10 @@ C
       IF (IYS.LE.NYM2) GO TO 6
       IYS=NYM2
       IYEG=NYMS
-C
-C     COMPUTE COEFFICIENTS OF 4 CUBIC POLYNOMIALS IN X FOR THE 4 GRID
-C     VALUES OF Y FOR EACH OF THE 4 FUNCTIONS
-C
+!
+!     COMPUTE COEFFICIENTS OF 4 CUBIC POLYNOMIALS IN X FOR THE 4 GRID
+!     VALUES OF Y FOR EACH OF THE 4 FUNCTIONS
+!
 6     IADZ=IXS+(IYS-3)*ND-NDP
       DO 11 K=1,4
       IADZ=IADZ+NDP
@@ -6312,7 +6415,7 @@ C
       DO 11 I=1,4
       IADD=IADD+ND
       GO TO (7,8,9), IGRS
-C     P1=AR1(IXS-1,IYS-2+I,K)
+!     P1=AR1(IXS-1,IYS-2+I,K)
 7     P1=ARL1(IADD-1)
       P2=ARL1(IADD)
       P3=ARL1(IADD+1)
@@ -6333,10 +6436,10 @@ C     P1=AR1(IXS-1,IYS-2+I,K)
 11    D(I,K)=P2
       XZ=(IXS-1)*DX+XS
       YZ=(IYS-1)*DY+YS
-C
-C     EVALUATE POLYMOMIALS IN X AND THEN USE CUBIC INTERPOLATION IN Y
-C     FOR EACH OF THE 4 FUNCTIONS.
-C
+!
+!     EVALUATE POLYMOMIALS IN X AND THEN USE CUBIC INTERPOLATION IN Y
+!     FOR EACH OF THE 4 FUNCTIONS.
+!
 12    XX=(X-XZ)/DX
       YY=(Y-YZ)/DY
       FX1=((A11*XX+B11)*XX+C11)*XX+D11
@@ -6373,17 +6476,19 @@ C
       F4=((P1*YY+P2)*YY+P3)*YY*.1666666667D+0+FX2
       RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE INTX (EL1,EL2,B,IJ,SGR,SGI)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     INTX PERFORMS NUMERICAL INTEGRATION OF EXP(JKR)/R BY THE METHOD OF
-C     VARIABLE INTERVAL WIDTH ROMBERG INTEGRATION.  THE INTEGRAND VALUE
-C     IS SUPPLIED BY SUBROUTINE GF.
-C
+! ***
+!
+!     INTX PERFORMS NUMERICAL INTEGRATION OF EXP(JKR)/R BY THE METHOD OF
+!     VARIABLE INTERVAL WIDTH ROMBERG INTEGRATION.  THE INTEGRAND VALUE
+!     IS SUPPLIED BY SUBROUTINE GF.
+!
       DATA NX,NM,NTS,RX/1,65536,4,1.D-4/
       Z=EL1
       ZE=EL2
@@ -6414,9 +6519,9 @@ C
       T01I=(T00I+DZ*G3I)*0.5
       T10R=(4.0*T01R-T00R)/3.0
       T10I=(4.0*T01I-T00I)/3.0
-C
-C     TEST CONVERGENCE OF 3 POINT ROMBERG RESULT.
-C
+!
+!     TEST CONVERGENCE OF 3 POINT ROMBERG RESULT.
+!
       CALL TEST (T01R,T10R,TE1R,T01I,T10I,TE1I,0.D0)
       IF (TE1I-RX) 5,5,6
 5     IF (TE1R-RX) 8,8,6
@@ -6430,9 +6535,9 @@ C
       T11I=(4.0*T02I-T01I)/3.0
       T20R=(16.0*T11R-T10R)/15.0
       T20I=(16.0*T11I-T10I)/15.0
-C
-C     TEST CONVERGENCE OF 5 POINT ROMBERG RESULT.
-C
+!
+!     TEST CONVERGENCE OF 5 POINT ROMBERG RESULT.
+!
       CALL TEST (T11R,T20R,TE2R,T11I,T20I,TE2I,0.D0)
       IF (TE2I-RX) 7,7,14
 7     IF (TE2R-RX) 9,9,14
@@ -6449,9 +6554,9 @@ C
       G1I=G5I
       IF (NT-NTS) 1,12,12
 12    IF (NS-NX) 1,1,13
-C
-C     DOUBLE STEP SIZE
-C
+!
+!     DOUBLE STEP SIZE
+!
 13    NS=NS/2
       NT=1
       GO TO 1
@@ -6459,9 +6564,9 @@ C
       IF (NS-NM) 16,15,15
 15    WRITE(3,20)  Z
       GO TO 9
-C
-C     HALVE STEP SIZE
-C
+!
+!     HALVE STEP SIZE
+!
 16    NS=NS*2
       FNS=NS
       DZ=S/FNS
@@ -6473,27 +6578,27 @@ C
       GO TO 4
 17    CONTINUE
       IF (IJ) 19,18,19
-C
-C     ADD CONTRIBUTION OF NEAR SINGULARITY FOR DIAGONAL TERM
-C
+!
+!     ADD CONTRIBUTION OF NEAR SINGULARITY FOR DIAGONAL TERM
+!
 18    SGR=2.*(SGR+LOG((SQRT(B*B+S*S)+S)/B))
       SGI=2.*SGI
 19    CONTINUE
       RETURN
-C
+!
 20    FORMAT (24H STEP SIZE LIMITED AT Z=,F10.5)
       END
       FUNCTION ISEGNO (ITAGI,MX)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     ISEGNO RETURNS THE SEGMENT NUMBER OF THE MTH SEGMENT HAVING THE
-C     TAG NUMBER ITAGI.  IF ITAGI=0 SEGMENT NUMBER M IS RETURNED.
-C
+! ***
+!
+!     ISEGNO RETURNS THE SEGMENT NUMBER OF THE MTH SEGMENT HAVING THE
+!     TAG NUMBER ITAGI.  IF ITAGI=0 SEGMENT NUMBER M IS RETURNED.
+!
       COMMON /DATA/ X(MAXSEG),Y(MAXSEG),Z(MAXSEG),SI(MAXSEG),BI(MAXSEG),
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
@@ -6514,25 +6619,27 @@ C
       STOP
 5     ISEGNO=I
       RETURN
-C
+!
 6     FORMAT (4X,91HCHECK DATA, PARAMETER SPECIFYING SEGMENT POSITION IN
      1 A GROUP OF EQUAL TAGS MUST NOT BE ZERO)
 7     FORMAT (///,10X,26HNO SEGMENT HAS AN ITAG OF ,I5)
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE LFACTR (A,NROW,IX1,IX2,IP)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     LFACTR PERFORMS GAUSS-DOOLITTLE MANIPULATIONS ON THE TWO BLOCKS OF
-C     THE TRANSPOSED MATRIX IN CORE STORAGE.  THE GAUSS-DOOLITTLE
-C     ALGORITHM IS PRESENTED ON PAGES 411-416 OF A. RALSTON -- A FIRST
-C     COURSE IN NUMERICAL ANALYSIS.  COMMENTS BELOW REFER TO COMMENTS IN
-C     RALSTONS TEXT.
-C
+! ***
+!
+!     LFACTR PERFORMS GAUSS-DOOLITTLE MANIPULATIONS ON THE TWO BLOCKS OF
+!     THE TRANSPOSED MATRIX IN CORE STORAGE.  THE GAUSS-DOOLITTLE
+!     ALGORITHM IS PRESENTED ON PAGES 411-416 OF A. RALSTON -- A FIRST
+!     COURSE IN NUMERICAL ANALYSIS.  COMMENTS BELOW REFER TO COMMENTS IN
+!     RALSTONS TEXT.
+!
       COMPLEX*16 A,D,AJR
       INTEGER R,R1,R2,PJ,PR
       LOGICAL L1,L2,L3
@@ -6541,9 +6648,9 @@ C
       COMMON /SCRATM/ D(2*MAXSEG)
       DIMENSION A(NROW,1), IP(NROW)
       IFLG=0
-C
-C     INITIALIZE R1,R2,J1,J2
-C
+!
+!     INITIALIZE R1,R2,J1,J2
+!
       L1=IX1.EQ.1.AND.IX2.EQ.2
       L2=(IX2-1).EQ.IX1
       L3=IX2.EQ.NBLSYM
@@ -6564,15 +6671,15 @@ C
 4     J2=J1+NPSYM-1
 5     IF (L3) R2=NPSYM+NLSYM
       DO 16 R=R1,R2
-C
-C     STEP 1
-C
+!
+!     STEP 1
+!
       DO 6 K=J1,NROW
       D(K)=A(K,R)
 6     CONTINUE
-C
-C     STEPS 2 AND 3
-C
+!
+!     STEPS 2 AND 3
+!
       IF (L1.OR.L2) J2=J2+1
       IF (J1.GT.J2) GO TO 9
       IXJ=0
@@ -6588,9 +6695,9 @@ C
 7     CONTINUE
 8     CONTINUE
 9     CONTINUE
-C
-C     STEP 4
-C
+!
+!     STEP 4
+!
       J2P1=J2+1
       IF (L1.OR.L2) GO TO 11
       IF (NROW.LT.J2P1) GO TO 16
@@ -6613,9 +6720,9 @@ C
       PR=IP(J2P1)
       A(J2P1,R)=D(PR)
       D(PR)=D(J2P1)
-C
-C     STEP 5
-C
+!
+!     STEP 5
+!
       IF (J2P2.GT.NROW) GO TO 15
       AJR=1./A(J2P1,R)
       DO 14 I=J2P2,NROW
@@ -6627,21 +6734,23 @@ C
       IFLG=0
 16    CONTINUE
       RETURN
-C
+!
 17    FORMAT (1H ,6HPIVOT(,I3,2H)=,1P,E16.8)
       END
 
+!----------------------------------------------------------------------------
+
       SUBROUTINE LOAD (LDTYP,LDTAG,LDTAGF,LDTAGT,ZLR,ZLI,ZLC)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     LOAD CALCULATES THE IMPEDANCE OF SPECIFIED SEGMENTS FOR VARIOUS
-C     TYPES OF LOADING
-C
+! ***
+!
+!     LOAD CALCULATES THE IMPEDANCE OF SPECIFIED SEGMENTS FOR VARIOUS
+!     TYPES OF LOADING
+!
       COMPLEX*16 ZARRAY,ZT,TPCJ,ZINT
       COMMON /DATA/ X(MAXSEG),Y(MAXSEG),Z(MAXSEG),SI(MAXSEG),BI(MAXSEG),
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
@@ -6651,20 +6760,20 @@ C
      1, ZLC(1), TPCJX(2)
       EQUIVALENCE (TPCJ,TPCJX)
       DATA TPCJX/0.,1.883698955D+9/
-C
-C     WRITE(3,HEADING)
-C
+!
+!     WRITE(3,HEADING)
+!
       WRITE(3,25)
-C
-C     INITIALIZE D ARRAY, USED FOR TEMPORARY STORAGE OF LOADING
-C     INFORMATION.
-C
+!
+!     INITIALIZE D ARRAY, USED FOR TEMPORARY STORAGE OF LOADING
+!     INFORMATION.
+!
       DO 1 I=N2,N
  1    ZARRAY(I)=(0.,0.)
       IWARN=0
-C
-C     CYCLE OVER LOADING CARDS
-C
+!
+!     CYCLE OVER LOADING CARDS
+!
       ISTEP=0
  2    ISTEP=ISTEP+1
       IF (ISTEP.LE.NLOAD) GO TO 5
@@ -6685,9 +6794,9 @@ C
  6    LDTAGS=LDTAG(ISTEP)
       JUMP=LDTYP(ISTEP)+1
       ICHK=0
-C
-C     SEARCH SEGMENTS FOR PROPER ITAGS
-C
+!
+!     SEARCH SEGMENTS FOR PROPER ITAGS
+!
       L1=N2
       L2=N
       IF (LDTAGS.NE.0) GO TO 7
@@ -6705,10 +6814,10 @@ C
       IF (ICHK.GE.LDTAGF(ISTEP).AND.ICHK.LE.LDTAGT(ISTEP)) GO TO 9
       GO TO 17
  8    ICHK=1
-C
-C     CALCULATION OF LAMDA*IMPED. PER UNIT LENGTH, JUMP TO APPROPRIATE
-C     SECTION FOR LOADING TYPE
-C
+!
+!     CALCULATION OF LAMDA*IMPED. PER UNIT LENGTH, JUMP TO APPROPRIATE
+!     SECTION FOR LOADING TYPE
+!
  9    GO TO (10,11,12,13,14,15), JUMP
  10   ZT=ZLR(ISTEP)/SI(I)+TPCJ*ZLI(ISTEP)/(SI(I)*WLAM)
       IF (ABS(ZLC(ISTEP)).GT.1.D-20) ZT=ZT+WLAM/(TPCJ*SI(I)*ZLC(ISTEP))
@@ -6737,9 +6846,9 @@ C
       IF (ICHK.NE.0) GO TO 18
       WRITE(3,28)  LDTAGS
       STOP
-C
-C     PRINTING THE SEGMENT LOADING DATA, JUMP TO PROPER PRINT
-C
+!
+!     PRINTING THE SEGMENT LOADING DATA, JUMP TO PROPER PRINT
+!
  18   GO TO (19,20,21,22,23,24), JUMP
  19   CALL PRNT (LDTAGS,LDTAGF(ISTEP),LDTAGT(ISTEP),ZLR(ISTEP),ZLI(ISTEP
      1),ZLC(ISTEP),0.D0,0.D0,0.D0,' SERIES ')
@@ -6759,7 +6868,7 @@ C
  24   CALL PRNT (LDTAGS,LDTAGF(ISTEP),LDTAGT(ISTEP),0.D0,0.D0,0.D0,0.D0,
      &0.D0,ZLR(ISTEP),'  WIRE  ')
       GO TO 2
-C
+!
  25   FORMAT (//,7X,8HLOCATION,10X,10HRESISTANCE,3X,10HINDUCTANCE,2X,11H
      1CAPACITANCE,7X,16HIMPEDANCE (OHMS),5X,12HCONDUCTIVITY,4X,4HTYPE,/,
      24X,4HITAG,10H FROM THRU,10X,4HOHMS,8X,6HHENRYS,7X,6HFARADS,8X,4HRE
@@ -6773,28 +6882,30 @@ C
  29   FORMAT (63H ERROR - LOADING MAY NOT BE ADDED TO SEGMENTS IN N.G.F.
      1 SECTION)
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE LTSOLV (A,NROW,IX,B,NEQ,NRH,IFL1,IFL2)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     LTSOLV SOLVES THE MATRIX EQ. Y(R)*LU(T)=B(R) WHERE (R) DENOTES ROW
-C     VECTOR AND LU(T) DENOTES THE LU DECOMPOSITION OF THE TRANSPOSE OF
-C     THE ORIGINAL COEFFICIENT MATRIX.  THE LU(T) DECOMPOSITION IS
-C     STORED ON TAPE 5 IN BLOCKS IN ASCENDING ORDER AND ON FILE 3 IN
-C     BLOCKS OF DESCENDING ORDER.
-C
+! ***
+!
+!     LTSOLV SOLVES THE MATRIX EQ. Y(R)*LU(T)=B(R) WHERE (R) DENOTES ROW
+!     VECTOR AND LU(T) DENOTES THE LU DECOMPOSITION OF THE TRANSPOSE OF
+!     THE ORIGINAL COEFFICIENT MATRIX.  THE LU(T) DECOMPOSITION IS
+!     STORED ON TAPE 5 IN BLOCKS IN ASCENDING ORDER AND ON FILE 3 IN
+!     BLOCKS OF DESCENDING ORDER.
+!
       COMPLEX*16 A,B,Y,SUM
       COMMON /MATPAR/ ICASE,NBLOKS,NPBLK,NLAST,NBLSYM,NPSYM,NLSYM,IMAT,I
      1CASX,NBBX,NPBX,NLBX,NBBL,NPBL,NLBL
       COMMON /SCRATM/ Y(2*MAXSEG)
       DIMENSION A(NROW,NROW), B(NEQ,NRH), IX(NEQ)
-C
-C     FORWARD SUBSTITUTION
-C
+!
+!     FORWARD SUBSTITUTION
+!
       I2=2*NPSYM*NROW
       DO 4 IXBLK1=1,NBLSYM
       CALL BLCKIN (A,IFL1,1,I2,1,121)
@@ -6813,9 +6924,9 @@ C
 2     B(J,IC)=(B(J,IC)-SUM)/A(J,K)
 3     CONTINUE
 4     CONTINUE
-C
-C     BACKWARD SUBSTITUTION
-C
+!
+!     BACKWARD SUBSTITUTION
+!
       JST=NROW+1
       DO 8 IXBLK1=1,NBLSYM
       CALL BLCKIN (A,IFL2,1,I2,1,122)
@@ -6836,9 +6947,9 @@ C
 6     CONTINUE
 7     CONTINUE
 8     JST=JST-K2
-C
-C     UNSCRAMBLE SOLUTION
-C
+!
+!     UNSCRAMBLE SOLUTION
+!
       DO 10 IC=1,NRH
       DO 9 I=1,NROW
       IXI=IX(I)
@@ -6847,15 +6958,17 @@ C
 10    B(I,IC)=Y(I)
       RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE LUNSCR (A,NROW,NOP,IX,IP,IU2,IU3,IU4)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     S/R WHICH UNSCRAMBLES, SCRAMBLED FACTORED MATRIX
-C
+! ***
+!
+!     S/R WHICH UNSCRAMBLES, SCRAMBLED FACTORED MATRIX
+!
       COMPLEX*16 A,TEMP
       COMMON /MATPAR/ ICASE,NBLOKS,NPBLK,NLAST,NBLSYM,NPSYM,NLSYM,IMAT,I
      1CASX,NBBX,NPBX,NLBX,NBBL,NPBL,NLBL
@@ -6902,7 +7015,7 @@ C
 7     CONTINUE
       IF (NOP.EQ.1) GO TO 9
       NB1=NBLSYM-1
-C     SKIP NB1 LOGICAL RECORDS FORWARD
+!     SKIP NB1 LOGICAL RECORDS FORWARD
       DO 8 IXBLK1=1,NB1
       CALL BLCKIN (A,IU3,I1,I2,1,125)
 8     CONTINUE
@@ -6912,19 +7025,21 @@ C     SKIP NB1 LOGICAL RECORDS FORWARD
       REWIND IU4
       RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE MOVE (ROX,ROY,ROZ,XS,YS,ZS,ITS,NRPT,ITGI)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     SUBROUTINE MOVE MOVES THE STRUCTURE WITH RESPECT TO ITS
-C     COORDINATE SYSTEM OR REPRODUCES STRUCTURE IN NEW POSITIONS.
-C     STRUCTURE IS ROTATED ABOUT X,Y,Z AXES BY ROX,ROY,ROZ
-C     RESPECTIVELY, THEN SHIFTED BY XS,YS,ZS
-C
+! ***
+!
+!     SUBROUTINE MOVE MOVES THE STRUCTURE WITH RESPECT TO ITS
+!     COORDINATE SYSTEM OR REPRODUCES STRUCTURE IN NEW POSITIONS.
+!     STRUCTURE IS ROTATED ABOUT X,Y,Z AXES BY ROX,ROY,ROZ
+!     RESPECTIVELY, THEN SHIFTED BY XS,YS,ZS
+!
       COMMON /DATA/ X(MAXSEG),Y(MAXSEG),Z(MAXSEG),SI(MAXSEG),BI(MAXSEG),
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
@@ -7020,17 +7135,19 @@ C
       RETURN
       END
          
+!----------------------------------------------------------------------------
+
       SUBROUTINE NEFLD (XOB,YOB,ZOB,EX,EY,EZ)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     NEFLD COMPUTES THE NEAR FIELD AT SPECIFIED POINTS IN SPACE AFTER
-C     THE STRUCTURE CURRENTS HAVE BEEN COMPUTED.
-C
+! ***
+!
+!     NEFLD COMPUTES THE NEAR FIELD AT SPECIFIED POINTS IN SPACE AFTER
+!     THE STRUCTURE CURRENTS HAVE BEEN COMPUTED.
+!
       COMPLEX*16 EX,EY,EZ,CUR,ACX,BCX,CCX,EXK,EYK,EZK,EXS,EYS,EZS,EXC
      1,EYC,EZC,ZRATI,ZRATI2,T1,FRATI
       COMMON /DATA/ X(MAXSEG),Y(MAXSEG),Z(MAXSEG),SI(MAXSEG),BI(MAXSEG),
@@ -7153,18 +7270,20 @@ C
       RETURN
       END
 
+!----------------------------------------------------------------------------
+
       SUBROUTINE NETWK (CM,CMB,CMC,CMD,IP,EINC)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     SUBROUTINE NETWK SOLVES FOR STRUCTURE CURRENTS FOR A GIVEN
-C     EXCITATION INCLUDING THE EFFECT OF NON-RADIATING NETWORKS IF
-C     PRESENT.
-C
+! ***
+!
+!     SUBROUTINE NETWK SOLVES FOR STRUCTURE CURRENTS FOR A GIVEN
+!     EXCITATION INCLUDING THE EFFECT OF NON-RADIATING NETWORKS IF
+!     PRESENT.
+!
       COMPLEX*16 CMN,RHNT,YMIT,RHS,ZPED,EINC,VSANT,VLT,CUR,VSRC,RHNX
      1,VQD,VQDS,CUX,CM,CMB,CMC,CMD
 
@@ -7175,14 +7294,14 @@ C
       COMMON /CRNT/ AIR(MAXSEG),AII(MAXSEG),BIR(MAXSEG),BII(MAXSEG),
      &CIR(MAXSEG),CII(MAXSEG),CUR(3*MAXSEG)
 
-Cav07 COMMON /VSORC/ VQD(30),VSANT(30),VQDS(30),IVQD(30),ISANT(30),IQDS(
-Cav07 130),NVQD,NSANT,NQDS
+!av07 COMMON /VSORC/ VQD(30),VSANT(30),VQDS(30),IVQD(30),ISANT(30),IQDS(
+!av07 130),NVQD,NSANT,NQDS
       COMMON /VSORC/ VQD(nsmax),VSANT(nsmax),VQDS(nsmax),IVQD(nsmax),
      &ISANT(nsmax),IQDS(nsmax),NVQD,NSANT,NQDS			! av07
 
-Cav06 COMMON/NETCX/ZPED,PIN,PNLS,X11R(30),X11I(30),X12R(30),X12I(30),
-C     &X22R(30),X22I(30),NTYP(30),ISEG1(30),ISEG2(30),NEQ,NPEQ,NEQ2,
-Cav06 &NONET,NTSOL,NPRINT,MASYM
+!av06 COMMON/NETCX/ZPED,PIN,PNLS,X11R(30),X11I(30),X12R(30),X12I(30),
+!     &X22R(30),X22I(30),NTYP(30),ISEG1(30),ISEG2(30),NEQ,NPEQ,NEQ2,
+!av06 &NONET,NTSOL,NPRINT,MASYM
 
       COMMON/NETCX/ZPED,PIN,PNLS,X11R(netmx),X11I(netmx),X12R(netmx),
      &X12I(netmx),X22R(netmx),X22I(netmx),NTYP(netmx),ISEG1(netmx),
@@ -7190,18 +7309,19 @@ Cav06 &NONET,NTSOL,NPRINT,MASYM
 
       DIMENSION EINC(1), IP(1),CM(1),CMB(1),CMC(1),CMD(1)
 
-Cav07 DIMENSION CMN(30,30), RHNT(30), IPNT(30), NTEQA(30), NTSCA(30),
-Cav07 &RHS(3*MAXSEG), VSRC(30), RHNX(30)
+!av07 DIMENSION CMN(30,30), RHNT(30), IPNT(30), NTEQA(30), NTSCA(30),
+!av07 &RHS(3*MAXSEG), VSRC(30), RHNX(30)
 
-Cav08	Keep VSRC dimension to 30 (for now) as it's use is uncertain.
-Cav17 VSRC made equal to netmx as it somehow limited the nr of NT's to 30
+!av08	Keep VSRC dimension to 30 (for now) as it's use is uncertain.
+!av17 VSRC made equal to netmx as it somehow limited the nr of NT's to 30
 
       DIMENSION CMN(netmx,netmx), RHNT(netmx), IPNT(netmx), 
      &NTEQA(netmx), NTSCA(netmx), RHS(3*MAXSEG), VSRC(netmx), 
      &RHNX(netmx)								! av017
 
-Cav06 DATA NDIMN,NDIMNP/30,31/,TP/6.283185308D+0/
-      DATA NDIMN,NDIMNP/netmx,netmx+1/,TP/6.283185308D+0/	! av06
+!av06 DATA NDIMN,NDIMNP/30,31/,TP/6.283185308D+0/
+!hwh  DATA NDIMN,NDIMNP/netmx,netmx+1/,TP/6.283185308D+0/	! av06
+      DATA NDIMN,NDIMNP/netmx,netmxp1/,TP/6.283185308D+0/	! av06 hwh
 
       NEQZ2=NEQ2
       IF(NEQZ2.EQ.0)NEQZ2=1
@@ -7211,9 +7331,9 @@ Cav06 DATA NDIMN,NDIMNP/30,31/,TP/6.283185308D+0/
       IF (NTSOL.NE.0) GO TO 42
       NOP=NEQ/NPEQ
       IF (MASYM.EQ.0) GO TO 14
-C
-C     COMPUTE RELATIVE MATRIX ASYMMETRY
-C
+!
+!     COMPUTE RELATIVE MATRIX ASYMMETRY
+!
       IROW1=0
       IF (NONET.EQ.0) GO TO 5
       DO 4 I=1,NONET
@@ -7238,8 +7358,8 @@ C
       IPNT(IROW1)=NSEG1
 8     CONTINUE
 
-Cav09
-C9	print *,'irow1=',irow1,'  ndimnp=',ndimnp
+!av09
+!9	print *,'irow1=',irow1,'  ndimnp=',ndimnp
 
 9      IF (IROW1.LT.NDIMNP) GO TO 10
       WRITE(3,59)
@@ -7272,19 +7392,19 @@ C9	print *,'irow1=',irow1,'  ndimnp=',ndimnp
       ASA=SQRT(ASA*2./DFLOAT(IROW1*(IROW1-1)))
       WRITE(3,58)  ASM,NTEQ,NTSC,ASA
 14    IF (NONET.EQ.0) GO TO 48
-C
-C     SOLUTION OF NETWORK EQUATIONS
-C
+!
+!     SOLUTION OF NETWORK EQUATIONS
+!
       DO 15 I=1,NDIMN
       RHNX(I)=(0.,0.)
       DO 15 J=1,NDIMN
 15    CMN(I,J)=(0.,0.)
       NTEQ=0
       NTSC=0
-C
-C     SORT NETWORK AND SOURCE DATA AND ASSIGN EQUATION NUMBERS TO
-C     SEGMENTS.
-C
+!
+!     SORT NETWORK AND SOURCE DATA AND ASSIGN EQUATION NUMBERS TO
+!     SEGMENTS.
+!
       DO 38 J=1,NONET
       NSEG1=ISEG1(J)
       NSEG2=ISEG2(J)
@@ -7364,10 +7484,10 @@ C
 33    IF (NTSC+NTEQ.LT.NDIMNP) GO TO 34
       WRITE(3,59)
       STOP
-C
-C     FILL NETWORK EQUATION MATRIX AND RIGHT HAND SIDE VECTOR WITH
-C     NETWORK SHORT-CIRCUIT ADMITTANCE MATRIX COEFFICIENTS.
-C
+!
+!     FILL NETWORK EQUATION MATRIX AND RIGHT HAND SIDE VECTOR WITH
+!     NETWORK SHORT-CIRCUIT ADMITTANCE MATRIX COEFFICIENTS.
+!
 34    IF (ISC1.NE.0) GO TO 35
       CMN(IROW1,IROW1)=CMN(IROW1,IROW1)-DCMPLX(Y11R,Y11I)*SI(NSEG1)
       CMN(IROW1,IROW2)=CMN(IROW1,IROW2)-DCMPLX(Y12R,Y12I)*SI(NSEG1)
@@ -7381,10 +7501,10 @@ C
 37    RHNX(IROW1)=RHNX(IROW1)+DCMPLX(Y12R,Y12I)*VSANT(ISC2)/WLAM
       RHNX(IROW2)=RHNX(IROW2)+DCMPLX(Y22R,Y22I)*VSANT(ISC2)/WLAM
 38    CONTINUE
-C
-C     ADD INTERACTION MATRIX ADMITTANCE ELEMENTS TO NETWORK EQUATION
-C     MATRIX
-C
+!
+!     ADD INTERACTION MATRIX ADMITTANCE ELEMENTS TO NETWORK EQUATION
+!     MATRIX
+!
       DO 41 I=1,NTEQ
       DO 39 J=1,NEQT
 39    RHS(J)=(0.,0.)
@@ -7396,14 +7516,14 @@ C
       IROW1=NTEQA(J)
 40    CMN(I,J)=CMN(I,J)+RHS(IROW1)
 41    CONTINUE
-C
-C     FACTOR NETWORK EQUATION MATRIX
-C
+!
+!     FACTOR NETWORK EQUATION MATRIX
+!
       CALL FACTR (NTEQ,CMN,IPNT,NDIMN)
-C
-C     ADD TO NETWORK EQUATION RIGHT HAND SIDE THE TERMS DUE TO ELEMENT
-C     INTERACTIONS
-C
+!
+!     ADD TO NETWORK EQUATION RIGHT HAND SIDE THE TERMS DUE TO ELEMENT
+!     INTERACTIONS
+!
 42    IF (NONET.EQ.0) GO TO 48
       DO 43 I=1,NEQT
 43    RHS(I)=EINC(I)
@@ -7412,14 +7532,14 @@ C
       DO 44 I=1,NTEQ
       IROW1=NTEQA(I)
 44    RHNT(I)=RHNX(I)+RHS(IROW1)
-C
-C     SOLVE NETWORK EQUATIONS
-C
+!
+!     SOLVE NETWORK EQUATIONS
+!
       CALL SOLVE (NTEQ,CMN,IPNT,RHNT,NDIMN)
-C
-C     ADD FIELDS DUE TO NETWORK VOLTAGES TO ELECTRIC FIELDS APPLIED TO
-C     STRUCTURE AND SOLVE FOR INDUCED CURRENT
-C
+!
+!     ADD FIELDS DUE TO NETWORK VOLTAGES TO ELECTRIC FIELDS APPLIED TO
+!     STRUCTURE AND SOLVE FOR INDUCED CURRENT
+!
       DO 45 I=1,NTEQ
       IROW1=NTEQA(I)
 45    EINC(IROW1)=EINC(IROW1)-RHNT(I)
@@ -7449,9 +7569,9 @@ C
       PNLS=PNLS-PWR
 47    IF (NPRINT.EQ.0) WRITE(3,62)  IROW2,IROW1,VLT,CUX,ZPED,YMIT,PWR
       GO TO 49
-C
-C     SOLVE FOR CURRENTS WHEN NO NETWORKS ARE PRESENT
-C
+!
+!     SOLVE FOR CURRENTS WHEN NO NETWORKS ARE PRESENT
+!
 48    CALL SOLGF (CM,CMB,CMC,CMD,EINC,IP,NP,N1,N,MP,M1,M,NEQ,NEQ2,NEQZ2)
       CALL CABC (EINC)
       NTSC=0
@@ -7497,7 +7617,7 @@ C
       IROW2=ITAG(ISC1)
 57    WRITE(3,64)  IROW2,ISC1,VLT,CUX,ZPED,YMIT,PWR
       RETURN
-C
+!
 58    FORMAT (///,3X,47HMAXIMUM RELATIVE ASYMMETRY OF THE DRIVING POINT,
      121H ADMITTANCE MATRIX IS,1P,E10.3,13H FOR SEGMENTS,I5,4H AND,I5,/,
      23X,25HRMS RELATIVE ASYMMETRY IS,E10.3)
@@ -7512,14 +7632,16 @@ C
 63    FORMAT (///,42X,36H- - - ANTENNA INPUT PARAMETERS - - -)
 64    FORMAT (1X,I5,2H *,I4,1P,9E12.5)
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE NFPAT
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C     COMPUTE NEAR E OR H FIELDS OVER A RANGE OF POINTS
+! ***
+!     COMPUTE NEAR E OR H FIELDS OVER A RANGE OF POINTS
       COMPLEX*16 EX,EY,EZ
       COMMON /DATA/ X(MAXSEG),Y(MAXSEG),Z(MAXSEG),SI(MAXSEG),BI(MAXSEG),
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
@@ -7527,9 +7649,9 @@ C     COMPUTE NEAR E OR H FIELDS OVER A RANGE OF POINTS
       COMMON/FPAT/THETS,PHIS,DTH,DPH,RFLD,GNOR,CLT,CHT,EPSR2,SIG2,
      &XPR6,PINR,PNLR,PLOSS,XNR,YNR,ZNR,DXNR,DYNR,DZNR,NTH,NPH,IPD,IAVP,
      &INOR,IAX,IXTYP,NEAR,NFEH,NRX,NRY,NRZ
-C***
+!***
       COMMON /PLOT/ IPLP1,IPLP2,IPLP3,IPLP4
-C***
+!***
       DATA TA/1.745329252D-02/
       IF (NFEH.EQ.1) GO TO 1
       WRITE(3,10)
@@ -7572,7 +7694,7 @@ C***
       TMP5=ABS(EZ)
       TMP6=CANG(EZ)
       WRITE(3,11)  XOB,YOB,ZOB,TMP1,TMP2,TMP3,TMP4,TMP5,TMP6
-C***
+!***
       IF(IPLP1 .NE. 2) GO TO 9
       GO TO (14,15,16),IPLP4
 14    XXX=XOB
@@ -7592,10 +7714,10 @@ C***
       IF(IPLP3 .EQ. 2) WRITE(8,*) XXX,EY
       IF(IPLP3 .EQ. 3) WRITE(8,*) XXX,EZ
       IF(IPLP3 .EQ. 4) WRITE(8,*) XXX,EX,EY,EZ
-C***
+!***
 9     CONTINUE
       RETURN
-C
+!
 10    FORMAT (///,35X,32H- - - NEAR ELECTRIC FIELDS - - -,//,12X,14H-  L
      1OCATION  -,21X,8H-  EX  -,15X,8H-  EY  -,15X,8H-  EZ  -,/,8X,1HX,1
      20X,1HY,10X,1HZ,10X,9HMAGNITUDE,3X,5HPHASE,6X,9HMAGNITUDE,3X,5HPHAS
@@ -7610,23 +7732,25 @@ C
      49X,6HAMPS/M,3X,7HDEGREES,7X,6HAMPS/M,3X,7HDEGREES,7X,6HAMPS/M,3X,7
      5HDEGREES)
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE NHFLD (XOB,YOB,ZOB,HX,HY,HZ)
-C
-C     NHFLD COMPUTES THE NEAR FIELD AT SPECIFIED POINTS IN SPACE AFTER
-C     THE STRUCTURE CURRENTS HAVE BEEN COMPUTED.
-C
-      INCLUDE 'NEC2DPAR.INC'
+!
+!     NHFLD COMPUTES THE NEAR FIELD AT SPECIFIED POINTS IN SPACE AFTER
+!     THE STRUCTURE CURRENTS HAVE BEEN COMPUTED.
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
       COMPLEX*16 HX,HY,HZ,CUR,ACX,BCX,CCX,EXK,EYK,EZK,EXS,EYS,EZS,EXC,
      &EYC,EZC
-C***************************************
+!***************************************
       COMPLEX*16 ZRATI,ZRATI2,FRATI,T1,CON
       COMPLEX*16 EXPX,EXMX,EXPY,EXMY,EXPZ,EXMZ
       COMPLEX*16 EYPX,EYMX,EYPY,EYMY,EYPZ,EYMZ
       COMPLEX*16 EZPX,EZMX,EZPY,EZMY,EZPZ,EZMZ
       COMMON /GND/ZRATI,ZRATI2,FRATI,T1,T2,CL,CH,SCRWL,SCRWR,NRADL,
      &KSYMP,IFAR,IPERF
-C***************************************
+!***************************************
       COMMON /DATA/ X(MAXSEG),Y(MAXSEG),Z(MAXSEG),SI(MAXSEG),BI(MAXSEG),
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
@@ -7643,9 +7767,9 @@ C***************************************
       EQUIVALENCE (T1XJ,CABJ), (T1YJ,SABJ), (T1ZJ,SALPJ), (T2XJ,B), (T2Y
      1J,IND1), (T2ZJ,IND2)
       EQUIVALENCE (CAB,ALP), (SAB,BET)
-C***************************************
+!***************************************
       IF (IPERF.EQ.2) GO TO 6
-C***************************************
+!***************************************
       HX=(0.,0.)
       HY=(0.,0.)
       HZ=(0.,0.)
@@ -7702,11 +7826,11 @@ C***************************************
       HY=HY+ACX*EYK+BCX*EYS
 5     HZ=HZ+ACX*EZK+BCX*EZS
       RETURN
-C
-C     GET H BY FINITE DIFFERENCE OF E FOR SOMMERFELD GROUND
-C     CON=j/(2*pi*eta)
-C     DELT is the increment for getting central differences
-C
+!
+!     GET H BY FINITE DIFFERENCE OF E FOR SOMMERFELD GROUND
+!     CON=j/(2*pi*eta)
+!     DELT is the increment for getting central differences
+!
 6     DELT=1.E-3
       CON=(0.,4.2246E-4)
       CALL NEFLD (XOB+DELT,YOB,ZOB,EXPX,EYPX,EZPX)
@@ -7720,14 +7844,16 @@ C
       HZ=CON*(EYPX-EYMX-EXPY+EXMY)/(2.*DELT)
       RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE PATCH (NX,NY,X1,Y1,Z1,X2,Y2,Z2,X3,Y3,Z3,X4,Y4,Z4)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C     PATCH GENERATES AND MODIFIES PATCH GEOMETRY DATA
+! ***
+!     PATCH GENERATES AND MODIFIES PATCH GEOMETRY DATA
       COMMON /DATA/ X(MAXSEG),Y(MAXSEG),Z(MAXSEG),SI(MAXSEG),BI(MAXSEG),
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
@@ -7735,10 +7861,10 @@ C     PATCH GENERATES AND MODIFIES PATCH GEOMETRY DATA
       DIMENSION T1X(1), T1Y(1), T1Z(1), T2X(1), T2Y(1), T2Z(1)
       EQUIVALENCE (T1X,SI), (T1Y,ALP), (T1Z,BET), (T2X,ICON1), (T2Y,ICON
      12), (T2Z,ITAG)
-C     NEW PATCHES.  FOR NX=0, NY=1,2,3,4 PATCH IS (RESPECTIVELY)
-C     ARBITRARY, RECTAGULAR, TRIANGULAR, OR QUADRILATERAL.
-C     FOR NX AND NY .GT. 0 A RECTANGULAR SURFACE IS PRODUCED WITH
-C     NX BY NY RECTANGULAR PATCHES.
+!     NEW PATCHES.  FOR NX=0, NY=1,2,3,4 PATCH IS (RESPECTIVELY)
+!     ARBITRARY, RECTAGULAR, TRIANGULAR, OR QUADRILATERAL.
+!     FOR NX AND NY .GT. 0 A RECTANGULAR SURFACE IS PRODUCED WITH
+!     NX BY NY RECTANGULAR PATCHES.
       M=M+1
       MI=LD+1-M
       NTP=NY
@@ -7855,7 +7981,7 @@ C     NX BY NY RECTANGULAR PATCHES.
       NP=N
       MP=M
       RETURN
-C     DIVIDE PATCH FOR WIRE CONNECTION
+!     DIVIDE PATCH FOR WIRE CONNECTION
       ENTRY SUBPH (NX,NY,X1,Y1,Z1,X2,Y2,Z2,X3,Y3,Z3,X4,Y4,Z4)
       IF (NY.GT.0) GO TO 10
       IF (NX.EQ.M) GO TO 10
@@ -7916,17 +8042,19 @@ C     DIVIDE PATCH FOR WIRE CONNECTION
       IF (NX.LE.MP) MP=MP+3
       IF (NY.GT.0) Z(MI)=10000.
       RETURN
-C
+!
 14    FORMAT (62H ERROR -- CORNERS OF QUADRILATERAL PATCH DO NOT LIE IN 
      1A PLANE)
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE PCINT (XI,YI,ZI,CABI,SABI,SALPI,E)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C     INTEGRATE OVER PATCHES AT WIRE CONNECTION POINT
+! ***
+!     INTEGRATE OVER PATCHES AT WIRE CONNECTION POINT
       COMPLEX*16 EXK,EYK,EZK,EXS,EYS,EZS,EXC,EYC,EZC,E,E1,E2,E3,E4,E5
      1,E6,E7,E8,E9
       COMMON /DATAJ/ S,B,XJ,YJ,ZJ,CABJ,SABJ,SALPJ,EXK,EYK,EZK,EXS,EYS,
@@ -8008,20 +8136,22 @@ C     INTEGRATE OVER PATCHES AT WIRE CONNECTION POINT
       S=XS
       RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE PRNT(IN1,IN2,IN3,FL1,FL2,FL3,FL4,FL5,FL6,CTYPE)
-C
-C     Purpose:
-C     PRNT prints the input data for impedance loading, inserting blanks
-C     for numbers that are zero.
-C
-C     INPUT:
-C     IN1-3 = INTEGER VALUES TO BE PRINTED
-C     FL1-6 = REAL VALUES TO BE PRINTED
-C     CTYPE = CHARACTER STRING TO BE PRINTED
-C
+!
+!     Purpose:
+!     PRNT prints the input data for impedance loading, inserting blanks
+!     for numbers that are zero.
+!
+!     INPUT:
+!     IN1-3 = INTEGER VALUES TO BE PRINTED
+!     FL1-6 = REAL VALUES TO BE PRINTED
+!     CTYPE = CHARACTER STRING TO BE PRINTED
+!
       IMPLICIT REAL*8(A-H,O-Z)
       CHARACTER CTYPE*(*), CINT(3)*5, CFLT(6)*13
-C
+!
       DO 1 I=1,3
 1     CINT(I)='     '
       IF(IN1.EQ.0.AND.IN2.EQ.0.AND.IN3.EQ.0)THEN
@@ -8041,33 +8171,35 @@ C
       IF(ABS(FL6).GT.1.E-30)WRITE(CFLT(6),91)FL6
       WRITE(3,92)(CINT(I),I=1,3),(CFLT(I),I=1,6),CTYPE
       RETURN
-C
+!
 90    FORMAT(I5)
 91    FORMAT(1P,E13.4)
 92    FORMAT(/,3X,3A,3X,6A,3X,A)
       END
 
+!----------------------------------------------------------------------------
+
       SUBROUTINE QDSRC (IS,V,E)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C     FILL INCIDENT FIELD ARRAY FOR CHARGE DISCONTINUITY VOLTAGE SOURCE
+! ***
+!     FILL INCIDENT FIELD ARRAY FOR CHARGE DISCONTINUITY VOLTAGE SOURCE
       COMPLEX*16 VQDS,CURD,CCJ,V,EXK,EYK,EZK,EXS,EYS,EZS,EXC,EYC,EZC
      1,ETK,ETS,ETC,VSANT,VQD,E,ZARRAY
       COMMON /DATA/ X(MAXSEG),Y(MAXSEG),Z(MAXSEG),SI(MAXSEG),BI(MAXSEG),
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
 
-Cav07 COMMON /VSORC/ VQD(30),VSANT(30),VQDS(30),IVQD(30),ISANT(30),IQDS(
-Cav07 130),NVQD,NSANT,NQDS
+!av07 COMMON /VSORC/ VQD(30),VSANT(30),VQDS(30),IVQD(30),ISANT(30),IQDS(
+!av07 130),NVQD,NSANT,NQDS
       COMMON /VSORC/ VQD(nsmax),VSANT(nsmax),VQDS(nsmax),IVQD(nsmax),
      &ISANT(nsmax),IQDS(nsmax),NVQD,NSANT,NQDS			! av07
 
-Cav14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
-Cav14-CON(10),NPCON
+!av14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
+!av14-CON(10),NPCON
       COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
      -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
 
@@ -8188,17 +8320,19 @@ Cav14-CON(10),NPCON
 20    CONTINUE
       RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE RDPAT
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       PARAMETER(NORMAX=4*MAXSEG)
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C     COMPUTE RADIATION PATTERN, GAIN, NORMALIZED GAIN
+! ***
+!     COMPUTE RADIATION PATTERN, GAIN, NORMALIZED GAIN
       REAL*8 IGNTP,IGAX,IGTP,HCIR,HBLK,HPOL,HCLIF,ISENS
-C     INTEGER HPOL,HBLK,HCIR,HCLIF
+!     INTEGER HPOL,HBLK,HCIR,HCLIF
       COMPLEX*16 ETH,EPH,ERD,ZRATI,ZRATI2,T1,FRATI
       COMMON /DATA/ X(MAXSEG),Y(MAXSEG),Z(MAXSEG),SI(MAXSEG),BI(MAXSEG),
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
@@ -8210,9 +8344,9 @@ C     INTEGER HPOL,HBLK,HCIR,HCLIF
      &XPR6,PINR,PNLR,PLOSS,XNR,YNR,ZNR,DXNR,DYNR,DZNR,NTH,NPH,IPD,IAVP,
      &INOR,IAX,IXTYP,NEAR,NFEH,NRX,NRY,NRZ
       COMMON /SCRATM/ GAIN(NORMAX)
-C***
+!***
       COMMON /PLOT/ IPLP1,IPLP2,IPLP3,IPLP4
-C***
+!***
       DIMENSION IGTP(4), IGAX(4), IGNTP(10), HPOL(3)
       DATA HPOL/6HLINEAR,5HRIGHT,4HLEFT/,HBLK,HCIR/1H ,6HCIRCLE/
       DATA IGTP/6H    - ,6HPOWER ,6H- DIRE,6HCTIVE /
@@ -8283,7 +8417,7 @@ C***
       EPHM=SQRT(EPHM2)
       EPHA=CANG(EPH)
       IF (IFAR.EQ.1) GO TO 28
-C     ELLIPTICAL POLARIZATION CALC.
+!     ELLIPTICAL POLARIZATION CALC.
       IF (ETHM2.GT.1.D-20.OR.EPHM2.GT.1.D-20) GO TO 11
       TILTA=0.
       EMAJR2=0.
@@ -8361,9 +8495,9 @@ C     ELLIPTICAL POLARIZATION CALC.
       EPHA=EPHA+EXRA
 27    WRITE(3,42)  THET,PHI,TMP5,TMP6,GTOT,AXRAT,TILTA,ISENS,ETHM,ETHA
      1,EPHM,EPHA
-C      GO TO 29
-C***
-C28    WRITE(3,43)  RFLD,PHI,THET,ETHM,ETHA,EPHM,EPHA,ERDM,ERDA
+!      GO TO 29
+!***
+!28    WRITE(3,43)  RFLD,PHI,THET,ETHM,ETHA,EPHM,EPHA,ERDM,ERDA
       IF(IPLP1 .NE. 3) GO TO 299
       IF(IPLP3 .EQ. 0) GO TO 290
       IF(IPLP2 .EQ. 1 .AND. IPLP3 .EQ. 1)
@@ -8390,7 +8524,7 @@ C28    WRITE(3,43)  RFLD,PHI,THET,ETHM,ETHA,EPHM,EPHA,ERDM,ERDA
       GO TO 299
 28    WRITE(3,43)  RFLD,PHI,THET,ETHM,ETHA,EPHM,EPHA,ERDM,ERDA
 299   CONTINUE
-C***
+!***
 29    CONTINUE
       IF (IAVP.EQ.0) GO TO 30
       TMP3=THETS*TA
@@ -8435,7 +8569,7 @@ C***
       GO TO 34
 33    WRITE(3,46)  TMP1,TMP2,TSTOR1
 34    RETURN
-C
+!
 35    FORMAT (///,31X,39H- - - FAR FIELD GROUND PARAMETERS - - -,//)
 36    FORMAT (40X,25HRADIAL WIRE GROUND SCREEN,/,40X,I5,6H WIRES,/,40X,1
      12HWIRE LENGTH=,F8.2,7H METERS,/,40X,12HWIRE RADIUS=,1P,E10.3,
@@ -8468,25 +8602,27 @@ C
      3GREES,2X,7HDEGREES,16X))
 46    FORMAT (3(1X,2F9.2,1X,F9.2,6X))
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE READGM(INUNIT,CODE,I1,I2,R1,R2,R3,R4,R5,R6,R7)
-C
-C  READGM reads a geometry record and parses it.
-C
-C  *****  Passed variables
-C     CODE        two letter mnemonic code
-C     I1 - I2     integer values from record
-C     R1 - R7     real values from record
-C
+!
+!  READGM reads a geometry record and parses it.
+!
+!  *****  Passed variables
+!     CODE        two letter mnemonic code
+!     I1 - I2     integer values from record
+!     R1 - R7     real values from record
+!
       IMPLICIT REAL*8(A-H,O-Z)
       CHARACTER*(*) CODE
       DIMENSION INTVAL(2),REAVAL(7)
-C
-C  Call the routine to read the record and parse it.
-C
+!
+!  Call the routine to read the record and parse it.
+!
       CALL PARSIT(INUNIT,2,7,CODE,INTVAL,REAVAL,IEOF)
-C
-C  Set the return variables to the buffer array elements.
-C
+!
+!  Set the return variables to the buffer array elements.
+!
       IF(IEOF.LT.0)CODE='GE'
       I1=INTVAL(1)
       I2=INTVAL(2)
@@ -8499,19 +8635,21 @@ C
       R7=REAVAL(7)
       RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE READMN(INUNIT,CODE,I1,I2,I3,I4,F1,F2,F3,F4,F5,F6)
-C
-C  READMN reads a control record and parses it.
-C
+!
+!  READMN reads a control record and parses it.
+!
       IMPLICIT REAL*8(A-H,O-Z)
       CHARACTER*(*) CODE
       DIMENSION INTVAL(4),REAVAL(6)
-C
-C  Call the routine to read the record and parse it.
-C
+!
+!  Call the routine to read the record and parse it.
+!
       CALL PARSIT(INUNIT,4,6,CODE,INTVAL,REAVAL,IEOF)
-C
-C  Set the return variables to the buffer array elements.
+!
+!  Set the return variables to the buffer array elements.
       IF(IEOF.LT.0)CODE='EN'
       I1=INTVAL(1)
       I2=INTVAL(2)
@@ -8528,33 +8666,35 @@ C  Set the return variables to the buffer array elements.
 
 
 
+!----------------------------------------------------------------------------
+
       SUBROUTINE PARSIT(INUNIT,MAXINT,MAXREA,CMND,INTFLD,REAFLD,IEOF)
 
-C  UPDATED:  21 July 87
+!  UPDATED:  21 July 87
 
-C  Called by:   READGM    READMN
+!  Called by:   READGM    READMN
 
-C  PARSIT reads an input record and parses it.
+!  PARSIT reads an input record and parses it.
 
-C  *****  Passed variables
-C     MAXINT     total number of integers in record
-C     MAXREA     total number of real values in record
-C     CMND       two letter mnemonic code
-C     INTFLD     integer values from record
-C     REAFLD     real values from record
+!  *****  Passed variables
+!     MAXINT     total number of integers in record
+!     MAXREA     total number of real values in record
+!     CMND       two letter mnemonic code
+!     INTFLD     integer values from record
+!     REAFLD     real values from record
 
-C  *****  Internal Variables
-C     BGNFLD     list of starting indices
-C     BUFFER     text buffer
-C     ENDFLD     list of ending indices
-C     FLDTRM     flag to indicate that pointer is in field position
-C     REC        input line as read
-C     TOTCOL     total number of columns in REC
-C     TOTFLD     number of numeric fields
+!  *****  Internal Variables
+!     BGNFLD     list of starting indices
+!     BUFFER     text buffer
+!     ENDFLD     list of ending indices
+!     FLDTRM     flag to indicate that pointer is in field position
+!     REC        input line as read
+!     TOTCOL     total number of columns in REC
+!     TOTFLD     number of numeric fields
 
       IMPLICIT REAL*8(A-H,O-Z)
 
-C  *****  Global variables		! av12
+!  *****  Global variables		! av12
 	character*80 ngfnam		! av12
 	common /ngfnam/ ngfnam		! av12
 
@@ -8563,13 +8703,13 @@ C  *****  Global variables		! av12
       INTEGER    BGNFLD(12), ENDFLD(12), TOTCOL, TOTFLD
       LOGICAL    FLDTRM
       DIMENSION  REAFLD(MAXREA)
-C
+!
       READ(INUNIT, 8000, IOSTAT=IEOF) REC
       CALL UPCASE( REC, REC, TOTCOL )
 
-C
-C  Store opcode and clear field arrays.
-C
+!
+!  Store opcode and clear field arrays.
+!
       CMND= REC(1:2)
       DO 3000 I=1,MAXINT
            INTFLD(I)= 0
@@ -8582,40 +8722,40 @@ C
            ENDFLD(I)= 0
  3020 CONTINUE
 
-Cav018	print *,'parsit:',cmnd,totcol,maxint,maxrea
-Cav018	print *, rec
+!av018	print *,'parsit:',cmnd,totcol,maxint,maxrea
+!av018	print *, rec
 
-C
-C  Find the beginning and ending of each field as well as the total number of
-C  fields.
-C
+!
+!  Find the beginning and ending of each field as well as the total number of
+!  fields.
+!
       TOTFLD= 0
       FLDTRM= .FALSE.
       LAST= MAXREA + MAXINT
       DO 4000 J=3,TOTCOL
            K= ICHAR( REC(J:J) )
-C
-C  Check for end of line comment (`!').  This is a new modification to allow
-C  VAX-like comments at the end of data records, i.e.
-C       GW 1 7 0 0 0 0 0 .5 .0001 ! DIPOLE WIRE
-C       GE ! END OF GEOMETRY
-C
+!
+!  Check for end of line comment (`!').  This is a new modification to allow
+!  VAX-like comments at the end of data records, i.e.
+!       GW 1 7 0 0 0 0 0 .5 .0001 ! DIPOLE WIRE
+!       GE ! END OF GEOMETRY
+!
       IF (K .EQ. 33) THEN					! .eq. '!'
          IF (FLDTRM) ENDFLD(TOTFLD)= J - 1
          GO TO 5000
-C
-C  Set the ending index when the character is a comma or space and the pointer
-C  is in a field position (FLDTRM = .TRUE.).
-C
+!
+!  Set the ending index when the character is a comma or space and the pointer
+!  is in a field position (FLDTRM = .TRUE.).
+!
           ELSE IF (K .EQ. 32  .OR.  K .EQ. 44) THEN	! space or comma ?
              IF (FLDTRM) THEN
                 ENDFLD(TOTFLD)= J - 1
                 FLDTRM= .FALSE.
              ENDIF
-C
-C  Set the beginning index when the character is not a comma or space and the
-C  pointer is not currently in a field position (FLDTRM = .FALSE).
-C
+!
+!  Set the beginning index when the character is not a comma or space and the
+!  pointer is not currently in a field position (FLDTRM = .FALSE).
+!
           ELSE IF (.NOT. FLDTRM) THEN
               TOTFLD= TOTFLD + 1
               FLDTRM= .TRUE.
@@ -8624,10 +8764,10 @@ C
  4000   CONTINUE
         IF (FLDTRM) ENDFLD(TOTFLD)= TOTCOL
 
-C  Check to see if the total number of value fields is within the precribed
-C  limits.
+!  Check to see if the total number of value fields is within the precribed
+!  limits.
 
-Cav018 5000	print *,totfld,maxint,cmnd,rec
+!av018 5000	print *,totfld,maxint,cmnd,rec
 
  5000	if ((cmnd.eq.'WG').or.(cmnd.eq.'GF')) then	! Init default NGFNAM
 	   ngfnam='NGF2D.NEC' 				! av15
@@ -8640,18 +8780,18 @@ Cav018 5000	print *,totfld,maxint,cmnd,rec
         ENDIF
         J= MIN( TOTFLD, MAXINT )
 
-C  Parse out integer values and store into integer buffer array.
+!  Parse out integer values and store into integer buffer array.
 
         DO 5090 I=1,J
              LENGTH= ENDFLD(I) - BGNFLD(I) + 1
              BUFFER= REC(BGNFLD(I):ENDFLD(I))
 
-Cav018	print *,i,'buf(1:1)=',buffer(1:1)
+!av018	print *,i,'buf(1:1)=',buffer(1:1)
 
 	if (((cmnd.eq.'WG').or.(cmnd.eq.'GF')).and.
      &  (buffer(1:1).ne.'0') .and. (buffer(1:1).ne.'1')) then	! Text field, av12
 	   ngfnam = rec(bgnfld(i):endfld(i))			! av12
-Cav018	   write (3, '(2A)') 'NGF-file set to : ',ngfnam			! av12
+!av018	   write (3, '(2A)') 'NGF-file set to : ',ngfnam			! av12
 	   return								! av12
 	endif									! av12
 
@@ -8661,7 +8801,7 @@ Cav018	   write (3, '(2A)') 'NGF-file set to : ',ngfnam			! av12
              READ( BUFFER(1:LENGTH), *, ERR=9000 ) INTFLD(I)
  5090   CONTINUE
 
-C  Parse out real values and store into real buffer array.
+!  Parse out real values and store into real buffer array.
 
         IF (TOTFLD .GT. MAXINT) THEN
              J= MAXINT + 1
@@ -8684,7 +8824,7 @@ C  Parse out real values and store into real buffer array.
         ENDIF
         RETURN
 
-C  Print out text of record line when error occurs.
+!  Print out text of record line when error occurs.
 
  9000   IF (I .LE. MAXINT) THEN
              WRITE(3, 8002 ) I
@@ -8694,9 +8834,9 @@ C  Print out text of record line when error occurs.
         ENDIF
  9010   WRITE(3, 8004 ) REC
         STOP 'CARD ERROR'
-C
-C  Input formats and output messages.
-C
+!
+!  Input formats and output messages.
+!
  8000   FORMAT (A80)
  8001   FORMAT (//,' ***** CARD ERROR - TOO MANY FIELDS IN RECORD')
  8002   FORMAT (//,' ***** CARD ERROR - INVALID NUMBER AT INTEGER',
@@ -8705,13 +8845,15 @@ C
      &          ' POSITION ',I1)
  8004   FORMAT (' ***** TEXT -->  ',A80)
         END
+!----------------------------------------------------------------------------
+
         SUBROUTINE UPCASE( INTEXT, OUTTXT, LENGTH )
-C
-C  UPCASE finds the length of INTEXT and converts it to upper case.
-C
+!
+!  UPCASE finds the length of INTEXT and converts it to upper case.
+!
         CHARACTER *(*) INTEXT, OUTTXT
-C
-C
+!
+!
         LENGTH = LEN( INTEXT )
         DO 3000 I=1,LENGTH
              J  = ICHAR( INTEXT(I:I) )
@@ -8720,14 +8862,16 @@ C
  3000   CONTINUE
         RETURN
         END
+!----------------------------------------------------------------------------
+
       SUBROUTINE REBLK (B,BX,NB,NBX,N2C)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C     REBLOCK ARRAY B IN N.G.F. SOLUTION FROM BLOCKS OF ROWS ON TAPE14
-C     TO BLOCKS OF COLUMNS ON TAPE16
+! ***
+!     REBLOCK ARRAY B IN N.G.F. SOLUTION FROM BLOCKS OF ROWS ON TAPE14
+!     TO BLOCKS OF COLUMNS ON TAPE16
       COMPLEX*16 B,BX
       COMMON /MATPAR/ ICASE,NBLOKS,NPBLK,NLAST,NBLSYM,NPSYM,NLSYM,IMAT,I
      1CASX,NBBX,NPBX,NLBX,NBBL,NPBL,NLBL
@@ -8754,17 +8898,19 @@ C     TO BLOCKS OF COLUMNS ON TAPE16
       REWIND 16
       RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE REFLC (IX,IY,IZ,ITX,NOP)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     REFLC REFLECTS PARTIAL STRUCTURE ALONG X,Y, OR Z AXES OR ROTATES
-C     STRUCTURE TO COMPLETE A SYMMETRIC STRUCTURE.
-C
+! ***
+!
+!     REFLC REFLECTS PARTIAL STRUCTURE ALONG X,Y, OR Z AXES OR ROTATES
+!     STRUCTURE TO COMPLETE A SYMMETRIC STRUCTURE.
+!
       COMMON /DATA/ X(MAXSEG),Y(MAXSEG),Z(MAXSEG),SI(MAXSEG),BI(MAXSEG),
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
@@ -8781,9 +8927,9 @@ C
       IF (NOP.EQ.0) RETURN
       IPSYM=1
       IF (IZ.EQ.0) GO TO 6
-C
-C     REFLECT ALONG Z AXIS
-C
+!
+!     REFLECT ALONG Z AXIS
+!
       IPSYM=2
       IF (N.LT.N2) GO TO 3
       DO 2 I=N2,N
@@ -8826,9 +8972,9 @@ C
 5     BI(NX)=BI(NXX)
       M=M*2-M1
 6     IF (IY.EQ.0) GO TO 12
-C
-C     REFLECT ALONG Y AXIS
-C
+!
+!     REFLECT ALONG Y AXIS
+!
       IF (N.LT.N2) GO TO 9
       DO 8 I=N2,N
       NX=I+N-N1
@@ -8870,9 +9016,9 @@ C
 11    BI(NX)=BI(NXX)
       M=M*2-M1
 12    IF (IX.EQ.0) GO TO 18
-C
-C     REFLECT ALONG X AXIS
-C
+!
+!     REFLECT ALONG X AXIS
+!
       IF (N.LT.N2) GO TO 15
       DO 14 I=N2,N
       NX=I+N-N1
@@ -8913,9 +9059,9 @@ C
 17    BI(NX)=BI(NXX)
       M=M*2-M1
 18    RETURN
-C
-C     REPRODUCE STRUCTURE WITH ROTATION TO FORM CYLINDRICAL STRUCTURE
-C
+!
+!     REPRODUCE STRUCTURE WITH ROTATION TO FORM CYLINDRICAL STRUCTURE
+!
 19    FNOP=NOP
       IPSYM=-1
       SAM=6.283185308D+0/FNOP
@@ -8965,25 +9111,27 @@ C
       SALP(J)=SALP(K)
 22    BI(J)=BI(K)
 23    RETURN
-C
+!
 24    FORMAT (29H GEOMETRY DATA ERROR--SEGMENT,I5,26H LIES IN PLANE OF S
      1YMMETRY)
 25    FORMAT (27H GEOMETRY DATA ERROR--PATCH,I4,26H LIES IN PLANE OF SYM
      1METRY)
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE ROM2 (A,B,SUM,DMIN)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     FOR THE SOMMERFELD GROUND OPTION, ROM2 INTEGRATES OVER THE SOURCE
-C     SEGMENT TO OBTAIN THE TOTAL FIELD DUE TO GROUND.  THE METHOD OF
-C     VARIABLE INTERVAL WIDTH ROMBERG INTEGRATION IS USED.  THERE ARE 9
-C     FIELD COMPONENTS - THE X, Y, AND Z COMPONENTS DUE TO CONSTANT,
-C     SINE, AND COSINE CURRENT DISTRIBUTIONS.
-C
+! ***
+!
+!     FOR THE SOMMERFELD GROUND OPTION, ROM2 INTEGRATES OVER THE SOURCE
+!     SEGMENT TO OBTAIN THE TOTAL FIELD DUE TO GROUND.  THE METHOD OF
+!     VARIABLE INTERVAL WIDTH ROMBERG INTEGRATION IS USED.  THERE ARE 9
+!     FIELD COMPONENTS - THE X, Y, AND Z COMPONENTS DUE TO CONSTANT,
+!     SINE, AND COSINE CURRENT DISTRIBUTIONS.
+!
       COMPLEX*16 SUM,G1,G2,G3,G4,G5,T00,T01,T10,T02,T11,T20
       DIMENSION SUM(9), G1(9), G2(9), G3(9), G4(9), G5(9), T01(9), T10(9
      1), T20(9)
@@ -9010,9 +9158,9 @@ C
       CALL SFLDS (Z+DZ,G5)
 5     TMAG1=0.
       TMAG2=0.
-C
-C     EVALUATE 3 POINT ROMBERG RESULT AND TEST CONVERGENCE.
-C
+!
+!     EVALUATE 3 POINT ROMBERG RESULT AND TEST CONVERGENCE.
+!
       DO 6 I=1,N
       T00=(G1(I)+G5(I))*DZOT
       T01(I)=(T00+DZ*G3(I))*.5
@@ -9037,9 +9185,9 @@ C
       CALL SFLDS (Z+DZ*.75,G4)
       TMAG1=0.
       TMAG2=0.
-C
-C     EVALUATE 5 POINT ROMBERG RESULT AND TEST CONVERGENCE.
-C
+!
+!     EVALUATE 5 POINT ROMBERG RESULT AND TEST CONVERGENCE.
+!
       DO 9 I=1,N
       T02=(T01(I)+DZOT*(G2(I)+G4(I)))*.5
       T11=(4.*T02-T01(I))/3.
@@ -9080,23 +9228,25 @@ C
       GO TO 5
 17    CONTINUE
       RETURN
-C
+!
 18    FORMAT (30H ERROR - B LESS THAN A IN ROM2)
 19    FORMAT (33H ROM2 -- STEP SIZE LIMITED AT Z =,1P,E12.5)
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE SBF (I,IS,AA,BB,CC)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C     COMPUTE COMPONENT OF BASIS FUNCTION I ON SEGMENT IS.
+! ***
+!     COMPUTE COMPONENT OF BASIS FUNCTION I ON SEGMENT IS.
       COMMON /DATA/ X(MAXSEG),Y(MAXSEG),Z(MAXSEG),SI(MAXSEG),BI(MAXSEG),
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
 
-Cav14 DATA PI/3.141592654D+0/,JMAX/30/
+!av14 DATA PI/3.141592654D+0/,JMAX/30/
       DATA PI/3.141592654D+0/
 
       AA=0.
@@ -9219,27 +9369,29 @@ Cav14 DATA PI/3.141592654D+0/,JMAX/30/
       RETURN
 24    WRITE(3,25)  I
       STOP
-C
+!
 25    FORMAT (43H SBF - SEGMENT CONNECTION ERROR FOR SEGMENT,I5)
       END
 
-Cav02 SUBROUTINE SECOND (CPUSECD)
-C
-C     Purpose:
-C     SECOND returns cpu time in seconds.  Must be customized!!!
-C
-C     VAX or other (modify subroutine stopwtch):
-C
-Cav02 REAL*8 CPUSECD
-Cav02 CALL STOPWTCH(CPUSECS,WALLTOT,CPUSPLT,WALLSPLT)
-Cav02 CPUSECD=60.*CPUSECS
-C     MACINTOSH:
-C      CPUSECD= LONG(362)/60.0
-Cav02 RETURN
-Cav02 END
+!----------------------------------------------------------------------------
+
+!av02 SUBROUTINE SECOND (CPUSECD)
+!
+!     Purpose:
+!     SECOND returns cpu time in seconds.  Must be customized!!!
+!
+!     VAX or other (modify subroutine stopwtch):
+!
+!av02 REAL*8 CPUSECD
+!av02 CALL STOPWTCH(CPUSECS,WALLTOT,CPUSPLT,WALLSPLT)
+!av02 CPUSECD=60.*CPUSECS
+!     MACINTOSH:
+!      CPUSECD= LONG(362)/60.0
+!av02 RETURN
+!av02 END
 
 c **********************************************************************
-Cav03   subroutine stopwtch(cputot,walltot,cpusplt,wallsplt)
+!av03   subroutine stopwtch(cputot,walltot,cpusplt,wallsplt)
 c
 c       This routine operates as a stopwatch.
 c       When first called, the routine initializes the clock.
@@ -9275,100 +9427,100 @@ c ----------------------------------------------------------------------
 c
 c parameter list
 c
-Cav03        real cputot,walltot,cpusplt,wallsplt
+!av03        real cputot,walltot,cpusplt,wallsplt
 c
 c locals (non sysdep)
 c
-Cav03        logical initiz
-Cav03        integer wallinit,walllast,wallnow
-Cav03        real cpuinit,cpulast,cpunow
-Cav03        save initiz,cpuinit,cpulast,wallinit,walllast
+!av03        logical initiz
+!av03        integer wallinit,walllast,wallnow
+!av03        real cpuinit,cpulast,cpunow
+!av03        save initiz,cpuinit,cpulast,wallinit,walllast
 c
 c locals (sysdep)
 c
-C#include "machines.h"
-C#ifdef VAX_VMS
-C        integer istatus,iwall,icpu
-C        real rwall
-C        dimension iwall(2)
-C#endif
-C#ifdef SUN4TIMER
-Cav03        integer time
-Cav03        real tarray
-Cav03        dimension tarray(2)
-C#endif
-C#ifdef CONVEX
-C        real time, secnds, tarray
-C        dimension tarray(2)
-C        external secnds
-C#endif
-C#ifdef IBM_RISC
+!#include "machines.h"
+!#ifdef VAX_VMS
+!        integer istatus,iwall,icpu
+!        real rwall
+!        dimension iwall(2)
+!#endif
+!#ifdef SUN4TIMER
+!av03        integer time
+!av03        real tarray
+!av03        dimension tarray(2)
+!#endif
+!#ifdef CONVEX
+!        real time, secnds, tarray
+!        dimension tarray(2)
+!        external secnds
+!#endif
+!#ifdef IBM_RISC
 c        integer icpu
 c        integer mclock
-C#endif
-C#ifdef IRIS4D
-C        external time
-C#endif
-C#ifdef STARDENT
-C        integer stime
-C        real tarray
-C        dimension tarray(2)
-C#endif
-C#ifdef UNICOS
-C        real rwall
-C#endif
+!#endif
+!#ifdef IRIS4D
+!        external time
+!#endif
+!#ifdef STARDENT
+!        integer stime
+!        real tarray
+!        dimension tarray(2)
+!#endif
+!#ifdef UNICOS
+!        real rwall
+!#endif
 c
 c data initialization
 c
-Cav03        data initiz/.false./
+!av03        data initiz/.false./
 c
 c ----------------------------------------------------------------------
 c
-Cav03        if (.not. initiz) then
+!av03        if (.not. initiz) then
 c
 c ...      set the flag showing that the clock has been initialized
 c
-Cav03           initiz = .true.
+!av03           initiz = .true.
 c
 c ...      set the initial times to default value of zero.  These may
 c          be changed, depending on how an individual machine handles
 c          its timer.
 c
-Cav03           cpuinit  = 0.0
-Cav03           wallinit = 0
+!av03           cpuinit  = 0.0
+!av03           wallinit = 0
 c
 c ...      initialize the timer (may not be necessary on all machines)
 c
-C#ifdef VAX_VMS
-C           istatus = lib$init_timer()
-C#endif
+!#ifdef VAX_VMS
+!           istatus = lib$init_timer()
+!#endif
 c
-C#ifdef SUN4TIMER
+!#ifdef SUN4TIMER
 c          CPU timer on SUN4 initializes automatically on job startup.
 c          However, we want t=0 to be defined when this routine is first
 c          called.  Hence, define initial CPU time here.
 c          Wall clock timer counts in seconds from 1-Jan-70  Thus,
 c          initial wall clock time is non-zero.  It is obtained here.
 c 
-Cav03           cpuinit  = etime(tarray)
-Cav03           wallinit = time()
-C#endif
+!av03           cpuinit  = etime(tarray)
+!av03           wallinit = time()
+!#endif
 c
-C#ifdef CONVEX
-C           cpuinit = etime(tarray)
-C           time = secnds(0.0)
-C           wallinit = ifix(time)
-C#endif
+!#ifdef CONVEX
+!           cpuinit = etime(tarray)
+!           time = secnds(0.0)
+!           wallinit = ifix(time)
+!#endif
 c
-C#ifdef IBM_RISC
+!#ifdef IBM_RISC
 c          no known wall clock timer
 c
 c           icpu = mclock( )
 c           cpuinit  = float(icpu)/100.0
 c           wallinit = 0
-C#endif
+!#endif
 c
-C#ifdef STARDENT
+!#ifdef STARDENT
 c          CPU timer on STARDENT initializes automatically on job
 c          startup.
 c          However, we want t=0 to be defined when this routine is first
@@ -9376,11 +9528,11 @@ c          called.  Hence, define initial CPU time here.
 c          Wall clock timer counts in seconds from 1-Jan-70  Thus,
 c          initial wall clock time is non-zero.  It is obtained here.
 c
-C           cpuinit  = etime(tarray)
-C           wallinit = stime()
-C#endif
+!           cpuinit  = etime(tarray)
+!           wallinit = stime()
+!#endif
 c
-C#ifdef UNICOS
+!#ifdef UNICOS
 c          I hope that the "second" routine is true UNICOS and not a
 c          local (LLNL) feature that was added on to keep things
 c          consistent with NLTSS.
@@ -9388,23 +9540,23 @@ c          The "timef" routine returns real milliseconds; first
 c          call initializes the timer and should return zero (not
 c          that we care -- this routine works by taking differences).
 c
-C           call second(cpuinit)
-C           call timef(rwall)
-C           wallinit = ifix(rwall*1.0e-03)
-C#endif
+!           call second(cpuinit)
+!           call timef(rwall)
+!           wallinit = ifix(rwall*1.0e-03)
+!#endif
 c
 c ...      since this is the first call to this routine,
 c          initialize the previous call times to the initial time.
 c
-Cav03           cpulast  =  cpuinit
-Cav03           walllast = wallinit
+!av03           cpulast  =  cpuinit
+!av03           walllast = wallinit
 c
-Cav03        end if
+!av03        end if
 c
 c ...   Find the current cpu and wall times
 c
-C#ifdef HASTIMER
-C#ifdef VAX_VMS
+!#ifdef HASTIMER
+!#ifdef VAX_VMS
 c
 c       function "lib$stat_timer" is called as:
 c       error_status = lib$stat_timer(input_code,output_result,junk)
@@ -9424,14 +9576,14 @@ c           argument, the result is returned in the 2nd argument.
 c           input_code = 2 returns elapsed cpu time as an integer in
 c           units of 10msec.  This is converted to seconds here.
 c 
-C        istatus = lib$stat_timer(1,iwall,)
-C        istatus = lib$cvtf_from_internal_time(30,rwall,iwall)
-C        wallnow = rwall
-C        istatus = lib$stat_timer(2,icpu,)
-C        cpunow = icpu*(10.0e-3)
-C#endif
+!        istatus = lib$stat_timer(1,iwall,)
+!        istatus = lib$cvtf_from_internal_time(30,rwall,iwall)
+!        wallnow = rwall
+!        istatus = lib$stat_timer(2,icpu,)
+!        cpunow = icpu*(10.0e-3)
+!#endif
 c
-C#ifdef SUN4TIMER
+!#ifdef SUN4TIMER
 c       there is some ambiguity in the manual as to how to use
 c       etime.  Function returns:
 c          "elapsed execution time" = tarray(1) + tarray(2)
@@ -9439,25 +9591,25 @@ c                                   = user time + system time
 c       I am uncertain whether to let cpunow = return value or
 c       else tarray(1).
 c
-Cav03        cpunow  = etime(tarray)
-Cav03        wallnow = time()
-C#endif
+!av03        cpunow  = etime(tarray)
+!av03        wallnow = time()
+!#endif
 c
-C#ifdef CONVEX
-C           cpunow = etime(tarray)
-C           time = secnds(0.0)
-C           wallnow = ifix(time)
-C#endif
+!#ifdef CONVEX
+!           cpunow = etime(tarray)
+!           time = secnds(0.0)
+!           wallnow = ifix(time)
+!#endif
 c
-C#ifdef IBM_RISC
+!#ifdef IBM_RISC
 c       no known wall clock timer
 c
 c        icpu = mclock( )
 c        cpunow  = float(icpu)/100.0
 c        wallnow = 0
-C#endif
+!#endif
 c
-C#ifdef STARDENT
+!#ifdef STARDENT
 c       there is some ambiguity in the manual as to how to use
 c       etime.  Function returns:
 c          "elapsed execution time" = tarray(1) + tarray(2)
@@ -9465,54 +9617,56 @@ c                                   = user time + system time
 c       I am uncertain whether to let cpunow = return value or
 c       else tarray(1).
 c 
-C        cpunow  = etime(tarray)
-C        wallnow = stime()
-C#endif
+!        cpunow  = etime(tarray)
+!        wallnow = stime()
+!#endif
 c
-C#ifdef UNICOS
+!#ifdef UNICOS
 c       I hope that the "second" routine is true UNICOS and not a
 c       local (LLNL) feature that was added on to keep things
 c       consistent with NLTSS.
 c       The "timef" routine returns real milliseconds.
 c
-C        call second(cpunow)
-C        call timef(rwall)
-C        wallnow = ifix(rwall*1.0e-03)
-C#endif
-C#else
+!        call second(cpunow)
+!        call timef(rwall)
+!        wallnow = ifix(rwall*1.0e-03)
+!#endif
+!#else
 c       for machines without timers or with unknown timers,
 c       set things to zero now to ensure that something is returned
-C        cpunow  = 0.0
-C        wallnow = 0
-C#endif
+!        cpunow  = 0.0
+!        wallnow = 0
+!#endif
 c
 c ...   calculate elapsed and split cpu and wall clock times,
 c       convert to minutes on output.
 c
-Cav03        cputot   = (cpunow  - cpuinit )/60.0
-Cav03        walltot  = float(wallnow - wallinit)/60.0
-Cav03        cpusplt  = (cpunow  - cpulast )/60.0
-Cav03        wallsplt = float(wallnow - walllast)/60.0
+!av03        cputot   = (cpunow  - cpuinit )/60.0
+!av03        walltot  = float(wallnow - wallinit)/60.0
+!av03        cpusplt  = (cpunow  - cpulast )/60.0
+!av03        wallsplt = float(wallnow - walllast)/60.0
 c
 c ...   save "now" times in "last" times
 c
-Cav03        cpulast  = cpunow
-Cav03        walllast = wallnow
+!av03        cpulast  = cpunow
+!av03        walllast = wallnow
 c
-Cav03        return
+!av03        return
 c **********************************************************************
-Cav03        end
+!av03        end
+
+!----------------------------------------------------------------------------
 
       SUBROUTINE SFLDS (T,E)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     SFLDX RETURNS THE FIELD DUE TO GROUND FOR A CURRENT ELEMENT ON
-C     THE SOURCE SEGMENT AT T RELATIVE TO THE SEGMENT CENTER.
-C
+! ***
+!
+!     SFLDX RETURNS THE FIELD DUE TO GROUND FOR A CURRENT ELEMENT ON
+!     THE SOURCE SEGMENT AT T RELATIVE TO THE SEGMENT CENTER.
+!
       COMPLEX*16 E,ERV,EZV,ERH,EZH,EPH,T1,EXK,EYK,EZK,EXS,EYS,EZS,EXC
      1,EYC,EZC,XX1,XX2,U,U2,ZRATI,ZRATI2,FRATI,ER,ET,HRV,HZV,HRH
       COMMON /DATAJ/ S,B,XJ,YJ,ZJ,CABJ,SABJ,SALPJ,EXK,EYK,EZK,EXS,EYS,
@@ -9551,11 +9705,11 @@ C
       RK=R2*TP
       XX2=DCMPLX(COS(RK),-SIN(RK))
       IF (ISNOR.EQ.1) GO TO 3
-C
-C     USE NORTON APPROXIMATION FOR FIELD DUE TO GROUND.  CURRENT IS
-C     LUMPED AT SEGMENT CENTER WITH CURRENT MOMENT FOR CONSTANT, SINE,
-C     OR COSINE DISTRIBUTION.
-C
+!
+!     USE NORTON APPROXIMATION FOR FIELD DUE TO GROUND.  CURRENT IS
+!     LUMPED AT SEGMENT CENTER WITH CURRENT MOMENT FOR CONSTANT, SINE,
+!     OR COSINE DISTRIBUTION.
+!
       ZMH=1.
       R1=1.
       XX1=0.
@@ -9589,51 +9743,53 @@ C
       E(8)=E(2)*SFAC
       E(9)=E(3)*SFAC
       RETURN
-C
-C     INTERPOLATE IN SOMMERFELD FIELD TABLES
-C
+!
+!     INTERPOLATE IN SOMMERFELD FIELD TABLES
+!
 3     IF (RHO.LT.1.D-12) GO TO 4
       THET=ATAN(ZPH/RHO)
       GO TO 5
 4     THET=POT
 5     CALL INTRP (R2,THET,ERV,EZV,ERH,EPH)
-C     COMBINE VERTICAL AND HORIZONTAL COMPONENTS AND CONVERT TO X,Y,Z
-C     COMPONENTS.  MULTIPLY BY EXP(-JKR)/R.
+!     COMBINE VERTICAL AND HORIZONTAL COMPONENTS AND CONVERT TO X,Y,Z
+!     COMPONENTS.  MULTIPLY BY EXP(-JKR)/R.
       XX2=XX2/R2
       SFAC=SN*CPH
       ERH=XX2*(SALPJ*ERV+SFAC*ERH)
       EZH=XX2*(SALPJ*EZV-SFAC*ERV)
       EPH=SN*SPH*XX2*EPH
-C     X,Y,Z FIELDS FOR CONSTANT CURRENT
+!     X,Y,Z FIELDS FOR CONSTANT CURRENT
       E(1)=ERH*RHX+EPH*PHX
       E(2)=ERH*RHY+EPH*PHY
       E(3)=EZH
       RK=TP*T
-C     X,Y,Z FIELDS FOR SINE CURRENT
+!     X,Y,Z FIELDS FOR SINE CURRENT
       SFAC=SIN(RK)
       E(4)=E(1)*SFAC
       E(5)=E(2)*SFAC
       E(6)=E(3)*SFAC
-C     X,Y,Z FIELDS FOR COSINE CURRENT
+!     X,Y,Z FIELDS FOR COSINE CURRENT
       SFAC=COS(RK)
       E(7)=E(1)*SFAC
       E(8)=E(2)*SFAC
       E(9)=E(3)*SFAC
       RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE SOLGF (A,B,C,D,XY,IP,NP,N1,N,MP,M1,M,N1C,N2C,N2CZ)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C     SOLVE FOR CURRENT IN N.G.F. PROCEDURE
+! ***
+!     SOLVE FOR CURRENT IN N.G.F. PROCEDURE
       COMPLEX*16 A,B,C,D,SUM,XY,Y
       COMMON /SCRATM/ Y(2*MAXSEG)
 
-Cav14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
-Cav14-CON(10),NPCON
+!av14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
+!av14-CON(10),NPCON
       COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
      -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
 
@@ -9643,11 +9799,11 @@ Cav14-CON(10),NPCON
       IFL=14
       IF (ICASX.GT.0) IFL=13
       IF (N2C.GT.0) GO TO 1
-C     NORMAL SOLUTION.  NOT N.G.F.
+!     NORMAL SOLUTION.  NOT N.G.F.
       CALL SOLVES (A,IP,XY,N1C,1,NP,N,MP,M,13,IFL)
       GO TO 22
 1     IF (N1.EQ.N.OR.M1.EQ.0) GO TO 5
-C     REORDER EXCITATION ARRAY
+!     REORDER EXCITATION ARRAY
       N2=N1+1
       JJ=N+1
       NPM=N+2*M1
@@ -9664,13 +9820,13 @@ C     REORDER EXCITATION ARRAY
       IF (NEQS.EQ.0) GO TO 7
       NEQ=N1C+N2C
       NEQS=NEQ-NEQS+1
-C     COMPUTE INV(A)E1
+!     COMPUTE INV(A)E1
       DO 6 I=NEQS,NEQ
 6     XY(I)=(0.,0.)
 7     CALL SOLVES (A,IP,XY,N1C,1,NP,N1,MP,M1,13,IFL)
       NI=0
       NPB=NPBL
-C     COMPUTE E2-C(INV(A)E1)
+!     COMPUTE E2-C(INV(A)E1)
       DO 10 JJ=1,NBBL
       IF (JJ.EQ.NBBL) NPB=NLBL
       IF (ICASX.GT.1) READ (15) ((C(I,J),I=1,N1C),J=1,NPB)
@@ -9684,7 +9840,7 @@ C     COMPUTE E2-C(INV(A)E1)
 10    NI=NI+NPBL
       IF (ICASX.GT.1) REWIND 15
       JJ=N1C+1
-C     COMPUTE INV(D)(E2-C(INV(A)E1)) = I2
+!     COMPUTE INV(D)(E2-C(INV(A)E1)) = I2
       IF (ICASX.GT.1) GO TO 11
       CALL SOLVE (N2C,D,IP(JJ),XY(JJ),N2C)
       GO TO 13
@@ -9713,7 +9869,7 @@ C     COMPUTE INV(D)(E2-C(INV(A)E1)) = I2
       ICASE=ICASS
 13    NI=0
       NPB=NPBL
-C     COMPUTE INV(A)E1-(INV(A)B)I2 = I1
+!     COMPUTE INV(A)E1-(INV(A)B)I2 = I1
       DO 16 JJ=1,NBBL
       IF (JJ.EQ.NBBL) NPB=NLBL
       IF (ICASX.GT.1) READ (14) ((B(I,J),I=1,N1C),J=1,NPB)
@@ -9727,7 +9883,7 @@ C     COMPUTE INV(A)E1-(INV(A)B)I2 = I1
 16    NI=NI+NPBL
       IF (ICASX.GT.1) REWIND 14
       IF (N1.EQ.N.OR.M1.EQ.0) GO TO 20
-C     REORDER CURRENT ARRAY
+!     REORDER CURRENT ARRAY
       DO 17 I=N2,NPM
 17    Y(I)=XY(I)
       JJ=N1C+1
@@ -9746,26 +9902,28 @@ C     REORDER CURRENT ARRAY
 21    XY(JJ)=XY(J)
 22    RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE SOLVE (N,A,IP,B,NDIM)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     SUBROUTINE TO SOLVE THE MATRIX EQUATION LU*X=B WHERE L IS A UNIT
-C     LOWER TRIANGULAR MATRIX AND U IS AN UPPER TRIANGULAR MATRIX BOTH
-C     OF WHICH ARE STORED IN A.  THE RHS VECTOR B IS INPUT AND THE
-C     SOLUTION IS RETURNED THROUGH VECTOR B.
-C
+! ***
+!
+!     SUBROUTINE TO SOLVE THE MATRIX EQUATION LU*X=B WHERE L IS A UNIT
+!     LOWER TRIANGULAR MATRIX AND U IS AN UPPER TRIANGULAR MATRIX BOTH
+!     OF WHICH ARE STORED IN A.  THE RHS VECTOR B IS INPUT AND THE
+!     SOLUTION IS RETURNED THROUGH VECTOR B.
+!
       COMPLEX*16 A,B,Y,SUM
       INTEGER PI
       COMMON /SCRATM/ Y(2*MAXSEG)
       DIMENSION A(NDIM,NDIM), IP(NDIM), B(NDIM)
-C
-C     FORWARD SUBSTITUTION
-C
+!
+!     FORWARD SUBSTITUTION
+!
       DO 3 I=1,N
       PI=IP(I)
       Y(I)=B(PI)
@@ -9777,9 +9935,9 @@ C
 1     CONTINUE
 2     CONTINUE
 3     CONTINUE
-C
-C     BACKWARD SUBSTITUTION
-C
+!
+!     BACKWARD SUBSTITUTION
+!
       DO 6 K=1,N
       I=N-K+1
       SUM=(0.,0.)
@@ -9793,18 +9951,20 @@ C
 6     CONTINUE
       RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE SOLVES (A,IP,B,NEQ,NRH,NP,N,MP,M,IFL1,IFL2)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     SUBROUTINE SOLVES, FOR SYMMETRIC STRUCTURES, HANDLES THE
-C     TRANSFORMATION OF THE RIGHT HAND SIDE VECTOR AND SOLUTION OF THE
-C     MATRIX EQ.
-C
+! ***
+!
+!     SUBROUTINE SOLVES, FOR SYMMETRIC STRUCTURES, HANDLES THE
+!     TRANSFORMATION OF THE RIGHT HAND SIDE VECTOR AND SOLUTION OF THE
+!     MATRIX EQ.
+!
       COMPLEX*16 A,B,Y,SUM,SSX
       COMMON /SMAT/ SSX(16,16)
       COMMON /SCRATM/ Y(2*MAXSEG)
@@ -9838,9 +9998,9 @@ C
       J=J+1
 4     B(J,IC)=Y(IB)
 5     CONTINUE
-C
-C     TRANSFORM MATRIX EQ. RHS VECTOR ACCORDING TO SYMMETRY MODES
-C
+!
+!     TRANSFORM MATRIX EQ. RHS VECTOR ACCORDING TO SYMMETRY MODES
+!
 6     DO 10 I=1,NPEQ
       DO 7 K=1,NOP
       IA=I+(K-1)*NPEQ
@@ -9858,9 +10018,9 @@ C
 11    IF (ICASE.LT.3) GO TO 12
       REWIND IFL1
       REWIND IFL2
-C
-C     SOLVE EACH MODE EQUATION
-C
+!
+!     SOLVE EACH MODE EQUATION
+!
 12    DO 16 KK=1,NOP
       IA=(KK-1)*NPEQ+1
       IB=IA
@@ -9875,9 +10035,9 @@ C
 15    CALL LTSOLV (A,NPEQ,IP(IA),B(IA,1),NEQ,NRH,IFL1,IFL2)
 16    CONTINUE
       IF (NOP.EQ.1) RETURN
-C
-C     INVERSE TRANSFORM THE MODE SOLUTIONS
-C
+!
+!     INVERSE TRANSFORM THE MODE SOLUTIONS
+!
       DO 26 IC=1,NRH
       DO 20 I=1,NPEQ
       DO 17 K=1,NOP
@@ -9915,24 +10075,26 @@ C
 26    CONTINUE
       RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE TBF (I,ICAP)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C     COMPUTE BASIS FUNCTION I
+! ***
+!     COMPUTE BASIS FUNCTION I
       COMMON /DATA/ X(MAXSEG),Y(MAXSEG),Z(MAXSEG),SI(MAXSEG),BI(MAXSEG),
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
 
-Cav14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
-Cav14-CON(10),NPCON
+!av14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
+!av14-CON(10),NPCON
       COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
      -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
 
-Cav14 DATA PI/3.141592654D+0/,JMAX/30/
+!av14 DATA PI/3.141592654D+0/,JMAX/30/
       DATA PI/3.141592654D+0/
 
       JSNO=0
@@ -10058,19 +10220,21 @@ Cav14 DATA PI/3.141592654D+0/,JMAX/30/
       RETURN
 28    WRITE(3,29)  I
       STOP
-C
+!
 29    FORMAT (43H TBF - SEGMENT CONNECTION ERROR FOR SEGMENT,I5)
       END
 
+!----------------------------------------------------------------------------
+
       SUBROUTINE TEST (F1R,F2R,TR,F1I,F2I,TI,DMIN)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     TEST FOR CONVERGENCE IN NUMERICAL INTEGRATION
-C
+! ***
+!
+!     TEST FOR CONVERGENCE IN NUMERICAL INTEGRATION
+!
       DEN=ABS(F2R)
       TR=ABS(F2I)
       IF (DEN.LT.TR) DEN=TR
@@ -10085,24 +10249,26 @@ C
       RETURN
       END
 
+!----------------------------------------------------------------------------
+
       SUBROUTINE TRIO (J)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C     COMPUTE THE COMPONENTS OF ALL BASIS FUNCTIONS ON SEGMENT J
+! ***
+!     COMPUTE THE COMPONENTS OF ALL BASIS FUNCTIONS ON SEGMENT J
       COMMON /DATA/ X(MAXSEG),Y(MAXSEG),Z(MAXSEG),SI(MAXSEG),BI(MAXSEG),
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
 
-Cav14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
-Cav14-CON(10),NPCON
+!av14 COMMON /SEGJ/ AX(30),BX(30),CX(30),JCO(30),JSNO,ISCON(50),NSCON,IP
+!av14-CON(10),NPCON
       COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
      -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
 
-Cav14 DATA JMAX/30/
+!av14 DATA JMAX/30/
 
       JSNO=0
       JCOX=ICON1(J)
@@ -10135,17 +10301,19 @@ Cav14 DATA JMAX/30/
       RETURN
 9     WRITE(3,10)  J
       STOP
-C
+!
 10    FORMAT (44H TRIO - SEGMENT CONNENTION ERROR FOR SEGMENT,I5)
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE UNERE (XOB,YOB,ZOB)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C     CALCULATES THE ELECTRIC FIELD DUE TO UNIT CURRENT IN THE T1 AND T2
-C     DIRECTIONS ON A PATCH
+! ***
+!     CALCULATES THE ELECTRIC FIELD DUE TO UNIT CURRENT IN THE T1 AND T2
+!     DIRECTIONS ON A PATCH
       COMPLEX*16 EXK,EYK,EZK,EXS,EYS,EZS,EXC,EYC,EZC,ZRATI,ZRATI2,T1
      1,ER,Q1,Q2,RRV,RRH,EDP,FRATI
       COMMON /DATAJ/ S,B,XJ,YJ,ZJ,CABJ,SABJ,SALPJ,EXK,EYK,EZK,EXS,EYS,
@@ -10155,7 +10323,7 @@ C     DIRECTIONS ON A PATCH
       EQUIVALENCE (T1XJ,CABJ), (T1YJ,SABJ), (T1ZJ,SALPJ), (T2XJ,B), (T2Y
      1J,IND1), (T2ZJ,IND2)
       DATA TPI,CONST/6.283185308D+0,4.771341188D+0/
-C     CONST=ETA/(8.*PI**2)
+!     CONST=ETA/(8.*PI**2)
       ZR=ZJ
       T1ZR=T1ZJ
       T2ZR=T2ZJ
@@ -10224,17 +10392,19 @@ C     CONST=ETA/(8.*PI**2)
       EZS=EZS*RRV
 6     RETURN
       END
+!----------------------------------------------------------------------------
+
       SUBROUTINE WIRE (XW1,YW1,ZW1,XW2,YW2,ZW2,RAD,RDEL,RRAD,NS,ITG)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
-      INCLUDE 'NEC2DPAR.INC'
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     SUBROUTINE WIRE GENERATES SEGMENT GEOMETRY DATA FOR A STRAIGHT
-C     WIRE OF NS SEGMENTS.
-C
+! ***
+!
+!     SUBROUTINE WIRE GENERATES SEGMENT GEOMETRY DATA FOR A STRAIGHT
+!     WIRE OF NS SEGMENTS.
+!
       COMMON /DATA/ X(MAXSEG),Y(MAXSEG),Z(MAXSEG),SI(MAXSEG),BI(MAXSEG),
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
@@ -10290,15 +10460,15 @@ C
       RETURN
       END
       COMPLEX*16 FUNCTION ZINT(SIGL,ROLAM)
-C ***
-C     DOUBLE PRECISION 6/4/85
-C
+! ***
+!     DOUBLE PRECISION 6/4/85
+!
       IMPLICIT REAL*8(A-H,O-Z)
-C ***
-C
-C     ZINT COMPUTES THE INTERNAL IMPEDANCE OF A CIRCULAR WIRE
-C
-C
+! ***
+!
+!     ZINT COMPUTES THE INTERNAL IMPEDANCE OF A CIRCULAR WIRE
+!
+!
       COMPLEX*16 TH,PH,F,G,FJ,CN,BR1,BR2
       COMPLEX*16 CC1,CC2,CC3,CC4,CC5,CC6,CC7,CC8,CC9,CC10,CC11,CC12
      1,CC13,CC14
@@ -10346,150 +10516,150 @@ C
       RETURN
       END
 
-Cav03 logical*4 function GetPut(what,where,message,file,volume,nt,types)
-C
-C      implicit none
-C
-C      integer NEWHANDLE
-C      parameter (NEWHANDLE = Z'122000A8')
-C      integer HLOCK
-C      parameter (HLOCK = Z'02980008')
-C      integer HUNLOCK
-C      parameter (HUNLOCK = Z'02A80008')
-C      integer NEWDIALOG
-C      parameter (NEWDIALOG = Z'97D20002')
-C      integer DISPOSHANDLE
-C      parameter (DISPOSHANDLE = Z'02380008')
-C      integer SFPUTFILE
-C      parameter (SFPUTFILE = Z'9EA16CB1')
-C      integer SFGETFILE
-C      parameter (SFGETFILE = Z'9EA20003')
-C      integer PTR
-C      parameter (PTR = Z'C0000000')
-C      integer DISPOSEDIALOG
-C      parameter (DISPOSEDIALOG = Z'98310000')
-C      integer PBSETVOL
-C      parameter (PBSETVOL = Z'01580010')
-C
-C      integer*4 what                ! 0 SFPUTFILE; 1 SFGETFILE
-C      integer*2 where(2)            ! location of box upper-left corner (y,x)
-C      character*(*) message         ! string to go over dialog box
-C      character*(*) file            ! file name
-C      integer*4 volume              ! volume number
-C      integer*4 nt                  ! number of filter types
-C      character*(*) types           ! filter types
-C
-C      integer*4 toolbx              ! toolbx interface
-C
-C      integer*4 dptr                ! dialog pointer
-C      character*64 fname
-C      logical*1 good                ! result flag
-C      integer*4 i
-C      integer*2 iovrefnum
-C      integer*4 lhdl                      ! handle of item list
-C      integer*4 lptr                      ! pointer to item list
-C      integer*4 nc                        ! number of characters in file name
-C      integer*2 posd(2)                   ! location of standard dialog
-C      integer*2 rect(4)                   ! rectangle
-C      integer*2 vrefnum
-C      integer*1 params(108)                ! partial PBGETVOL parameter block
-C      equivalence (params(23),iovrefnum)
-C      integer*1 reply(76)                 ! reply record
-C      equivalence (reply(1),good)
-C      equivalence (reply(7),vrefnum)
-C      equivalence (reply(11),fname)
-C
-Cav03  GetPut = .false.
-C      volume = 0
-C      good = .true.
-C      if (what .eq. 0) then
-C        lhdl = 0
-C        lhdl = toolbx(NEWHANDLE,72)
-C        if (lhdl .eq. 0) return
-C        call toolbx(HLOCK,lhdl)
-C        lptr = LONG(lhdl)
-C        WORD(lptr) = 1
-C        LONG(lptr + 2) = 0
-C        WORD(lptr + 6) = 0
-C        WORD(lptr + 8) = 0
-C        WORD(lptr + 10) = 32
-C        WORD(lptr + 12) = 32
-C        BYTE(lptr + 14) = 160
-C        BYTE(lptr + 15) = 2
-C        WORD(lptr + 16) = 1
-C        LONG(lptr + 18) = 0
-C        WORD(lptr + 22) = 8
-C        WORD(lptr + 24) = 40
-C        WORD(lptr + 26) = 24
-C        WORD(lptr + 28) = 304
-C        BYTE(lptr + 30) = 136
-C        BYTE(lptr + 31) = 40
-C        do (i = 1, 40)
-C          BYTE(lptr + 31 + i) = ICHAR(message(i:i))
-C        enddo
-C        call toolbx(HUNLOCK,lhdl)
-C        rect(1) = where(1)
-C        rect(2) = where(2)
-C        rect(3) = rect(1) + 32
-C        rect(4) = rect(2) + 304
-C      elseif (what .eq. 1) then
-C        lhdl = 0
-C        lhdl = toolbx(NEWHANDLE,80)
-C        if (lhdl .eq. 0) return
-C        call toolbx(HLOCK,lhdl)
-C        lptr = LONG(lhdl)
-C        WORD(lptr) = 1
-C        LONG(lptr + 2) = 0
-C        WORD(lptr + 6) = 0
-C        WORD(lptr + 8) = 0
-C        WORD(lptr + 10) = 32
-C        WORD(lptr + 12) = 32
-C        BYTE(lptr + 14) = 160
-C        BYTE(lptr + 15) = 2
-C        WORD(lptr + 16) = 1
-C        LONG(lptr + 18) = 0
-C        WORD(lptr + 22) = 8
-C        WORD(lptr + 24) = 40
-C        WORD(lptr + 26) = 24
-C        WORD(lptr + 28) = 348
-C        BYTE(lptr + 30) = 136
-C        BYTE(lptr + 31) = 48
-C        do (i = 1, 48)
-C          BYTE(lptr + 31 + i) = ICHAR(message(i:i))
-C        enddo
-C        call toolbx(HUNLOCK,lhdl)
-C        rect(1) = where(1)
-C        rect(2) = where(2)
-C        rect(3) = rect(1) + 32
-C        rect(4) = rect(2) + 348
-C      else
-C        return
-C      endif
-C      dptr = 0
-C      dptr = toolbx(NEWDIALOG,0,rect,0,.true.,1,-1,.false.,0,lhdl)
-C      if (dptr .eq. 0) then
-C        call toolbx(DISPOSHANDLE,lhdl)
-C        return
-C      endif
-C      posd(1) = where(1) + 50
-C      posd(2) = where(2)
-C      if (what .eq. 0) then
-C        call toolbx(SFPUTFILE,posd,0,0,0,reply,1)
-C      else
-C        call toolbx(SFGETFILE,posd,0,0,nt,toolbx(PTR,types),0,reply,2)
-C      endif
-C      call toolbx(DISPOSEDIALOG,dptr)                 ! Dispose of Header dialog
-C      if (good .eq. .false.) return
-C      nc = ICHAR(fname(1:1))
-C      file = fname(2:nc + 1)
-C      do (i = 1, 108)
-C        params(i) = 0
-C      enddo
-C      iovrefnum = vrefnum
-C      if (toolbx(PBSETVOL,toolbx(PTR,params)) .eq. 0) then
-C        GetPut = .true.
-C        volume = vrefnum
-C      endif
-C
-Cav03 return
-Cav03 end
+!av03 logical*4 function GetPut(what,where,message,file,volume,nt,types)
+!
+!      implicit none
+!
+!      integer NEWHANDLE
+!      parameter (NEWHANDLE = Z'122000A8')
+!      integer HLOCK
+!      parameter (HLOCK = Z'02980008')
+!      integer HUNLOCK
+!      parameter (HUNLOCK = Z'02A80008')
+!      integer NEWDIALOG
+!      parameter (NEWDIALOG = Z'97D20002')
+!      integer DISPOSHANDLE
+!      parameter (DISPOSHANDLE = Z'02380008')
+!      integer SFPUTFILE
+!      parameter (SFPUTFILE = Z'9EA16CB1')
+!      integer SFGETFILE
+!      parameter (SFGETFILE = Z'9EA20003')
+!      integer PTR
+!      parameter (PTR = Z'C0000000')
+!      integer DISPOSEDIALOG
+!      parameter (DISPOSEDIALOG = Z'98310000')
+!      integer PBSETVOL
+!      parameter (PBSETVOL = Z'01580010')
+!
+!      integer*4 what                ! 0 SFPUTFILE; 1 SFGETFILE
+!      integer*2 where(2)            ! location of box upper-left corner (y,x)
+!      character*(*) message         ! string to go over dialog box
+!      character*(*) file            ! file name
+!      integer*4 volume              ! volume number
+!      integer*4 nt                  ! number of filter types
+!      character*(*) types           ! filter types
+!
+!      integer*4 toolbx              ! toolbx interface
+!
+!      integer*4 dptr                ! dialog pointer
+!      character*64 fname
+!      logical*1 good                ! result flag
+!      integer*4 i
+!      integer*2 iovrefnum
+!      integer*4 lhdl                      ! handle of item list
+!      integer*4 lptr                      ! pointer to item list
+!      integer*4 nc                        ! number of characters in file name
+!      integer*2 posd(2)                   ! location of standard dialog
+!      integer*2 rect(4)                   ! rectangle
+!      integer*2 vrefnum
+!      integer*1 params(108)                ! partial PBGETVOL parameter block
+!      equivalence (params(23),iovrefnum)
+!      integer*1 reply(76)                 ! reply record
+!      equivalence (reply(1),good)
+!      equivalence (reply(7),vrefnum)
+!      equivalence (reply(11),fname)
+!
+!av03  GetPut = .false.
+!      volume = 0
+!      good = .true.
+!      if (what .eq. 0) then
+!        lhdl = 0
+!        lhdl = toolbx(NEWHANDLE,72)
+!        if (lhdl .eq. 0) return
+!        call toolbx(HLOCK,lhdl)
+!        lptr = LONG(lhdl)
+!        WORD(lptr) = 1
+!        LONG(lptr + 2) = 0
+!        WORD(lptr + 6) = 0
+!        WORD(lptr + 8) = 0
+!        WORD(lptr + 10) = 32
+!        WORD(lptr + 12) = 32
+!        BYTE(lptr + 14) = 160
+!        BYTE(lptr + 15) = 2
+!        WORD(lptr + 16) = 1
+!        LONG(lptr + 18) = 0
+!        WORD(lptr + 22) = 8
+!        WORD(lptr + 24) = 40
+!        WORD(lptr + 26) = 24
+!        WORD(lptr + 28) = 304
+!        BYTE(lptr + 30) = 136
+!        BYTE(lptr + 31) = 40
+!        do (i = 1, 40)
+!          BYTE(lptr + 31 + i) = ICHAR(message(i:i))
+!        enddo
+!        call toolbx(HUNLOCK,lhdl)
+!        rect(1) = where(1)
+!        rect(2) = where(2)
+!        rect(3) = rect(1) + 32
+!        rect(4) = rect(2) + 304
+!      elseif (what .eq. 1) then
+!        lhdl = 0
+!        lhdl = toolbx(NEWHANDLE,80)
+!        if (lhdl .eq. 0) return
+!        call toolbx(HLOCK,lhdl)
+!        lptr = LONG(lhdl)
+!        WORD(lptr) = 1
+!        LONG(lptr + 2) = 0
+!        WORD(lptr + 6) = 0
+!        WORD(lptr + 8) = 0
+!        WORD(lptr + 10) = 32
+!        WORD(lptr + 12) = 32
+!        BYTE(lptr + 14) = 160
+!        BYTE(lptr + 15) = 2
+!        WORD(lptr + 16) = 1
+!        LONG(lptr + 18) = 0
+!        WORD(lptr + 22) = 8
+!        WORD(lptr + 24) = 40
+!        WORD(lptr + 26) = 24
+!        WORD(lptr + 28) = 348
+!        BYTE(lptr + 30) = 136
+!        BYTE(lptr + 31) = 48
+!        do (i = 1, 48)
+!          BYTE(lptr + 31 + i) = ICHAR(message(i:i))
+!        enddo
+!        call toolbx(HUNLOCK,lhdl)
+!        rect(1) = where(1)
+!        rect(2) = where(2)
+!        rect(3) = rect(1) + 32
+!        rect(4) = rect(2) + 348
+!      else
+!        return
+!      endif
+!      dptr = 0
+!      dptr = toolbx(NEWDIALOG,0,rect,0,.true.,1,-1,.false.,0,lhdl)
+!      if (dptr .eq. 0) then
+!        call toolbx(DISPOSHANDLE,lhdl)
+!        return
+!      endif
+!      posd(1) = where(1) + 50
+!      posd(2) = where(2)
+!      if (what .eq. 0) then
+!        call toolbx(SFPUTFILE,posd,0,0,0,reply,1)
+!      else
+!        call toolbx(SFGETFILE,posd,0,0,nt,toolbx(PTR,types),0,reply,2)
+!      endif
+!      call toolbx(DISPOSEDIALOG,dptr)                 ! Dispose of Header dialog
+!      if (good .eq. .false.) return
+!      nc = ICHAR(fname(1:1))
+!      file = fname(2:nc + 1)
+!      do (i = 1, 108)
+!        params(i) = 0
+!      enddo
+!      iovrefnum = vrefnum
+!      if (toolbx(PBSETVOL,toolbx(PTR,params)) .eq. 0) then
+!        GetPut = .true.
+!        volume = vrefnum
+!      endif
+!
+!av03 return
+!av03 end

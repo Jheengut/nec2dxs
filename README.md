@@ -13,4 +13,5 @@ The initial commit is the oldest NEC2 source I could find. It's from ucsd.edu an
 
 Then I merged in the nec2dxs version from Arie Voors in the Netherlands, the author of the 4NEC2 visual NEC environment for windows. It has all his changes to av018 made on 10-oct-08.  This was still the current source as of the beginning of November 2013. Other files from him are in the 4nec2 subdirectory.
 
+After that I added a Makefile, a test nec model file, and made the changes to make it compile under the current gfortran compiler. It compiles and runs but aborts the run part way through.
 
