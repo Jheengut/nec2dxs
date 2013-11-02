@@ -13,3 +13,6 @@ test: nec2dxs
 discard:
 	git checkout -- .
 
+nocomment:
+	git commit -m "more general cleanup"
+

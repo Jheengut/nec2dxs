@@ -1,26 +1,26 @@
-!	av00	01-mar-02	First compile with Gnu77 compiler for windows
-!				(Thanks to Raymond Anderson for letting me know
-!				about this compiler and doing initial compilations)
-!	av01	14-mar-02	Var PI not used in routine GWAVE
-!	av02	14-mar-02	Sub SECOND already intrinsic function
-!	av03	15-mar-02	Multiple changes to include SOMNEC routines in nec2dx.exe
-!	av04	16-mar-02	Status='NEW', somehow seems not to replace existing file.
-!	av05	21-okt-02	Max number of loads (LOADMX) made equal to max-nr of segments.
-!	av06	21-okt-02	Max number of NT cards (NETMX) increased from 30 to 99
-!	av07	21-okt-02	Max number of EX cards (NSMAX) increased from 30 to 99
-!	av08  	22-oct-02	Use of VSRC is uncertain, in some sources equal 10 and some 
-!				equal 30 (=nr EX?). What should be new value ??? 
-!	av09	??		??
-!	av010	30-jan-03	Used DGJJ port of G77 compiler which delivers speed increase
-!				from 30 to 60% for small segment counts
-!	av011	04-sep-03	Logging of NetMX, NSMAX changed
-!	av012	29-sep-03	Enable user-specified NGF file-name.
-!	av013	29-sep-03	MinGW port used for both 11K segs and virtual memory usage.
-!	av014	09-oct-03	Max number of segs at junction/single-seg (JMAX) increased from 30 to 60
-!	av015	05-nov-04	BugFix: Use default NGF name when nothing specified.
-!	av016	09-nov-06	Official Nec2 bugfix by J.Burke, see nec-list at robomod.net
-!	av017	30-jan-08	VSRC (30) var also increase to netmx, see also av08
-!	av018	10-oct-08	av015 did not work properly in all cases.
+!    av00    01-mar-02    First compile with Gnu77 compiler for windows
+!                         (Thanks to Raymond Anderson for letting me know
+!                         about this compiler and doing initial compilations)
+!    av01    14-mar-02    Var PI not used in routine GWAVE
+!    av02    14-mar-02    Sub SECOND already intrinsic function
+!    av03    15-mar-02    Multiple changes to include SOMNEC routines in nec2dx.exe
+!    av04    16-mar-02    Status='NEW', somehow seems not to replace existing file.
+!    av05    21-okt-02    Max number of loads (LOADMX) made equal to max-nr of segments.
+!    av06    21-okt-02    Max number of NT cards (NETMX) increased from 30 to 99
+!    av07    21-okt-02    Max number of EX cards (NSMAX) increased from 30 to 99
+!    av08    22-oct-02    Use of VSRC is uncertain, in some sources equal 10 and some 
+!                         equal 30 (=nr EX?). What should be new value ??? 
+!    av09    ??           ??
+!    av010   30-jan-03    Used DGJJ port of G77 compiler which delivers speed increase
+!                         from 30 to 60% for small segment counts
+!    av011   04-sep-03    Logging of NetMX, NSMAX changed
+!    av012   29-sep-03    Enable user-specified NGF file-name.
+!    av013   29-sep-03    MinGW port used for both 11K segs and virtual memory usage.
+!    av014   09-oct-03    Max number of segs at junction/single-seg (JMAX) increased from 30 to 60
+!    av015   05-nov-04    BugFix: Use default NGF name when nothing specified.
+!    av016   09-nov-06    Official Nec2 bugfix by J.Burke, see nec-list at robomod.net
+!    av017   30-jan-08    VSRC (30) var also increase to netmx, see also av08
+!    av018   10-oct-08    av015 did not work properly in all cases.
 !
 !     History:
 !        Date      Change
@@ -49,25 +49,20 @@
 !
 !     DOUBLE PRECISION 6/4/85
 !
-      INCLUDE 'nec2dpar.inc'	! Declares MAXSEG,MAXMAT,LOADMX,NETMX and NSMAX
-					! AV05,AV06,AV07
+      INCLUDE 'nec2dpar.inc'    ! Declares MAXSEG,MAXMAT,LOADMX,NETMX and NSMAX
+                                ! AV05,AV06,AV07
 
       PARAMETER (IRESRV=MAXMAT**2)
 
       IMPLICIT REAL*8(A-H,O-Z)
       CHARACTER AIN*2,ATST*2,INFILE*80,OUTFILE*80
-	
-!***
+    
       REAL*8 HPOL,PNET
-      REAL  STARTTIME, ENDTIME, ELAPSED
-      REAL  TIM, TIM1, TIM2
+      REAL   STARTTIME, ENDTIME, ELAPSED
+      REAL   TIM, TIM1, TIM2
       REAL*8 TMP1
 
-!      CHARACTER INMSG*48,OUTMSG*40
-!      INTEGER*2 GPWNXY(2)
-!      LOGICAL*4 GetPut,LGTPT
-
-	integer*2	llneg
+      integer*2   llneg
 
       COMPLEX*16  CM,FJ,VSANT,ETH,EPH,ZRATI,CUR,CURI,ZARRAY,ZRATI2
       COMPLEX*16  EX,EY,EZ,ZPED,VQD,VQDS,T1,Y11A,Y12A,EPSC,U,U2,XX1,XX2
@@ -86,15 +81,15 @@
      -KSYMP,IFAR,IPERF
       COMMON /ZLOAD/ ZARRAY(MAXSEG),NLOAD,NLODF
       COMMON/YPARM/Y11A(5),Y12A(20),NCOUP,ICOUP,NCTAG(5),NCSEG(5)
-      COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
-     -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
+      COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),
+     -JSNO,ISCON(50),NSCON,IPCON(10),NPCON
 
       COMMON/VSORC/VQD(nsmax),VSANT(nsmax),VQDS(nsmax),IVQD(nsmax),
-     -ISANT(nsmax),IQDS(nsmax),NVQD,NSANT,NQDS			! av07
+     -ISANT(nsmax),IQDS(nsmax),NVQD,NSANT,NQDS
 
       COMMON/NETCX/ZPED,PIN,PNLS,X11R(netmx),X11I(netmx),X12R(netmx),
      -X12I(netmx),X22R(netmx),X22I(netmx),NTYP(netmx),ISEG1(netmx),
-     -ISEG2(netmx),NEQ,NPEQ,NEQ2,NONET,NTSOL,NPRINT,MASYM	! av06
+     -ISEG2(netmx),NEQ,NPEQ,NEQ2,NONET,NTSOL,NPRINT,MASYM
 
       COMMON/FPAT/THETS,PHIS,DTH,DPH,RFLD,GNOR,CLT,CHT,EPSR2,SIG2,
      -XPR6,PINR,PNLR,PLOSS,XNR,YNR,ZNR,DXNR,DYNR,DZNR,NTH,NPH,IPD,IAVP,
@@ -108,7 +103,7 @@
       DIMENSION CAB(1),SAB(1),X2(1),Y2(1),Z2(1)
 
       DIMENSION LDTYP(loadmx),LDTAG(loadmx),LDTAGF(loadmx),
-     -LDTAGT(loadmx),ZLR(loadmx),ZLI(loadmx),ZLC(loadmx)	! av05
+     -LDTAGT(loadmx),ZLR(loadmx),ZLI(loadmx),ZLC(loadmx)
 
       DIMENSION ATST(22),PNET(6),HPOL(3),IX(2*MAXSEG)
       DIMENSION FNORM(200)
@@ -125,9 +120,9 @@
       DATA PNET/6H      ,2H  ,6HSTRAIG,2HHT,6HCROSSE,1HD/
       DATA TA/1.745329252D-02/,CVEL/299.8/
 
-      DATA NORMF/200/							
+      DATA NORMF/200/
 
-	INCLUDE 'g77port.inc'	! Sets G77 port and version used to compile/link.
+      INCLUDE 'g77port.inc'    ! Sets G77 port and version used to compile/link.
 
       print *, ''
       print *, 'Numerical Electromagnetics Code, ',
@@ -144,35 +139,35 @@
      &print *, 'Maximum when using swap files      : MAXSEG=',MAXSEG
 
       print *, ''
-	print *, 
+      print *, 
      & 'Merged nec2d/som2d file created by Arie Voors. (4nec2@gmx.net)'
-	print *,'Build 2.7  30-jan-08  ',
-     & '(maxLD=',loadmx,', MaxEX=',nsmax,', MaxTL=',netmx,')'	! av011
-	print *,'Using ',G77PORT		! 'XX port for G77 version YY'
+      print *,'Build 2.7  30-jan-08  ',
+     & '(maxLD=',loadmx,', MaxEX=',nsmax,', MaxTL=',netmx,')'
+      print *,'Using ',G77PORT        ! 'XX port for G77 version YY'
       print *, ''
 
 !***VAX
 706   CONTINUE
       WRITE(*,700)
 700   FORMAT(' ENTER NAME OF INPUT FILE >',$)
-      READ(*,701,ERR=706,END=708) INFILE				! av03
+      READ(*,701,ERR=706,END=708) INFILE
 701   FORMAT(A)
       OPEN (UNIT=2,FILE=INFILE,STATUS='OLD',ERR=702)
 
 707   CONTINUE
       WRITE(*,703)
 703   FORMAT(' ENTER NAME OF OUTPUT FILE >',$)
-      READ(*,701,ERR=707,end=706) OUTFILE				! av03
+      READ(*,701,ERR=707,end=706) OUTFILE
       OPEN (UNIT=3,FILE=OUTFILE,STATUS='UNKNOWN',ERR=704)
       GO TO 705
 
-702	print *, 'Error opening input-file:',infile		! av03
+702   print *, 'Error opening input-file:',infile
       GO TO 706
 
-704	print *, 'Error opening output-file:',outfile		! av03
+704   print *, 'Error opening output-file:',outfile
       GO TO 707
 
-708	stop
+708   stop
 
 705   CONTINUE
       print *,''
@@ -255,7 +250,8 @@
       IRNGF=0
       NCOUP=0
       ICOUP=0
-	llneg = 0	! av03, Default = No freq-loop/Neg-sigma
+! Default = No freq-loop/Neg-sigma
+      llneg = 0
 
       IF(ICASX.GT.0)GO TO 14
       FMHZ=CVEL
@@ -272,28 +268,28 @@
       MPCNT=MPCNT+1
       WRITE(3,137) MPCNT,AIN,ITMP1,ITMP2,ITMP3,ITMP4,TMP1,TMP2,TMP3,
      1TMP4,TMP5,TMP6
-      IF (AIN.EQ.ATST(2)) GO TO 16	! FR
-      IF (AIN.EQ.ATST(3)) GO TO 17	! LD
-      IF (AIN.EQ.ATST(4)) GO TO 21	! GN
-      IF (AIN.EQ.ATST(5)) GO TO 24	! EX
-      IF (AIN.EQ.ATST(6)) GO TO 28	! NT
-      IF (AIN.EQ.ATST(14)) GO TO 28	! TL
-      IF (AIN.EQ.ATST(15)) GO TO 31	! PT
+      IF (AIN.EQ.ATST(2)) GO TO 16   ! FR
+      IF (AIN.EQ.ATST(3)) GO TO 17   ! LD
+      IF (AIN.EQ.ATST(4)) GO TO 21   ! GN
+      IF (AIN.EQ.ATST(5)) GO TO 24   ! EX
+      IF (AIN.EQ.ATST(6)) GO TO 28   ! NT
+      IF (AIN.EQ.ATST(14)) GO TO 28  ! TL
+      IF (AIN.EQ.ATST(15)) GO TO 31  ! PT
       IF (AIN.EQ.ATST(18)) GO TO 319 ! PQ
-      IF (AIN.EQ.ATST(7)) GO TO 37	! XQ
-      IF (AIN.EQ.ATST(8)) GO TO 32	! NE
+      IF (AIN.EQ.ATST(7)) GO TO 37   ! XQ
+      IF (AIN.EQ.ATST(8)) GO TO 32   ! NE
       IF (AIN.EQ.ATST(17)) GO TO 208 ! NH
-      IF (AIN.EQ.ATST(9)) GO TO 34	! GD
-      IF (AIN.EQ.ATST(10)) GO TO 36	! RP
+      IF (AIN.EQ.ATST(9)) GO TO 34   ! GD
+      IF (AIN.EQ.ATST(10)) GO TO 36  ! RP
       IF (AIN.EQ.ATST(16)) GO TO 305 ! KH
       IF (AIN.EQ.ATST(19)) GO TO 320 ! EK
-      IF (AIN.EQ.ATST(12)) GO TO 1	! NX
+      IF (AIN.EQ.ATST(12)) GO TO 1   ! NX
       IF (AIN.EQ.ATST(20)) GO TO 322 ! WG
       IF (AIN.EQ.ATST(21)) GO TO 304 ! CP
 !***
       IF (AIN.EQ.ATST(22)) GO TO 330 ! PL ???
 !***
-      IF (AIN.NE.ATST(13)) GO TO 15	! EN
+      IF (AIN.NE.ATST(13)) GO TO 15   ! EN
 
       CALL SECOND(ENDTIME)
       ELAPSED=ENDTIME-STARTTIME
@@ -496,7 +492,7 @@
       IPLP2=ITMP2
       IPLP3=ITMP3
       IPLP4=ITMP4
-      OPEN (UNIT=8,FILE='PLTDAT.NEC',STATUS='UNKNOWN',ERR=14) ! av04
+      OPEN (UNIT=8,FILE='PLTDAT.NEC',STATUS='UNKNOWN',ERR=14) 
 !***
       GO TO 14
 !
@@ -655,7 +651,7 @@
 43    FMHZ=FMHZ*DELFRQ
 44    FR=FMHZ/CVEL
 !***
-      WLAM=CVEL/FMHZ		! wavl=299.8/freq
+      WLAM=CVEL/FMHZ             ! wavl=299.8/freq
       WRITE(3,145)  FMHZ,WLAM
       WRITE(3,196) RKH
       IF(IEXK.EQ.1)WRITE(3,321)
@@ -693,15 +689,15 @@
 
 !     GROUND PARAMETER
 
-      WRITE(3,148)			! Antenna environment
+      WRITE(3,148)            ! Antenna environment
       IF (KSYMP.EQ.1) GO TO 49
       FRATI=(1.,0.)
       IF (IPERF.EQ.1) GO TO 48
 
-      IF (SIG.LT.0.) then		! av03, Negative sigma ?
-	   llneg = 1			! Set flag
-         SIG=-SIG/(59.96*WLAM)	! Make positive
-	endif
+      IF (SIG.LT.0.) then        ! Negative sigma ?
+       llneg = 1                 ! Set flag
+         SIG=-SIG/(59.96*WLAM)   ! Make positive
+      endif
 
       EPSC=DCMPLX(EPSR,-SIG*WLAM*59.96)
       ZRATI=1./SQRT(EPSC)
@@ -714,34 +710,34 @@
       T2=SCRWR*DFLOAT(NRADL)
       WRITE(3,170)  NRADL,SCRWLT,SCRWRT
       WRITE(3,149)
-47    IF(IPERF.EQ.2)GO TO 328		! Somnec ground ?
+47    IF(IPERF.EQ.2)GO TO 328        ! Somnec ground ?
 
-      WRITE(3,391)			! Finite ground
+      WRITE(3,391)                   ! Finite ground
       GO TO 329
 
 !******************************************************************************
-!	Include SomNec calculations
+!    Include SomNec calculations
 !******************************************************************************
 
-328	if (llneg.le.1) then		! Single or first step ?
-	   if (llneg.eq.1) llneg=2	! If negative, only once
-   	   call som2d (fmhz,epsr,sig) ! Get SomNec data, av03
-	endif
+328   if (llneg.le.1) then      ! Single or first step ?
+      if (llneg.eq.1) llneg=2   ! If negative, only once
+         call som2d (fmhz,epsr,sig) ! Get SomNec data, av03
+      endif
 
       FRATI=(EPSC-1.)/(EPSC+1.)
       IF(ABS((EPSCF-EPSC)/EPSC).LT.1.D-3)GO TO 400
 
-      WRITE(3,393) EPSCF,EPSC		! Error in ground param's
+      WRITE(3,393) EPSCF,EPSC      ! Error in ground param's
       STOP
 
-400   WRITE(3,392)			! Sommerfeld ground
-329   WRITE(3,150)  EPSR,SIG,EPSC	! Rel-diel-C, conduct, compl-diel-C
+400   WRITE(3,392)         ! Sommerfeld ground
+329   WRITE(3,150)  EPSR,SIG,EPSC   ! Rel-diel-C, conduct, compl-diel-C
       GO TO 50
 
-48    WRITE(3,151)	! Perfect ground
+48    WRITE(3,151)   ! Perfect ground
       GO TO 50
 
-49    WRITE(3,152)	! Free space
+49    WRITE(3,152)   ! Free space
 50    CONTINUE
 ! * * *
 !     FILL AND FACTOR PRIMARY INTERACTION MATRIX
@@ -1162,12 +1158,12 @@
       CHARACTER*3  LCOMP(4)
       DATA LCOMP/'ERV','EZV','ERH','EPH'/
 !
-	epr = repr		! av03
-	sig = rsig		! av03
-	fmhz = rmhz		! av03
-	ipt=0			! No printing, av03
+      epr = repr
+      sig = rsig
+      fmhz = rmhz
+      ipt=0            ! No printing
 
-!deb	write (*,100) fmhz,epr,sig
+!deb  write (*,100) fmhz,epr,sig
 !deb  100 format (' Som2d: Freq=',d10.5,' Diel=',d10.5,' Cond=',d10.5)
 
 !***
@@ -1271,11 +1267,11 @@
 !
 !     WRITE GRID ON TAPE21
 !
-      IF (IPT.EQ.0) RETURN						! av03
+      IF (IPT.EQ.0) RETURN
 !
 !     PRINT GRID
 !
-      OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='UNKNOWN',ERR=14)! av04
+      OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='UNKNOWN',ERR=14)
       WRITE(3,17) EPSCF
       DO 13 K=1,3
       NR=NXA(K)
@@ -1291,7 +1287,7 @@
       GO TO 13
 12    WRITE(9,20) IR,(AR3(IR,ITH,L),ITH=1,NTH)
 13    CONTINUE
-14    return								! av03
+14    return
 !
 16    FORMAT (6H TIME=,1PE12.5)
 17    FORMAT (30H1NEC GROUND INTERPOLATION GRID,/,21H DIELECTRIC CONSTAN
@@ -1992,11 +1988,11 @@
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
       COMMON /CRNT/ AIR(MAXSEG),AII(MAXSEG),BIR(MAXSEG),BII(MAXSEG),
      &CIR(MAXSEG),CII(MAXSEG),CUR(3*MAXSEG)
-      COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
-     -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
+      COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),
+     -JSNO,ISCON(50),NSCON,IPCON(10),NPCON
 
       COMMON /VSORC/ VQD(nsmax),VSANT(nsmax),VQDS(nsmax),IVQD(nsmax),
-     &ISANT(nsmax),IQDS(nsmax),NVQD,NSANT,NQDS			! av07
+     &ISANT(nsmax),IQDS(nsmax),NVQD,NSANT,NQDS
 
       COMMON /ANGL/ SALP(MAXSEG)
       DIMENSION T1X(1), T1Y(1), T1Z(1), T2X(1), T2Y(1), T2Z(1)
@@ -2091,8 +2087,8 @@
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
       COMMON /ZLOAD/ ZARRAY(MAXSEG),NLOAD,NLODF
-      COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
-     -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
+      COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),
+     -JSNO,ISCON(50),NSCON,IPCON(10),NPCON
 
       COMMON /DATAJ/ S,B,XJ,YJ,ZJ,CABJ,SABJ,SALPJ,EXK,EYK,EZK,EXS,EYS,
      &EZS,EXC,EYC,EZC,RKH,IND1,INDD1,IND2,INDD2,IEXK,IPGND
@@ -2372,8 +2368,8 @@
       COMMON /SCRATM/ D(2*MAXSEG)
       COMMON /ZLOAD/ ZARRAY(MAXSEG),NLOAD,NLODF
 
-      COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
-     -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
+      COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),
+     -JSNO,ISCON(50),NSCON,IPCON(10),NPCON
 
       COMMON /DATAJ/ S,B,XJ,YJ,ZJ,CABJ,SABJ,SALPJ,EXK,EYK,EZK,EXS,EYS,
      &EZS,EXC,EYC,EZC,RKH,IND1,INDD1,IND2,INDD2,IEXK,IPGND
@@ -2574,8 +2570,8 @@
       COMMON /DATAJ/ S,B,XJ,YJ,ZJ,CABJ,SABJ,SALPJ,EXK,EYK,EZK,EXS,EYS,
      &EZS,EXC,EYC,EZC,RKH,IND1,INDD1,IND2,INDD2,IEXK,IPGND
 
-      COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
-     -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
+      COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),
+     -JSNO,ISCON(50),NSCON,IPCON(10),NPCON
 
       DIMENSION CAB(1), SAB(1), CM(NROW,1), CW(NROW,1)
       DIMENSION T1X(1), T1Y(1), T1Z(1), T2X(1), T2Y(1), T2Z(1), EMEL(9)
@@ -2721,8 +2717,8 @@
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
       COMMON /ANGL/ SALP(MAXSEG)
 
-      COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
-     -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
+      COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),
+     -JSNO,ISCON(50),NSCON,IPCON(10),NPCON
 
       COMMON /DATAJ/ S,B,XJ,YJ,ZJ,CABJ,SABJ,SALPJ,EXK,EYK,EZK,EXS,EYS,
      &EZS,EXC,EYC,EZC,RKH,IND1,INDD1,IND2,INDD2,IEXK,IPGND
@@ -2811,8 +2807,8 @@
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
       COMMON /ANGL/ SALP(MAXSEG)
 
-      COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
-     -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
+      COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),
+     -JSNO,ISCON(50),NSCON,IPCON(10),NPCON
 
       COMMON /DATAJ/ S,B,XJ,YJ,ZJ,CABJ,SABJ,SALPJ,EXK,EYK,EZK,EXS,EYS,
      &EZS,EXC,EYC,EZC,RKH,IND1,INDD1,IND2,INDD2,IEXK,IPGND
@@ -2937,8 +2933,8 @@
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
 
-      COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
-     -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
+      COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),
+     -JSNO,ISCON(50),NSCON,IPCON(10),NPCON
 
       DIMENSION X2(1), Y2(1), Z2(1)
       EQUIVALENCE (X2,SI), (Y2,ALP), (Z2,BET)
@@ -3241,7 +3237,7 @@
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-      INCLUDE 'nec2dpar.inc'					! av07
+      INCLUDE 'nec2dpar.inc'
       IMPLICIT REAL*8(A-H,O-Z)
 ! ***
 !
@@ -3252,7 +3248,7 @@
       COMMON/YPARM/Y11A(5),Y12A(20),NCOUP,ICOUP,NCTAG(5),NCSEG(5)
 
       COMMON /VSORC/ VQD(nsmax),VSANT(nsmax),VQDS(nsmax),IVQD(nsmax),
-     &ISANT(nsmax),IQDS(nsmax),NVQD,NSANT,NQDS			! av07
+     &ISANT(nsmax),IQDS(nsmax),NVQD,NSANT,NQDS
 
       DIMENSION CUR(1)
       IF (NSANT.NE.1.OR.NVQD.NE.0) RETURN
@@ -4053,7 +4049,7 @@
       COMMON /ANGL/ SALP(MAXSEG)
 
       COMMON /VSORC/ VQD(nsmax),VSANT(nsmax),VQDS(nsmax),IVQD(nsmax),
-     &ISANT(nsmax),IQDS(nsmax),NVQD,NSANT,NQDS			! av07
+     &ISANT(nsmax),IQDS(nsmax),NVQD,NSANT,NQDS
 
       COMMON /GND/ZRATI,ZRATI2,FRATI,T1,T2,CL,CH,SCRWL,SCRWR,NRADL,
      &KSYMP,IFAR,IPERF
@@ -5151,8 +5147,8 @@
       COMMON/SAVE/EPSR,SIG,SCRWLT,SCRWRT,FMHZ,IP(2*MAXSEG),KCOM
       COMMON/CSAVE/COM(19,5)
 
-	character ngfnam*80		! av12
-	common /ngfnam/ ngfnam		! av12
+      character ngfnam*80
+      common /ngfnam/ ngfnam
 !
 !*** ERROR CORRECTED 11/20/89 *******************************
       DIMENSION T2X(1),T2Y(1),T2Z(1)
@@ -5160,12 +5156,12 @@
 !***
       DATA IGFL/20/
 
-	OPEN(UNIT=IGFL,FILE=NGFNAM,FORM='UNFORMATTED',STATUS='OLD',ERR=30)! av12
-	goto 31										! av12
+      OPEN(UNIT=IGFL,FILE=NGFNAM,FORM='UNFORMATTED',STATUS='OLD',ERR=30)
+      goto 31
 
-30	write (3, '(2A)') 'ERROR opening NGF-file : ',ngfnam			! av12
-	stop											! av12
-	
+30    write (3, '(2A)') 'ERROR opening NGF-file : ',ngfnam
+      stop
+
 31    REWIND IGFL
       READ (IGFL) N1,NP,M1,MP,WLAM,FMHZ,IPSYM,KSYMP,IPERF,NRADL,EPSR,SIG
      1,SCRWLT,SCRWRT,NLODF,KCOM
@@ -5481,8 +5477,8 @@
       COMMON/SAVE/EPSR,SIG,SCRWLT,SCRWRT,FMHZ,IP(2*MAXSEG),KCOM
       COMMON/CSAVE/COM(19,5)
 
-	character ngfnam*80		! av12
-	common /ngfnam/ ngfnam		! av12
+      character ngfnam*80
+      common /ngfnam/ ngfnam
 !
 !*** ERROR CORRECTED 11/20/89 *******************************
       DIMENSION T2X(1),T2Y(1),T2Z(1)
@@ -5490,8 +5486,7 @@
 !***
       DATA IGFL/20/
 
-      OPEN(UNIT=IGFL,FILE=NGFNAM,
-     &FORM='UNFORMATTED',STATUS='UNKNOWN')	! av12
+      OPEN(UNIT=IGFL,FILE=NGFNAM,FORM='UNFORMATTED',STATUS='UNKNOWN')
 
       NEQ=N+2*M
       NPEQ=NP+2*MP
@@ -5561,8 +5556,8 @@
       WRITE(3,13)  IGFL,IMAT
       RETURN
 !
-13    FORMAT (///,44H ****NUMERICAL GREEN'S FUNCTION FILE ON TAPE,I3,5H
-     1****,/,5X,16HMATRIX STORAGE -,I7,16H COMPLEX NUMBERS,///)
+13    FORMAT (///," ****NUMERICAL GREEN'S FUNCTION FILE ON TAPE",I3,
+     -" ****",/,5X,"MATRIX STORAGE -",I7," COMPLEX NUMBERS",///)
       END
 !----------------------------------------------------------------------------
 
@@ -5606,7 +5601,7 @@
       COMMON /GWAV/ U,U2,XX1,XX2,R1,R2,ZMH,ZPH
       DIMENSION FJX(2), TPJX(2), ECONX(2)
       EQUIVALENCE (FJ,FJX), (TPJ,TPJX), (ECON,ECONX)
-	DATA FJX/0.,1./,TPJX/0.,6.283185308D+0/
+      DATA FJX/0.,1./,TPJX/0.,6.283185308D+0/
       DATA ECONX/0.,-188.367/
       SPPP=ZMH/R1
       SPPP2=SPPP*SPPP
@@ -7141,20 +7136,20 @@
      &CIR(MAXSEG),CII(MAXSEG),CUR(3*MAXSEG)
 
       COMMON /VSORC/ VQD(nsmax),VSANT(nsmax),VQDS(nsmax),IVQD(nsmax),
-     &ISANT(nsmax),IQDS(nsmax),NVQD,NSANT,NQDS			! av07
+     &ISANT(nsmax),IQDS(nsmax),NVQD,NSANT,NQDS
 
       COMMON/NETCX/ZPED,PIN,PNLS,X11R(netmx),X11I(netmx),X12R(netmx),
      &X12I(netmx),X22R(netmx),X22I(netmx),NTYP(netmx),ISEG1(netmx),
-     &ISEG2(netmx),NEQ,NPEQ,NEQ2,NONET,NTSOL,NPRINT,MASYM	! av06
+     &ISEG2(netmx),NEQ,NPEQ,NEQ2,NONET,NTSOL,NPRINT,MASYM
 
       DIMENSION EINC(1), IP(1),CM(1),CMB(1),CMC(1),CMD(1)
 
       DIMENSION CMN(netmx,netmx), RHNT(netmx), IPNT(netmx), 
      &NTEQA(netmx), NTSCA(netmx), RHS(3*MAXSEG), VSRC(netmx), 
-     &RHNX(netmx)								! av017
+     &RHNX(netmx)
 
-!hwh  DATA NDIMN,NDIMNP/netmx,netmx+1/,TP/6.283185308D+0/	! av06
-      DATA NDIMN,NDIMNP/netmx,netmxp1/,TP/6.283185308D+0/	! av06 hwh
+!hwh  DATA NDIMN,NDIMNP/netmx,netmx+1/,TP/6.283185308D+0/
+      DATA NDIMN,NDIMNP/netmx,netmxp1/,TP/6.283185308D+0/ ! hwh
 
       NEQZ2=NEQ2
       IF(NEQZ2.EQ.0)NEQZ2=1
@@ -8024,10 +8019,10 @@
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
 
       COMMON /VSORC/ VQD(nsmax),VSANT(nsmax),VQDS(nsmax),IVQD(nsmax),
-     &ISANT(nsmax),IQDS(nsmax),NVQD,NSANT,NQDS			! av07
+     &ISANT(nsmax),IQDS(nsmax),NVQD,NSANT,NQDS
 
-      COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
-     -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
+      COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),
+     -JSNO,ISCON(50),NSCON,IPCON(10),NPCON
 
       COMMON /DATAJ/ S,B,XJ,YJ,ZJ,CABJ,SABJ,SALPJ,EXK,EYK,EZK,EXS,EYS,
      &EZS,EXC,EYC,EZC,RKH,IND1,INDD1,IND2,INDD2,IEXK,IPGND
@@ -8063,7 +8058,7 @@
       IF (IEXK.EQ.0) GO TO 16
 
       IPR=ICON1(J)
-      IF(IPR.GT.10000)GO TO 7     !<---NEW, av016
+      IF(IPR.GT.10000)GO TO 7
       IF (IPR) 1,6,2
 
 1     IPR=-IPR
@@ -8083,7 +8078,7 @@
 7     IND1=2
 
 8     IPR=ICON2(J)
-      IF(IPR.GT.10000)GO TO 15      !<---NEW, av016
+      IF(IPR.GT.10000)GO TO 15
       IF (IPR) 9,14,10
 
 9     IPR=-IPR
@@ -8520,9 +8515,9 @@
 
       IMPLICIT REAL*8(A-H,O-Z)
 
-!  *****  Global variables		! av12
-	character*80 ngfnam		! av12
-	common /ngfnam/ ngfnam		! av12
+!  *****  Global variables
+      character*80 ngfnam
+      common /ngfnam/ ngfnam
 
       CHARACTER  CMND*2, BUFFER*20, REC*80
       INTEGER    INTFLD(MAXINT)
@@ -8563,14 +8558,14 @@
 !       GW 1 7 0 0 0 0 0 .5 .0001 ! DIPOLE WIRE
 !       GE ! END OF GEOMETRY
 !
-      IF (K .EQ. 33) THEN					! .eq. '!'
+      IF (K .EQ. 33) THEN                    ! .eq. '!'
          IF (FLDTRM) ENDFLD(TOTFLD)= J - 1
          GO TO 5000
 !
 !  Set the ending index when the character is a comma or space and the pointer
 !  is in a field position (FLDTRM = .TRUE.).
 !
-          ELSE IF (K .EQ. 32  .OR.  K .EQ. 44) THEN	! space or comma ?
+          ELSE IF (K .EQ. 32  .OR.  K .EQ. 44) THEN    ! space or comma ?
              IF (FLDTRM) THEN
                 ENDFLD(TOTFLD)= J - 1
                 FLDTRM= .FALSE.
@@ -8590,10 +8585,10 @@
 !  Check to see if the total number of value fields is within the precribed
 !  limits.
 
- 5000	if ((cmnd.eq.'WG').or.(cmnd.eq.'GF')) then	! Init default NGFNAM
-	   ngfnam='NGF2D.NEC' 				! av15
-        endif
-	IF (TOTFLD .EQ. 0) THEN
+ 5000  if ((cmnd.eq.'WG').or.(cmnd.eq.'GF')) then  ! Init default NGFNAM
+         ngfnam='NGF2D.NEC'
+       endif
+       IF (TOTFLD .EQ. 0) THEN
              RETURN
         ELSE IF (TOTFLD .GT. LAST) THEN
              WRITE(3, 8001 )
@@ -8607,11 +8602,11 @@
              LENGTH= ENDFLD(I) - BGNFLD(I) + 1
              BUFFER= REC(BGNFLD(I):ENDFLD(I))
 
-	if (((cmnd.eq.'WG').or.(cmnd.eq.'GF')).and.
-     &  (buffer(1:1).ne.'0') .and. (buffer(1:1).ne.'1')) then	! Text field, av12
-	   ngfnam = rec(bgnfld(i):endfld(i))			! av12
-	   return								! av12
-	endif									! av12
+       if (((cmnd.eq.'WG').or.(cmnd.eq.'GF')).and.
+     &  (buffer(1:1).ne.'0') .and. (buffer(1:1).ne.'1')) then       ! Text field
+          ngfnam = rec(bgnfld(i):endfld(i))
+       return
+       endif
 
              IND= INDEX( BUFFER(1:LENGTH), '.' )
              IF (IND .GT. 0  .AND.  IND .LT. LENGTH) GO TO 9000
@@ -9323,8 +9318,8 @@
       COMPLEX*16 A,B,C,D,SUM,XY,Y
       COMMON /SCRATM/ Y(2*MAXSEG)
 
-      COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
-     -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
+      COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),
+     -JSNO,ISCON(50),NSCON,IPCON(10),NPCON
 
       COMMON /MATPAR/ ICASE,NBLOKS,NPBLK,NLAST,NBLSYM,NPSYM,NLSYM,IMAT,I
      1CASX,NBBX,NPBX,NLBX,NBBL,NPBL,NLBL
@@ -9622,8 +9617,8 @@
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
 
-      COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
-     -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
+      COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),
+     -JSNO,ISCON(50),NSCON,IPCON(10),NPCON
 
       DATA PI/3.141592654D+0/
 
@@ -9793,8 +9788,8 @@
      &ALP(MAXSEG),BET(MAXSEG),WLAM,ICON1(2*MAXSEG),ICON2(2*MAXSEG),
      &ITAG(2*MAXSEG),ICONX(MAXSEG),LD,N1,N2,N,NP,M1,M2,M,MP,IPSYM
 
-      COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),	! av14
-     -JSNO,ISCON(50),NSCON,IPCON(10),NPCON			! av14
+      COMMON /SEGJ/ AX(jmax),BX(jmax),CX(jmax),JCO(jmax),
+     -JSNO,ISCON(50),NSCON,IPCON(10),NPCON
 
       JSNO=0
       JCOX=ICON1(J)
