@@ -1,3 +1,22 @@
+module nec2dpar
+    integer, parameter:: b8 = selected_real_kind(14)
+
+    real(b8), parameter :: pi = 3.141592654_b8
+    !real(b8), parameter :: pi = 3.141592653589793239_b8
+
+    integer, parameter      :: maxseg=500       ! Max number of segments     (Windows-95 <= 4950)
+    integer, parameter      :: maxmat=500       ! max nr of 'in-core' alloc.    (MAXMAT <= MAXSEG)
+
+    integer, parameter      :: loadmx=maxseg/10 ! Max number of LD cards
+    integer, parameter      :: nsmax=64         ! Max number of EX cards
+    integer, parameter      :: netmx=64         ! Max number of segs connected to NT/TL 
+    ! FIXME fix where this is used right - hwh
+    integer, parameter      :: netmxp1=65       ! Max number of segs connected to NT/TL 
+
+    integer, parameter      :: jmax=60          ! Max segments connected to a single segment or junction
+
+end module
+
 !    av00    01-mar-02    First compile with Gnu77 compiler for windows
 
 ! Code converted using TO_F90 by Alan Miller
@@ -3940,29 +3959,44 @@ STOP
 61    FORMAT (9X,'ABOVE wire is tapered.  seg. length ratio =',f9.5,/, &
     33X,'RADIUS from',f9.5,' TO',f9.5)
 END SUBROUTINE datagn
+!---------------------------------------------------------------------------
 
-FUNCTION db10 (x)
-! ***
-!     DOUBLE PRECISION 6/4/85
-!
-IMPLICIT REAL*8(a-h,o-z)
-
-
-REAL*8, INTENT(IN OUT)                     :: x
-! ***
-!
+! FIXME fix comment
 !     FUNCTION DB-- RETURNS DB FOR MAGNITUDE (FIELD) OR MAG**2 (POWER) I
 !
-f=10.
-GO TO 1
-ENTRY db20(x)
-f=20.
-1     IF (x < 1.d-20) GO TO 2
-db10=f*LOG10(x)
-RETURN
-2     db10=-999.99
-RETURN
+REAL*8 FUNCTION db10 (x)
+    IMPLICIT NONE
+
+    REAL*8, INTENT(IN)               :: x
+
+    REAL*8, PARAMETER                :: f = 10.0
+
+    IF (x < 1.d-20) THEN
+        db10=-999.99
+    ELSE
+        db10=f*LOG10(x)
+    END IF
+    RETURN
 END FUNCTION db10
+!---------------------------------------------------------------------------
+
+! FIXME fix comment
+!     FUNCTION DB-- RETURNS DB FOR MAGNITUDE (FIELD) OR MAG**2 (POWER) I
+!
+REAL*8 FUNCTION db20 (x)
+    IMPLICIT NONE
+
+    REAL*8, INTENT(IN)               :: x
+
+    REAL*8, PARAMETER                :: f = 20.0
+
+    IF (x < 1.d-20) THEN
+        db20=-999.99
+    ELSE
+        db20=f*LOG10(x)
+    END IF
+    RETURN
+END FUNCTION db20
 !----------------------------------------------------------------------------
 
 SUBROUTINE efld (xi,yi,zi,ai,ij)
@@ -7374,91 +7408,91 @@ SUBROUTINE ltsolv (a,nrow,ix,b,neq,nrh,ifl1,ifl2)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
-IMPLICIT REAL*8(a-h,o-z)
+    INCLUDE 'nec2dpar.inc'
+    IMPLICIT REAL*8(a-h,o-z)
 
-COMPLEX*16, INTENT(IN)                   :: a(nrow,nrow)
-INTEGER, INTENT(IN)                      :: nrow
-INTEGER, INTENT(IN)                      :: ix(neq)
-COMPLEX*16, INTENT(IN OUT)               :: b(neq,nrh)
-INTEGER, INTENT(IN OUT)                  :: neq
-INTEGER, INTENT(IN)                      :: nrh
-INTEGER, INTENT(IN OUT)                  :: ifl1
-INTEGER, INTENT(IN OUT)                  :: ifl2
-! ***
-!
-!     LTSOLV SOLVES THE MATRIX EQ. Y(R)*LU(T)=B(R) WHERE (R) DENOTES ROW
-!     VECTOR AND LU(T) DENOTES THE LU DECOMPOSITION OF THE TRANSPOSE OF
-!     THE ORIGINAL COEFFICIENT MATRIX.  THE LU(T) DECOMPOSITION IS
-!     STORED ON TAPE 5 IN BLOCKS IN ASCENDING ORDER AND ON FILE 3 IN
-!     BLOCKS OF DESCENDING ORDER.
-!
-COMPLEX*16  y,sum
-COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat, &
-    icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
-COMMON /scratm/ y(2*maxseg)
+    COMPLEX*16, INTENT(IN OUT)               :: a(nrow,nrow)
+    INTEGER, INTENT(IN)                      :: nrow
+    INTEGER, INTENT(IN)                      :: ix(neq)
+    COMPLEX*16, INTENT(IN OUT)               :: b(neq,nrh)
+    INTEGER, INTENT(IN)                      :: neq
+    INTEGER, INTENT(IN)                      :: nrh
+    INTEGER, INTENT(IN)                      :: ifl1
+    INTEGER, INTENT(IN)                      :: ifl2
+    ! ***
+    !
+    !     LTSOLV SOLVES THE MATRIX EQ. Y(R)*LU(T)=B(R) WHERE (R) DENOTES ROW
+    !     VECTOR AND LU(T) DENOTES THE LU DECOMPOSITION OF THE TRANSPOSE OF
+    !     THE ORIGINAL COEFFICIENT MATRIX.  THE LU(T) DECOMPOSITION IS
+    !     STORED ON TAPE 5 IN BLOCKS IN ASCENDING ORDER AND ON FILE 3 IN
+    !     BLOCKS OF DESCENDING ORDER.
+    !
+    COMPLEX*16  y,sum
+    COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat, &
+        icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
+    COMMON /scratm/ y(2*maxseg)
 
-!
-!     FORWARD SUBSTITUTION
-!
-i2=2*npsym*nrow
-DO  ixblk1=1,nblsym
-  CALL blckin (a,ifl1,1,i2,1,121)
-  k2=npsym
-  IF (ixblk1 == nblsym) k2=nlsym
-  jst=(ixblk1-1)*npsym
-  DO  ic=1,nrh
-    j=jst
-    DO  k=1,k2
-      jm1=j
-      j=j+1
-      sum=(0.,0.)
-      IF (jm1 < 1) GO TO 2
-      DO  i=1,jm1
-        sum=sum+a(i,k)*b(i,ic)
+    !
+    !     FORWARD SUBSTITUTION
+    !
+    i2=2*npsym*nrow
+    DO  ixblk1=1,nblsym
+      CALL blckin (a,ifl1,1,i2,1,121)
+      k2=npsym
+      IF (ixblk1 == nblsym) k2=nlsym
+      jst=(ixblk1-1)*npsym
+      DO  ic=1,nrh
+        j=jst
+        DO  k=1,k2
+          jm1=j
+          j=j+1
+          sum=(0.,0.)
+          IF (jm1 < 1) GO TO 2
+          DO  i=1,jm1
+            sum=sum+a(i,k)*b(i,ic)
+          END DO
+          2     b(j,ic)=(b(j,ic)-sum)/a(j,k)
+        END DO
       END DO
-      2     b(j,ic)=(b(j,ic)-sum)/a(j,k)
     END DO
-  END DO
-END DO
-!
-!     BACKWARD SUBSTITUTION
-!
-jst=nrow+1
-DO  ixblk1=1,nblsym
-  CALL blckin (a,ifl2,1,i2,1,122)
-  k2=npsym
-  IF (ixblk1 == 1) k2=nlsym
-  DO  ic=1,nrh
-    kp=k2+1
-    j=jst
-    DO  k=1,k2
-      kp=kp-1
-      jp1=j
-      j=j-1
-      sum=(0.,0.)
-      IF (nrow < jp1) CYCLE
-      DO  i=jp1,nrow
-        sum=sum+a(i,kp)*b(i,ic)
+    !
+    !     BACKWARD SUBSTITUTION
+    !
+    jst=nrow+1
+    DO  ixblk1=1,nblsym
+      CALL blckin (a,ifl2,1,i2,1,122)
+      k2=npsym
+      IF (ixblk1 == 1) k2=nlsym
+      DO  ic=1,nrh
+        kp=k2+1
+        j=jst
+        DO  k=1,k2
+          kp=kp-1
+          jp1=j
+          j=j-1
+          sum=(0.,0.)
+          IF (nrow < jp1) CYCLE
+          DO  i=jp1,nrow
+            sum=sum+a(i,kp)*b(i,ic)
+          END DO
+          b(j,ic)=b(j,ic)-sum
+        END DO
       END DO
-      b(j,ic)=b(j,ic)-sum
+      jst=jst-k2
     END DO
-  END DO
-  jst=jst-k2
-END DO
-!
-!     UNSCRAMBLE SOLUTION
-!
-DO  ic=1,nrh
-  DO  i=1,nrow
-    ixi=ix(i)
-    y(ixi)=b(i,ic)
-  END DO
-  DO  i=1,nrow
-    b(i,ic)=y(i)
-  END DO
-END DO
-RETURN
+    !
+    !     UNSCRAMBLE SOLUTION
+    !
+    DO  ic=1,nrh
+      DO  i=1,nrow
+        ixi=ix(i)
+        y(ixi)=b(i,ic)
+      END DO
+      DO  i=1,nrow
+        b(i,ic)=y(i)
+      END DO
+    END DO
+    RETURN
 END SUBROUTINE ltsolv
 !----------------------------------------------------------------------------
 
@@ -7877,9 +7911,9 @@ DO  i=1,nonet
     DO  j=1,irow1
       IF (nseg1 == ipnt(j)) GO TO 3
     END DO
-    2     irow1=irow1+1
+2   irow1=irow1+1
     ipnt(irow1)=nseg1
-    nseg1=iseg2(i)
+3   nseg1=iseg2(i)
   END DO loop3
 END DO
 5     IF (nsant == 0) GO TO 9
@@ -8943,8 +8977,21 @@ PARAMETER(normax=4*maxseg)
 IMPLICIT REAL*8(a-h,o-z)
 ! ***
 !     COMPUTE RADIATION PATTERN, GAIN, NORMALIZED GAIN
-REAL*8 igntp,igax,igtp,hcir,hblk,hpol,hclif,isens
-!     INTEGER HPOL,HBLK,HCIR,HCLIF
+
+CHARACTER (LEN=6), DIMENSION(4), PARAMETER    :: igtp  = (/'    - ','POWER ','- DIRE','CTIVE '/)
+CHARACTER (LEN=6), DIMENSION(3), PARAMETER    :: hpol  = (/'LINEAR','RIGHT ','LEFT  '/)
+CHARACTER (LEN=1), PARAMETER                  :: hblk  = ' '
+CHARACTER (LEN=6), PARAMETER                  :: hcir  = 'CIRCLE'
+CHARACTER (LEN=6), DIMENSION(4), PARAMETER    :: igax  = (/' MAJOR',' MINOR',' VERT.',' HOR. '/)
+CHARACTER (LEN=6), DIMENSION(10), PARAMETER   :: igntp = (/' MAJOR',' AXIS ',' MINOR',' AXIS ', &
+    '   VER','TICAL ', ' HORIZ','ONTAL ','      ','TOTAL '/)
+CHARACTER (LEN=6)                             :: hclif
+CHARACTER (LEN=6)                             :: isens
+
+REAL*8                                        ::  pi = 3.141592654D+0
+REAL*8                                        ::  ta = 1.745329252D-02
+REAL*8                                        ::  td = 57.29577951D+0
+
 COMPLEX*16 eth,eph,erd,zrati,zrati2,t1,frati
 COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
     alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
@@ -8958,13 +9005,6 @@ COMMON /scratm/ gain(normax)
 !***
 COMMON /plot/ iplp1,iplp2,iplp3,iplp4
 !***
-DIMENSION igtp(4), igax(4), igntp(10), hpol(3)
-DATA hpol/'LINEAR','RIGHT','LEFT'/,hblk,hcir/' ','CIRCLE'/
-DATA igtp/'    - ','POWER ','- DIRE','CTIVE '/
-DATA igax/' MAJOR',' MINOR',' VERT.',' HOR. '/
-DATA igntp/' MAJOR',' AXIS ',' MINOR',' AXIS ','   VER','TICAL ', &
-    ' HORIZ','ONTAL ','      ','TOTAL '/
-DATA pi,ta,td/3.141592654D+0,1.745329252D-02,57.29577951D+0/
 
 IF (ifar < 2) GO TO 2
 WRITE(3,35)
@@ -9514,9 +9554,9 @@ SUBROUTINE reblk (b,bx,nb,nbx,n2c)
 
     COMPLEX*16, INTENT(OUT)                  :: b(nb,1)
     COMPLEX*16, INTENT(IN OUT)               :: bx(nbx,1)
-    INTEGER, INTENT(IN OUT)                  :: nb
-    INTEGER, INTENT(IN OUT)                  :: nbx
-    INTEGER, INTENT(IN OUT)                  :: n2c
+    INTEGER, INTENT(IN)                      :: nb
+    INTEGER, INTENT(IN)                      :: nbx
+    INTEGER, INTENT(IN)                      :: n2c
     ! ***
     !     REBLOCK ARRAY B IN N.G.F. SOLUTION FROM BLOCKS OF ROWS ON TAPE14
     !     TO BLOCKS OF COLUMNS ON TAPE16
@@ -10210,8 +10250,8 @@ INCLUDE 'nec2dpar.inc'
 IMPLICIT REAL*8(a-h,o-z)
 
 COMPLEX*16, INTENT(IN OUT)               :: a(1)
-COMPLEX*16, INTENT(IN)                   :: b(n1c,1)
-COMPLEX*16, INTENT(IN)                   :: c(n1c,1)
+COMPLEX*16, INTENT(IN OUT)               :: b(n1c,1)
+COMPLEX*16, INTENT(IN OUT)               :: c(n1c,1)
 COMPLEX*16, INTENT(IN OUT)               :: d(n2cz,1)
 COMPLEX*16, INTENT(IN OUT)               :: xy(1)
 INTEGER, INTENT(IN OUT)                  :: ip(1)
@@ -10362,54 +10402,54 @@ SUBROUTINE solve (n,a,ip,b,ndim)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
-IMPLICIT REAL*8(a-h,o-z)
+    INCLUDE 'nec2dpar.inc'
+    IMPLICIT REAL*8(a-h,o-z)
 
-INTEGER, INTENT(IN)                      :: n
-COMPLEX*16, INTENT(IN)                   :: a(ndim,ndim)
-INTEGER, INTENT(IN)                      :: ip(ndim)
-COMPLEX*16, INTENT(IN OUT)               :: b(ndim)
-INTEGER, INTENT(IN OUT)                  :: ndim
-! ***
-!
-!     SUBROUTINE TO SOLVE THE MATRIX EQUATION LU*X=B WHERE L IS A UNIT
-!     LOWER TRIANGULAR MATRIX AND U IS AN UPPER TRIANGULAR MATRIX BOTH
-!     OF WHICH ARE STORED IN A.  THE RHS VECTOR B IS INPUT AND THE
-!     SOLUTION IS RETURNED THROUGH VECTOR B.
-!
-COMPLEX*16  y,sum
-INTEGER :: pi
-COMMON /scratm/ y(2*maxseg)
+    INTEGER, INTENT(IN)                      :: n
+    COMPLEX*16, INTENT(IN)                   :: a(ndim,ndim)
+    INTEGER, INTENT(IN)                      :: ip(ndim)
+    COMPLEX*16, INTENT(IN OUT)               :: b(ndim)
+    INTEGER, INTENT(IN)                      :: ndim
+    ! ***
+    !
+    !     SUBROUTINE TO SOLVE THE MATRIX EQUATION LU*X=B WHERE L IS A UNIT
+    !     LOWER TRIANGULAR MATRIX AND U IS AN UPPER TRIANGULAR MATRIX BOTH
+    !     OF WHICH ARE STORED IN A.  THE RHS VECTOR B IS INPUT AND THE
+    !     SOLUTION IS RETURNED THROUGH VECTOR B.
+    !
+    COMPLEX*16  y,sum
+    INTEGER :: pi
+    COMMON /scratm/ y(2*maxseg)
 
-!
-!     FORWARD SUBSTITUTION
-!
-DO  i=1,n
-  pi=ip(i)
-  y(i)=b(pi)
-  b(pi)=b(i)
-  ip1=i+1
-  IF (ip1 > n) GO TO 2
-  DO  j=ip1,n
-    b(j)=b(j)-a(j,i)*y(i)
-  END DO
-  2     CONTINUE
-END DO
-!
-!     BACKWARD SUBSTITUTION
-!
-DO  k=1,n
-  i=n-k+1
-  sum=(0.,0.)
-  ip1=i+1
-  IF (ip1 > n) GO TO 5
-  DO  j=ip1,n
-    sum=sum+a(i,j)*b(j)
-  END DO
-  5     CONTINUE
-  b(i)=(y(i)-sum)/a(i,i)
-END DO
-RETURN
+    !
+    !     FORWARD SUBSTITUTION
+    !
+    DO  i=1,n
+      pi=ip(i)
+      y(i)=b(pi)
+      b(pi)=b(i)
+      ip1=i+1
+      IF (ip1 > n) GO TO 2
+      DO  j=ip1,n
+        b(j)=b(j)-a(j,i)*y(i)
+      END DO
+2     CONTINUE
+    END DO
+    !
+    !     BACKWARD SUBSTITUTION
+    !
+    DO  k=1,n
+      i=n-k+1
+      sum=(0.,0.)
+      ip1=i+1
+      IF (ip1 > n) GO TO 5
+      DO  j=ip1,n
+        sum=sum+a(i,j)*b(j)
+      END DO
+5     CONTINUE
+      b(i)=(y(i)-sum)/a(i,i)
+    END DO
+    RETURN
 END SUBROUTINE solve
 !----------------------------------------------------------------------------
 
@@ -10428,9 +10468,9 @@ INTEGER, INTENT(IN)                      :: nrh
 INTEGER, INTENT(IN)                      :: np
 INTEGER, INTENT(IN)                      :: n
 INTEGER, INTENT(IN)                      :: mp
-INTEGER, INTENT(IN OUT)                  :: m
-INTEGER, INTENT(IN OUT)                  :: ifl1
-INTEGER, INTENT(IN OUT)                  :: ifl2
+INTEGER, INTENT(IN)                      :: m
+INTEGER, INTENT(IN)                      :: ifl1
+INTEGER, INTENT(IN)                      :: ifl2
 ! ***
 !
 !     SUBROUTINE SOLVES, FOR SYMMETRIC STRUCTURES, HANDLES THE
