@@ -7371,8 +7371,8 @@ INTEGER, INTENT(IN OUT)                  :: ifl2
 !     BLOCKS OF DESCENDING ORDER.
 !
 COMPLEX*16  y,sum
-COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat,i  &
-    casx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
+COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat, &
+    icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
 COMMON /scratm/ y(2*maxseg)
 
 !
@@ -7458,8 +7458,8 @@ INTEGER, INTENT(IN OUT)                  :: iu4
 !     S/R WHICH UNSCRAMBLES, SCRAMBLED FACTORED MATRIX
 !
 COMPLEX*16  temp
-COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat,i  &
-    casx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
+COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat, &
+    icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
 
 
 i1=1
@@ -7543,10 +7543,9 @@ COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
     alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
     itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 COMMON /angl/ salp(maxseg)
-DIMENSION t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1), x2(1), y 2(1), z2(1)
+DIMENSION t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1), x2(1), y2(1), z2(1)
 EQUIVALENCE (x2(1),si(1)), (y2(1),alp(1)), (z2(1),bet(1))
-EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), (t2y,icon  &
-    2), (t2z,itag)
+EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), (t2y,icon2), (t2z,itag)
 
 IF (ABS(rox)+ABS(roy) > 1.d-10) ipsym=ipsym*3
 sps=SIN(rox)
@@ -7666,13 +7665,12 @@ COMMON /crnt/ air(maxseg),aii(maxseg),bir(maxseg),bii(maxseg),  &
     cir(maxseg),cii(maxseg),cur(3*maxseg)
 COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
     ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
-COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
+COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl,ksymp,ifar,iperf
 DIMENSION cab(1), sab(1), t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1)
 EQUIVALENCE (cab,alp), (sab,bet)
-EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), (t2y,icon  &
-    2), (t2z,itag)
-EQUIVALENCE (t1xj,cabj), (t1yj,sabj), (t1zj,salpj), (t2xj,b), (t2y  &
-    j,ind1), (t2zj,ind2)
+EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), (t2y,icon2), (t2z,itag)
+EQUIVALENCE (t1xj,cabj), (t1yj,sabj), (t1zj,salpj), (t2xj,b), &
+    (t2yj,ind1), (t2zj,ind2)
 
 ex=(0.,0.)
 ey=(0.,0.)
@@ -8145,17 +8143,16 @@ DO  i=1,nvqd
 END DO
 RETURN
 !
-58    FORMAT (///,3X,47HMAXIMUM relative asymmetry of the driving point,  &
-    21H admittance matrix is,1P,e10.3,13H for segments,i5,4H AND,i5,/,  &
-    3X,25HRMS relative asymmetry is,e10.3)
-59    FORMAT (1X,44HERROR - - network array dimensions too small)
-60    FORMAT (/,3X,3HTAG,3X,4HSEG.,4X,15HVOLTAGE (volts),9X,14HCURRENT (  &
-    amps),9X,16HIMPEDANCE (ohms),8X,17HADMITTANCE (mhos),6X,5HPOWER,/,  &
-    3X,3HNO.,3X,3HNO.,4X,4HREAL,8X,5HIMAG.,3(7X,4HREAL,8X,5HIMAG.),5X, 7H(watts))
-61    FORMAT (///,27X,66H- - - structure excitation DATA at network conn  &
-    ection points - - -)
+58    FORMAT (///,3X,'MAXIMUM relative asymmetry of the driving point',  &
+    ' admittance matrix is',1P,e10.3,' for segments',i5,' AND',i5,/,  &
+    3X,'RMS relative asymmetry is',e10.3)
+59    FORMAT (1X,'ERROR - - network array dimensions too small')
+60    FORMAT (/,3X,'TAG',3X,'SEG.',4X,'VOLTAGE (volts)',9X, &
+    'CURRENT (amps)',9X,'IMPEDANCE (ohms)',8X,'ADMITTANCE (mhos)',6X,'POWER',/,  &
+    3X,'NO.',3X,'NO.',4X,'REAL',8X,'IMAG.',3(7X,'REAL',8X,'IMAG.'),5X, '(watts)')
+61    FORMAT (///,27X,'- - - structure excitation DATA at network connection points - - -')
 62    FORMAT (2(1X,i5),1P,9E12.5)
-63    FORMAT (///,42X,36H- - - antenna INPUT parameters - - -)
+63    FORMAT (///,42X,'- - - antenna INPUT parameters - - -')
 64    FORMAT (1X,i5,2H *,i4,1P,9E12.5)
 END SUBROUTINE netwk
 !----------------------------------------------------------------------------
@@ -8253,18 +8250,17 @@ DO  i=1,nrz
 END DO
 RETURN
 !
-10    FORMAT (///,35X,32H- - - near electric fields - - -,//,12X,14H-  l  &
-    ocation  -,21X,8H-  ex  -,15X,8H-  ey  -,15X,8H-  ez  -,/,8X,1HX,1  &
-    0X,1HY,10X,1HZ,10X,9HMAGNITUDE,3X,5HPHASE,6X,9HMAGNITUDE,3X,5HPHAS  &
-    e,6X,9HMAGNITUDE,3X,5HPHASE,/,6X,6HMETERS,5X,6HMETERS,5X,6HMETERS,  &
-    8X,7HVOLTS/m,3X,7HDEGREES,6X,7HVOLTS/m,3X,7HDEGREES,6X,7HVOLTS/m,3  &
-    x,7HDEGREES)
+10    FORMAT (///,35X,'- - - near electric fields - - -',//,12X, &
+    '-  location  -',21X,'-  ex  -',15X,'-  ey  -',15X,'-  ez  -',/,8X,'X', &
+    10X,'Y',10X,'Z',10X,'MAGNITUDE',3X,'PHASE',6X,'MAGNITUDE',3X,'PHASE', &
+    6X,'MAGNITUDE',3X,'PHASE',/,6X,'METERS',5X,'METERS',5X,'METERS',  &
+    8X,'VOLTS/m',3X,'DEGREES',6X,'VOLTS/m',3X,'DEGREES',6X,'VOLTS/m',3x,'DEGREES')
 11    FORMAT (2X,3(2X,f9.4),1X,3(3X,1P,e11.4,2X,0P,f7.2))
-12    FORMAT (///,35X,32H- - - near magnetic fields - - -,//,12X,14H-  l  &
-    ocation  -,21X,8H-  hx  -,15X,8H-  hy  -,15X,8H-  hz  -,/,8X,1HX,1  &
-    0X,1HY,10X,1HZ,10X,9HMAGNITUDE,3X,5HPHASE,6X,9HMAGNITUDE,3X,5HPHAS  &
-    e,6X,9HMAGNITUDE,3X,5HPHASE,/,6X,6HMETERS,5X,6HMETERS,5X,6HMETERS,  &
-    9X,6HAMPS/m,3X,7HDEGREES,7X,6HAMPS/m,3X,7HDEGREES,7X,6HAMPS/m,3X,7 hdegrees)
+12    FORMAT (///,35X,'- - - near magnetic fields - - -',//,12X, &
+    '-  location  -',21X,'-  hx  -',15X,'-  hy  -',15X,'-  hz  -',/,8X,'X', &
+    10X,'Y',10X,'Z',10X,'MAGNITUDE',3X,'PHASE',6X,'MAGNITUDE',3X,'PHASE', &
+    6X,'MAGNITUDE',3X,'PHASE',/,6X,'METERS',5X,'METERS',5X,'METERS',  &
+    9X,'AMPS/M',3X,'DEGREES',7X,'AMPS/M',3X,'DEGREES',7X,'AMPS/M',3X,'DEGREES')
 END SUBROUTINE nfpat
 !----------------------------------------------------------------------------
 
@@ -8299,11 +8295,11 @@ COMMON /crnt/ air(maxseg),aii(maxseg),bir(maxseg),bii(maxseg),  &
 COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
     ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
 DIMENSION cab(1), sab(1)
-DIMENSION t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1), xs(1), y s(1), zs(1)
-EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), (t2y,icon  &
-    2), (t2z,itag), (xs,x), (ys,y), (zs,z)
-EQUIVALENCE (t1xj,cabj), (t1yj,sabj), (t1zj,salpj), (t2xj,b), (t2y  &
-    j,ind1), (t2zj,ind2)
+DIMENSION t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1), xs(1), ys(1), zs(1)
+EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), (t2y,icon2), &
+    (t2z,itag), (xs,x), (ys,y), (zs,z)
+EQUIVALENCE (t1xj,cabj), (t1yj,sabj), (t1zj,salpj), (t2xj,b), &
+    (t2yj,ind1), (t2zj,ind2)
 EQUIVALENCE (cab,alp), (sab,bet)
 !***************************************
 IF (iperf == 2) GO TO 6
@@ -8414,8 +8410,7 @@ COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
     itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 COMMON /angl/ salp(maxseg)
 DIMENSION t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1)
-EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), (t2y,icon  &
-    2), (t2z,itag)
+EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), (t2y,icon2), (t2z,itag)
 !     NEW PATCHES.  FOR NX=0, NY=1,2,3,4 PATCH IS (RESPECTIVELY)
 !     ARBITRARY, RECTAGULAR, TRIANGULAR, OR QUADRILATERAL.
 !     FOR NX AND NY .GT. 0 A RECTANGULAR SURFACE IS PRODUCED WITH
@@ -8601,8 +8596,7 @@ IF (nx <= mp) mp=mp+3
 IF (ny > 0) z(mi)=10000.
 RETURN
 !
-14    FORMAT (62H error -- corners of quadrilateral patch DO NOT lie in  &
-      a plane)
+14    FORMAT (' error -- corners of quadrilateral patch DO NOT lie in a plane')
 END SUBROUTINE patch
 !----------------------------------------------------------------------------
 
@@ -8625,8 +8619,8 @@ COMPLEX*16 exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc, e1,e2,e3,e4,e5 ,e6,e7,e8,e9
 COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
     ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
 
-EQUIVALENCE (t1xj,cabj), (t1yj,sabj), (t1zj,salpj), (t2xj,b), (t2y  &
-    j,ind1), (t2zj,ind2)
+EQUIVALENCE (t1xj,cabj), (t1yj,sabj), (t1zj,salpj), (t2xj,b), &
+    (t2yj,ind1), (t2zj,ind2)
 DATA tpi/6.283185308D+0/,nint/10/
 
 d=SQRT(s)*.5
@@ -8728,8 +8722,10 @@ REAL, INTENT(IN OUT)                     :: fl3
 REAL, INTENT(IN OUT)                     :: fl4
 REAL, INTENT(IN OUT)                     :: fl5
 REAL, INTENT(IN OUT)                     :: fl6
-REAL, INTENT(IN)                         :: ctype
-CHARACTER (LEN=1) :: ctype*(*), cint(3)*5, cflt(6)*13
+CHARACTER (LEN=*), INTENT(IN)            :: ctype
+! hwh
+CHARACTER (LEN=5)  :: cint(3)
+CHARACTER (LEN=13) :: cflt(6)
 !
 DO  i=1,3
   cint(i)='     '
@@ -8791,8 +8787,7 @@ COMMON /zload/ zarray(maxseg),nload,nlodf
 DIMENSION ccjx(2), cab(1), sab(1)
 DIMENSION t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1)
 EQUIVALENCE (ccj,ccjx), (cab,alp), (sab,bet)
-EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), (t2y,icon  &
-    2), (t2z,itag)
+EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), (t2y,icon2), (t2z,itag)
 DATA tp/6.283185308D+0/,ccjx/0.,-.01666666667D+0/
 
 i=icon1(is)
@@ -8800,8 +8795,7 @@ icon1(is)=0
 CALL tbf (is,0)
 icon1(is)=i
 s=si(is)*.5
-curd=ccj*v/((LOG(2.*s/bi(is))-1.)*(bx(jsno)*COS(tp*s)+cx(jsno)*si  &
-    n(tp*s))*wlam)
+curd=ccj*v/((LOG(2.*s/bi(is))-1.)*(bx(jsno)*COS(tp*s)+cx(jsno)*SIN(tp*s))*wlam)
 nqds=nqds+1
 vqds(nqds)=v
 iqds(nqds)=is
@@ -8941,12 +8935,13 @@ COMMON /scratm/ gain(normax)
 COMMON /plot/ iplp1,iplp2,iplp3,iplp4
 !***
 DIMENSION igtp(4), igax(4), igntp(10), hpol(3)
-DATA hpol/6HLINEAR,5HRIGHT,4HLEFT/,hblk,hcir/1H ,6HCIRCLE/
-DATA igtp/6H    - ,6HPOWER ,6H- dire,6HCTIVE /
-DATA igax/6H major,6H minor,6H vert.,6H hor. /
-DATA igntp/6H major,6H axis ,6H minor,6H axis ,6H   ver,6HTICAL ,6  &
-    h horiz,6HONTAL ,6H      ,6HTOTAL /
+DATA hpol/'LINEAR','RIGHT','LEFT'/,hblk,hcir/' ','CIRCLE'/
+DATA igtp/'    - ','POWER ','- DIRE','CTIVE '/
+DATA igax/' MAJOR',' MINOR',' VERT.',' HOR. '/
+DATA igntp/' MAJOR',' AXIS ',' MINOR',' AXIS ','   VER','TICAL ', &
+    ' HORIZ','ONTAL ','      ','TOTAL '/
 DATA pi,ta,td/3.141592654D+0,1.745329252D-02,57.29577951D+0/
+
 IF (ifar < 2) GO TO 2
 WRITE(3,35)
 IF (ifar <= 3) GO TO 1
@@ -9166,34 +9161,34 @@ GO TO 34
 33    WRITE(3,46)  tmp1,tmp2,tstor1
 34    RETURN
 !
-35    FORMAT (///,31X,39H- - - far field ground parameters - - -,//)
-36    FORMAT (40X,25HRADIAL wire ground screen,/,40X,i5,6H wires,/,40X,1  &
-    2HWIRE length=,f8.2,7H meters,/,40X,12HWIRE radius=,1P,e10.3, 7H meters)
-37    FORMAT (40X,a6,6H cliff,/,40X,14HEDGE distance=,f9.2,7H meters,/,4  &
-    0X,7HHEIGHT=,f8.2,7H meters,/,40X,15HSECOND medium -,/,40X,27HRELA  &
-    tive dielectric const.=,f7.3,/,40X,13HCONDUCTIVITY=,1P,e10.3, 5H mhos)
-38    FORMAT (///,48X,30H- - - radiation patterns - - -)
-39    FORMAT (54X,6HRANGE=,1P,e13.6,7H meters,/,54X,12HEXP(-jkr)/r=,  &
-    e12.5,9H at phase,0P,f7.2,8H degrees,/)
-40    FORMAT (/,2X,14H- - angles - -,7X,2A6,7HGAINS -,7X,24H- - - polari  &
-    zation - - -,4X,20H- - - e(theta) - - -,4X,18H- - - e(phi) - - -,  &
-    /,2X,5HTHETA,5X,3HPHI,7X,a6,2X,a6,3X,5HTOTAL,6X,5HAXIAL,5X,4HTILT,  &
-    3X,5HSENSE,2(5X,9HMAGNITUDE,4X,6HPHASE ),/,2(1X,7HDEGREES,1X),3(  &
-    6X,2HDB),8X,5HRATIO,5X,4HDEG.,8X,2(6X,7HVOLTS/m,4X,7HDEGREES))
-41    FORMAT (///,28X,40H - - - radiated fields near ground - - -,//,8X,  &
-    20H- - - location - - -,10X,16H- - e(theta) - -,8X,14H- - e(phi) -  &
-    -,8X,17H- - e(radial) - -,/,7X,3HRHO,6X,3HPHI,9X,1HZ,12X,3HMAG,6X  &
-    ,5HPHASE,9X,3HMAG,6X,5HPHASE,9X,3HMAG,6X,5HPHASE,/,5X,6HMETERS,3X,  &
-    7HDEGREES,4X,6HMETERS,8X,7HVOLTS/m,3X,7HDEGREES,6X,7HVOLTS/m,3X,7H  &
-    degrees,6X,7HVOLTS/m,3X,7HDEGREES,/)
+35    FORMAT (///,31X,'- - - FAR FIELD GROUND PARAMETERS - - -',//)
+36    FORMAT (40X,'RADIAL WIRE GROUND SCREEN',/,40X,i5,' WIRES',/,40X, &
+    'WIRE LENGTH=',f8.2,' METERS',/,40X,'WIRE RADIUS=',1P,e10.3,' METERS')
+37    FORMAT (40X,a6,' CLIFF',/,40X,'EDGE DISTANCE=',f9.2,' METERS',/,40X, &
+    'HEIGHT=',f8.2,' METERS',/,40X,'SECOND MEDIUM -',/,40X, &
+    'RELATIVE DIELECTRIC CONST.=',f7.3,/,40X,'CONDUCTIVITY=',1P,e10.3, ' MHOS')
+38    FORMAT (///,48X,'- - - RADIATION PATTERNS - - -')
+39    FORMAT (54X,'RANGE=',1P,e13.6,' METERS',/,54X,'EXP(-JKR)/R=',  &
+    e12.5,' AT PHASE',0P,f7.2,8H degrees,/)
+40    FORMAT (/,2X,'- - ANGLES - -',7X,2A6,'GAINS -',7X, &
+    '- - - POLARIZATION - - -',4X,'- - - E(THETA) - - -',4X,'- - - E(PHI) - - -',  &
+    /,2X,'THETA',5X,'PHI',7X,a6,2X,a6,3X,'TOTAL',6X,'AXIAL',5X,'TILT',  &
+    3X,'SENSE',2(5X,'MAGNITUDE',4X,'PHASE '),/,2(1X,'DEGREES',1X), &
+    3(6X,'DB'),8X,'RATIO',5X,'DEG.',8X,2(6X,'VOLTS/M',4X,'DEGREES'))
+41    FORMAT (///,28X,' - - - RADIATED FIELDS NEAR GROUND - - -',//,8X,  &
+    '- - - LOCATION - - -',10X,'- - E(THETA) - -',8X,'- - E(PHI) - -', &
+    8X,'- - E(RADIAL) - -',/,7X,'RHO',6X,'PHI',9X,'Z',12X,'MAG',6X  &
+    ,'PHASE',9X,'MAG',6X,'PHASE',9X,'MAG',6X,'PHASE',/,5X,'METERS',3X,  &
+    'DEGREES',4X,'METERS',8X,'VOLTS/M',3X,'DEGREES',6X,'VOLTS/M',3X, &
+    'DEGREES',6X,'VOLTS/M',3X,'DEGREES',/)
 42    FORMAT(1X,f7.2,f9.2,3X,3F8.2,f11.5,f9.2,2X,a6,2(1P,e15.5,0P,f9.2))
 43    FORMAT (3X,f9.2,2X,f7.2,2X,f9.2,1X,3(3X,1P,e11.4,2X,0P,f7.2))
-44    FORMAT (//,3X,19HAVERAGE power gain=,1P,e12.5,7X, 31HSOLID angle u  &
-    sed in averaging=(,0P,f7.4,16H)*pi steradians.,//)
-45    FORMAT (//,37X,31H- - - - normalized gain - - - -,//,37X,2A6,4HGAI  &
-    n,/,38X,22HNORMALIZATION factor =,f9.2,3H db,//,3(4X,14H- - angles  &
-    - -,6X,4HGAIN,7X),/,3(4X,5HTHETA,5X,3HPHI,8X,2HDB,8X),/,3(3X,7HDE  &
-    grees,2X,7HDEGREES,16X))
+44    FORMAT (//,3X,'AVERAGE POWER GAIN=',1P,e12.5,7X, &
+    'SOLID ANGLE USED IN AVERAGING=(',0P,f7.4,')*PI STERADIANS.',//)
+45    FORMAT (//,37X,'- - - - NORMALIZED GAIN - - - -',//,37X,2A6, &
+    'GAIN',/,38X,'NORMALIZATION factor =',f9.2,' DB',//, &
+    3(4X,'- - ANGLES - -',6X,'GAIN',7X),/,3(4X,'THETA',5X,'PHI',8X,'DB',8X), &
+    /,3(3X,'DEGREES',2X,'DEGREES',16X))
 46    FORMAT (3(1X,2F9.2,1X,f9.2,6X))
 END SUBROUTINE rdpat
 !----------------------------------------------------------------------------
@@ -9325,8 +9320,8 @@ INTEGER, INTENT(IN OUT)                  :: ieof
 CHARACTER (LEN=80) :: ngfnam
 COMMON /ngfnam/ ngfnam
 
-CHARACTER (LEN=80) :: REC chara ter*20  buffer
-
+CHARACTER (LEN=80) :: REC
+CHARACTER (LEN=20) :: buffer
 
 INTEGER :: bgnfld(12), endfld(12), totcol, totfld
 LOGICAL :: fldtrm
@@ -9503,8 +9498,8 @@ INTEGER, INTENT(IN OUT)                  :: n2c
 !     REBLOCK ARRAY B IN N.G.F. SOLUTION FROM BLOCKS OF ROWS ON TAPE14
 !     TO BLOCKS OF COLUMNS ON TAPE16
 
-COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat,i  &
-    casx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
+COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat, &
+    icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
 
 REWIND 16
 
@@ -9556,9 +9551,9 @@ COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
     alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
     itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 COMMON /angl/ salp(maxseg)
-DIMENSION t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1), x2(1), y 2(1), z2(1)
-EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), (t2y,icon  &
-    2), (t2z,itag), (x2,si), (y2,alp), (z2,bet)
+DIMENSION t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1), x2(1), y2(1), z2(1)
+EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), &
+    (t2y,icon2), (t2z,itag), (x2,si), (y2,alp), (z2,bet)
 
 np=n
 mp=m
@@ -9761,10 +9756,8 @@ DO  i=nx,m
 END DO
 23    RETURN
 !
-24    FORMAT (29H geometry DATA error--segment,i5,26H lies in plane of s  &
-    ymmetry)
-25    FORMAT (27H geometry DATA error--patch,i4,26H lies in plane of sym  &
-    metry)
+24    FORMAT (' GEOMETRY DATA ERROR--SEGMENT',i5,' LIES IN PLANE OF SYMMETRY')
+25    FORMAT (' GEOMETRY DATA ERROR--PATCH',i4,' LIES IN PLANE OF SYMMETRY')
 END SUBROUTINE reflc
 !----------------------------------------------------------------------------
 
@@ -10216,8 +10209,8 @@ COMMON /scratm/ y(2*maxseg)
 COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
     jsno,iscon(50),nscon,ipcon(10),npcon
 
-COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat,i  &
-    casx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
+COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat, &
+    icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
 
 
 ifl=14
@@ -10424,8 +10417,8 @@ INTEGER, INTENT(IN OUT)                  :: ifl2
 COMPLEX*16  y,sum,ssx
 COMMON /smat/ ssx(16,16)
 COMMON /scratm/ y(2*maxseg)
-COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat,i  &
-    casx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
+COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat, &
+    icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
 
 
 npeq=np+2*mp
@@ -10845,8 +10838,8 @@ COMPLEX*16 exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc,zrati,zrati2,t1  &
 COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
     ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
 COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
-EQUIVALENCE (t1xj,cabj), (t1yj,sabj), (t1zj,salpj), (t2xj,b), (t2y  &
-    j,ind1), (t2zj,ind2)
+EQUIVALENCE (t1xj,cabj), (t1yj,sabj), (t1zj,salpj), (t2xj,b), &
+    (t2yj,ind1), (t2zj,ind2)
 DATA tpi,const/6.283185308D+0,4.771341188D+0/
 !     CONST=ETA/(8.*PI**2)
 zr=zj
@@ -11015,16 +11008,16 @@ REAL, INTENT(IN)                         :: rolam
 COMPLEX*16 th,ph,f,g,fj,cn,br1,br2
 COMPLEX*16 cc1,cc2,cc3,cc4,cc5,cc6,cc7,cc8,cc9,cc10,cc11,cc12 ,cc13,cc14
 DIMENSION fjx(2), cnx(2), ccn(28)
-EQUIVALENCE (fj,fjx), (cn,cnx), (cc1,ccn(1)), (cc2,ccn(3)), (cc3,c  &
-    cn(5)), (cc4,ccn(7)), (cc5,ccn(9)), (cc6,ccn(11)), (cc7,ccn(13)),  &
-    (cc8,ccn(15)), (cc9,ccn(17)), (cc10,ccn(19)), (cc11,ccn(21)), (cc1  &
-    2,ccn(23)), (cc13,ccn(25)), (cc14,ccn(27))
+EQUIVALENCE (fj,fjx), (cn,cnx), (cc1,ccn(1)), (cc2,ccn(3)), &
+    (cc3,ccn(5)), (cc4,ccn(7)), (cc5,ccn(9)), (cc6,ccn(11)), (cc7,ccn(13)),  &
+    (cc8,ccn(15)), (cc9,ccn(17)), (cc10,ccn(19)), (cc11,ccn(21)), &
+    (cc12,ccn(23)), (cc13,ccn(25)), (cc14,ccn(27))
 DATA pi,pot,tp,tpcmu/3.1415926D+0,1.5707963D+0,6.2831853D+0, 2.368705D+3/
 DATA cmotp/60.00/,fjx/0.,1./,cnx/.70710678D+0,.70710678D+0/
-DATA ccn/6.d-7,1.9D-6,-3.4D-6,5.1D-6,-2.52D-5,0.,-9.06D-5,-9.01D-5  &
-    ,0.,-9.765D-4,.0110486D+0,-.0110485D+0,0.,-.3926991D+0,1.6D-6,  &
-    -3.2D-6,1.17D-5,-2.4D-6,3.46D-5,3.38D-5,5.d-7,2.452D-4,-1.3813D-3  &
-    ,1.3811D-3,-6.25001D-2,-1.d-7,.7071068D+0,.7071068D+0/
+DATA ccn/6.d-7,1.9D-6,-3.4D-6,5.1D-6,-2.52D-5,0.,-9.06D-5,-9.01D-5,  &
+    0.,-9.765D-4,.0110486D+0,-.0110485D+0,0.,-.3926991D+0,1.6D-6,  &
+    -3.2D-6,1.17D-5,-2.4D-6,3.46D-5,3.38D-5,5.d-7,2.452D-4,-1.3813D-3,  &
+    1.3811D-3,-6.25001D-2,-1.d-7,.7071068D+0,.7071068D+0/
 
 th(d)=(((((cc1*d+cc2)*d+cc3)*d+cc4)*d+cc5)*d+cc6)*d+cc7
 ph(d)=(((((cc8*d+cc9)*d+cc10)*d+cc11)*d+cc12)*d+cc13)*d+cc14
