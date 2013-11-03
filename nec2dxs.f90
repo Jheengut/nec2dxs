@@ -5032,8 +5032,8 @@ INTEGER, INTENT(IN OUT)                  :: ipsym
 !     FBLOCK SETS PARAMETERS FOR OUT-OF-CORE SOLUTION FOR THE PRIMARY
 !     MATRIX (A)
 COMPLEX*16 ssx,deter
-COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat,i  &
-    casx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
+COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat, &
+    icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
 COMMON /smat/ ssx(16,16)
 
 imx1=imax-irngf
@@ -5128,13 +5128,13 @@ STOP
 13    WRITE(3,18)  nrow,ncol
 STOP
 !
-14    FORMAT (//35H matrix FILE storage -  no. blocks=,i5,19H columns pe  &
-    r BLOCK=,i5,23H columns in last BLOCK=,i5)
-15    FORMAT (25H submatricies fit in core)
-16    FORMAT (38H submatrix partitioning -  no. blocks=,i5,19H columns p  &
-    er BLOCK=,i5,23H columns in last BLOCK=,i5)
-17    FORMAT (40H error - insufficient storage for matrix,2I5)
-18    FORMAT (28H symmetry error - nrow,ncol=,2I5)
+14    FORMAT (//' matrix FILE storage -  no. blocks=',i5, &
+    ' columns per BLOCK=',i5,' columns in last BLOCK=',i5)
+15    FORMAT (' submatricies fit in core')
+16    FORMAT (' submatrix partitioning -  no. blocks=',i5, &
+    ' columns per BLOCK=',i5,' columns in last BLOCK=',i5)
+17    FORMAT (' error - insufficient storage for matrix',2I5)
+18    FORMAT (' symmetry error - nrow,ncol=',2I5)
 END SUBROUTINE fblock
 !----------------------------------------------------------------------------
 
@@ -5154,8 +5154,8 @@ INTEGER, INTENT(OUT)                     :: ix11
 ! ***
 !     FBNGF SETS THE BLOCKING PARAMETERS FOR THE B, C, AND D ARRAYS FOR
 !     OUT-OF-CORE STORAGE.
-COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat,i  &
-    casx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
+COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat, &
+    icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
 
 iresx=iresrv-imat
 nbln=neq*neq2
@@ -5212,14 +5212,14 @@ RETURN
 6     WRITE(3,7)  iresrv,imat,neq,neq2
 STOP
 !
-7     FORMAT (55H error - insufficient storage for interaction matricies  &
-    ,24H  iresrv,imat,neq,neq2 =,4I5)
-8     FORMAT (48H FILE storage for NEW matrix sections -  icasx =,i2)
-9     FORMAT (19H b filled by rows -,15X,12HNO. blocks =,i3,3X,16HROWS p  &
-    er BLOCK =,i3,3X,20HROWS in last BLOCK =,i3)
-10    FORMAT (32H b by columns, c AND d by rows -,2X,12HNO. blocks =,i3,  &
-    4X,15HR/c per BLOCK =,i3,4X,19HR/c in last BLOCK =,i3)
-11    FORMAT (//,35H n.g.f. - NUMBER of NEW unknowns is,i4)
+7     FORMAT (' error - insufficient storage for interaction matricies',  &
+    '  iresrv,imat,neq,neq2 =',4I5)
+8     FORMAT (' FILE storage for NEW matrix sections -  icasx =',i2)
+9     FORMAT (' b filled by rows -',15X,'NO. blocks =',i3,3X, &
+    'ROWS per BLOCK =',i3,3X,'ROWS in last BLOCK =',i3)
+10    FORMAT (' b by columns, c AND d by rows -',2X,'NO. blocks =',i3,  &
+    4X,'R/c per BLOCK =',i3,4X,'R/c in last BLOCK =',i3)
+11    FORMAT (//,' n.g.f. - NUMBER of NEW unknowns is',i4)
 END SUBROUTINE fbngf
 !----------------------------------------------------------------------------
 
@@ -5545,10 +5545,10 @@ COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
 COMMON /cmb/ cm(iresrv)
 COMMON /angl/ salp(maxseg)
 COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
-COMMON /ggrid/ ar1(11,10,4),ar2(17,5,4),ar3(9,8,4),epscf,dxa(3),dy  &
-    a(3),xsa(3),ysa(3),nxa(3),nya(3)
-COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat,i  &
-    casx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
+COMMON /ggrid/ ar1(11,10,4),ar2(17,5,4),ar3(9,8,4),epscf,dxa(3), &
+    dya(3),xsa(3),ysa(3),nxa(3),nya(3)
+COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat, &
+    icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
 COMMON /smat/ ssx(16,16)
 COMMON /zload/ zarray(maxseg),nload,nlodf
 COMMON/SAVE/epsr,sig,scrwlt,scrwrt,fmhz,ip(2*maxseg),kcom
@@ -5677,29 +5677,28 @@ DO  i=1,n1
 END DO
 RETURN
 !
-14    FORMAT (5X,50H**************************************************,  &
-    34H**********************************)
-15    FORMAT (5X,3H** ,19A4,3H **)
+14    FORMAT (5X,'**************************************************',  &
+    '**********************************')
+15    FORMAT (5X,'** ',19A4,' **')
 16    FORMAT (////)
-17    FORMAT (5X,2H**,80X,2H**)
-18    FORMAT (5X,29H** numerical green'S FUNCTION,53X,2H**,/,5X,17H** NO  &
-    . SEGMENTS =,I4,10X,13HNO. PATCHES =,I4,34X,2H**)
-19    FORMAT (5X,27H** no. symmetric sections =,i4,51X,2H**)
-20    FORMAT (5X,34H** n.g.f. matrix -  core storage =,i7,23H COMPLEX nu  &
-    mbers,  case,i2,16X,2H**)
-21    FORMAT (5X,2H**,19X,13HMATRIX size =,i7,16H COMPLEX numbers,25X,2H **)
-22    FORMAT (5X,14H** frequency =,1P,e12.5,5H mhz.,51X,2H**)
-23    FORMAT (5X,17H** perfect ground,65X,2H**)
-24    FORMAT (5X,44H** ground parameters - dielectric constant =,1P,  &
-    e12.5,26X,2H**,/,5X,2H**,21X,14HCONDUCTIVITY =,e12.5,8H mhos/m., 25X,2H**)
-25    FORMAT (39X,31HNUMERICAL green'S FUNCTION DATA,/,41X,27HCOORDINATE  &
-S OF SEGMENT ENDS,/,51X,8H(METERS),/,5X,4HSEG.,11X,19H- - - END ON  &
-E - - -,26X,19H- - - END TWO - - -,/,6X,3HNO.,6X,1HX,14X,1HY,14X,1  &
-    HZ,14X,1HX,14X,1HY,14X,1HZ)
+17    FORMAT (5X,'**',80X,'**')
+18    FORMAT (5X,"** NUMERICAL GREEN'S FUNCTION",53X,2H**,/,5X, &
+    '** NO. SEGMENTS =',I4,10X,'NO. PATCHES =',I4,34X,2H**)
+19    FORMAT (5X,'** no. symmetric sections =',i4,51X,2H**)
+20    FORMAT (5X,'** n.g.f. matrix -  core storage =',i7, &
+    ' COMPLEX NUMBERS,  CASE',i2,16X,'**')
+21    FORMAT (5X,'**',19X,'MATRIX SIZE =',i7,' COMPLEX NUMBERS',25X,'**')
+22    FORMAT (5X,'** frequency =',1P,e12.5,' mhz.',51X,'**')
+23    FORMAT (5X,'** perfect ground',65X,'**')
+24    FORMAT (5X,'** ground parameters - dielectric constant =',1P,  &
+    e12.5,26X,'**',/,5X,'**',21X,'CONDUCTIVITY =',e12.5,' mhos/m.', 25X,'**')
+25    FORMAT (39X,"NUMERICAL GREEN'S FUNCTION DATA",/,41X, &
+    'COORDINATES OF SEGMENT ENDS',/,51X,'(METERS)',/,5X,'SEG.',11X, &
+    '- - - END ONE - - -',26X,'- - - END TWO - - -',/,6X,'NO.', &
+    6X,'X',14X,'Y',14X,'Z',14X,'X',14X,'Y',14X,'Z')
 26    FORMAT (1X,i7,1P,6E15.6)
-27    FORMAT (5X,55H** finite ground.  reflection coefficient approximat  &
-    ion,27X,2H**)
-28    FORMAT (5X,38H** finite ground.  sommerfeld solution,44X,2H**)
+27    FORMAT (5X,'** finite ground.  reflection coefficient approximation',27X,'**')
+28    FORMAT (5X,'** finite ground.  sommerfeld solution',44X,'**')
 END SUBROUTINE gfil
 !----------------------------------------------------------------------------
 
@@ -5888,10 +5887,10 @@ COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
 COMMON /cmb/ cm(iresrv)
 COMMON /angl/ salp(maxseg)
 COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
-COMMON /ggrid/ ar1(11,10,4),ar2(17,5,4),ar3(9,8,4),epscf,dxa(3),dy  &
-    a(3),xsa(3),ysa(3),nxa(3),nya(3)
-COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat,i  &
-    casx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
+COMMON /ggrid/ ar1(11,10,4),ar2(17,5,4),ar3(9,8,4),epscf,dxa(3), &
+    dya(3),xsa(3),ysa(3),nxa(3),nya(3)
+COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat, &
+    icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
 COMMON /smat/ ssx(16,16)
 COMMON /zload/ zarray(maxseg),nload,nlodf
 COMMON/SAVE/epsr,sig,scrwlt,scrwrt,fmhz,ip(2*maxseg),kcom
@@ -6416,13 +6415,12 @@ REAL, INTENT(IN)                         :: yi
 REAL, INTENT(IN)                         :: zi
 ! ***
 !     HINTG COMPUTES THE H FIELD OF A PATCH CURRENT
-COMPLEX*16 exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc,zrati,zrati2,gam  &
-    ,f1x,f1y,f1z,f2x,f2y,f2z,rrv,rrh,t1,frati
+COMPLEX*16 exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc,zrati,zrati2,gam,  &
+    f1x,f1y,f1z,f2x,f2y,f2z,rrv,rrh,t1,frati
 COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
     ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
 COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
-EQUIVALENCE (t1xj,cabj), (t1yj,sabj), (t1zj,salpj), (t2xj,b), (t2y  &
-    j,ind1), (t2zj,ind2)
+EQUIVALENCE (t1xj,cabj), (t1yj,sabj), (t1zj,salpj), (t2xj,b), (t2yj,ind1), (t2zj,ind2)
 DATA fpi/12.56637062D+0/,tp/6.283185308D+0/
 
 rx=xi-xj
@@ -6708,8 +6706,8 @@ COMPLEX*16  a,b,c,d,fx1,fx2,fx3,fx4,p1,p2,p3,p4,a11,a12  &
     ,c13,c14,c21,c22,c23,c24,c31,c32,c33,c34,c41,c42,c43,c44,d11,d12  &
     ,d13,d14,d21,d22,d23,d24,d31,d32,d33,d34,d41,d42,d43,d44
 COMPLEX*16 ar1,ar2,ar3,arl1,arl2,arl3,epscf
-COMMON /ggrid/ ar1(11,10,4),ar2(17,5,4),ar3(9,8,4),epscf,dxa(3),dy  &
-    a(3),xsa(3),ysa(3),nxa(3),nya(3)
+COMMON /ggrid/ ar1(11,10,4),ar2(17,5,4),ar3(9,8,4),epscf,dxa(3), &
+    dya(3),xsa(3),ysa(3),nxa(3),nya(3)
 DIMENSION nda(3), ndpa(3)
 DIMENSION a(4,4), b(4,4), c(4,4), d(4,4), arl1(1), arl2(1), arl3(1 )
 EQUIVALENCE (a(1,1),a11), (a(1,2),a12), (a(1,3),a13), (a(1,4),a14)
@@ -7049,9 +7047,8 @@ STOP
 5     isegno=i
 RETURN
 !
-6     FORMAT (4X,91HCHECK DATA, PARAMETER specifying segment POSITION in  &
-    a group of equal tags must NOT be zero)
-7     FORMAT (///,10X,26HNO segment has an itag of ,i5)
+6     FORMAT (4X,'CHECK DATA, PARAMETER specifying segment POSITION in a group of equal tags must NOT be zero')
+7     FORMAT (///,10X,'NO segment has an itag of ',i5)
 END FUNCTION isegno
 !----------------------------------------------------------------------------
 
@@ -7078,8 +7075,8 @@ INTEGER, INTENT(IN OUT)                  :: ip(nrow)
 COMPLEX*16  d,ajr
 INTEGER :: r,r1,r2,pj,pr
 LOGICAL :: l1,l2,l3
-COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat,i  &
-    casx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
+COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat, &
+    icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
 COMMON /scratm/ d(2*maxseg)
 
 
@@ -7200,7 +7197,7 @@ COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
     alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
     itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 COMMON /zload/ zarray(maxseg),nload,nlodf
-DIMENSION  , tpcjx(2)
+DIMENSION  tpcjx(2)
 EQUIVALENCE (tpcj,tpcjx)
 DATA tpcjx/0.,1.883698955D+9/
 !
@@ -7287,7 +7284,7 @@ STOP
   zt=1./zt
   GO TO 16
   12   zt=zlr(istep)*wlam+tpcj*zli(istep)
-  IF (ABS(zlc(istep)) > 1.d-20) zt=zt+1./(tpcj*si(i)*si(i)*zlc(iste p))
+  IF (ABS(zlc(istep)) > 1.d-20) zt=zt+1./(tpcj*si(i)*si(i)*zlc(istep))
   GO TO 16
   13   zt=tpcj*si(i)*si(i)*zlc(istep)
   IF (ABS(zli(istep)) > 1.d-20) zt=zt+1./(tpcj*zli(istep))
@@ -7339,16 +7336,14 @@ GO TO 2
     0.d0,zlr(istep),'  WIRE  ')
 GO TO 2
 !
-25   FORMAT (//,7X,8HLOCATION,10X,10HRESISTANCE,3X,10HINDUCTANCE,2X,11H  &
-    capacitance,7X,16HIMPEDANCE (ohms),5X,12HCONDUCTIVITY,4X,4HTYPE,/,  &
-    4X,4HITAG,10H from thru,10X,4HOHMS,8X,6HHENRYS,7X,6HFARADS,8X,4HRE  &
-    al,6X,9HIMAGINARY,4X,10HMHOS/meter)
-26   FORMAT (/,10X,74HNOTE, some of the above segments have been loaded  &
-    twice - impedances added)
-27   FORMAT (/,10X,46HIMPROPER load TYPE choosen, requested TYPE is ,i3 )
-28   FORMAT (/,10X,50HLOADING DATA card error, no segment has an itag = ,i5)
-29   FORMAT (63H error - loading may NOT be added TO segments in n.g.f.  &
-    section)
+25   FORMAT (//,7X,'LOCATION',10X,'RESISTANCE',3X,'INDUCTANCE',2X, &
+    'CAPACITANCE',7X,'IMPEDANCE (ohms)',5X,'CONDUCTIVITY',4X,'TYPE',/,  &
+    4X,'ITAG',' from thru',10X,'OHMS',8X,'HENRYS',7X,'FARADS',8X,'REAl', &
+    6X,'IMAGINARY',4X,'MHOS/meter')
+26   FORMAT (/,10X,'NOTE, some of the above segments have been loaded twice - impedances added')
+27   FORMAT (/,10X,'IMPROPER load TYPE choosen, requested TYPE is ',i3 )
+28   FORMAT (/,10X,'LOADING DATA card error, no segment has an itag = ',i5)
+29   FORMAT (' error - loading may NOT be added TO segments in n.g.f. section')
 END SUBROUTINE load
 !----------------------------------------------------------------------------
 
