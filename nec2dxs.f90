@@ -62,10 +62,14 @@ IMPLICIT REAL*8(a-h,o-z)
 
 CHARACTER (LEN=80) :: outfile
 CHARACTER (LEN=80) :: infile
-CHARACTER (LEN=2) :: atst
+CHARACTER (LEN=2), DIMENSION(22), PARAMETER :: atst &
+    = (/'CE','FR','LD','GN','EX','NT','XQ','NE','GD','RP','CM',  &
+    'NX','EN','TL','PT','KH','NH','PQ','EK','WG','CP','PL'/)
 CHARACTER (LEN=2) :: ain
 
-REAL*8 hpol,pnet
+CHARACTER (LEN=8), DIMENSION(3), PARAMETER :: pnet = (/'        ','STRAIGHT','CROSSED '/)
+CHARACTER (LEN=6), DIMENSION(3), PARAMETER :: hpol = (/'LINEAR','RIGHT ','LEFT  '/)
+
 REAL :: starttime, endtime, elapsed
 REAL :: tim, tim1, tim2
 REAL*8 tmp1
@@ -113,7 +117,7 @@ DIMENSION cab(1),sab(1),x2(1),y2(1),z2(1)
 DIMENSION ldtyp(loadmx),ldtag(loadmx),ldtagf(loadmx),  &
     ldtagt(loadmx),zlr(loadmx),zli(loadmx),zlc(loadmx)
 
-DIMENSION atst(22),pnet(6),hpol(3),ix(2*maxseg)
+DIMENSION ix(2*maxseg)
 DIMENSION fnorm(200)
 DIMENSION t1x(1),t1y(1),t1z(1),t2x(1),t2y(1),t2z(1)
 !***
@@ -121,10 +125,6 @@ DIMENSION xtemp(maxseg),ytemp(maxseg),ztemp(maxseg),  &
     sitemp(maxseg),bitemp(maxseg)
 EQUIVALENCE (cab,alp),(sab,bet),(x2,si),(y2,alp),(z2,bet)
 EQUIVALENCE (t1x,si),(t1y,alp),(t1z,bet),(t2x,icon1),(t2y,icon2), (t2z,itag)
-DATA atst/'CE','FR','LD','GN','EX','NT','XQ','NE','GD','RP','CM',  &
-    'NX','EN','TL','PT','KH','NH','PQ','EK','WG','CP','PL'/
-DATA hpol/'LINEAR','RIGHT','LEFT'/
-DATA pnet/'      ','  ','STRAIG','HT','CROSSE','D'/
 DATA ta/1.745329252D-02/,cvel/299.8/
 
 DATA normf/200/
@@ -839,7 +839,7 @@ GO TO 56
 tmp2=ta*xpr2
 tmp3=ta*xpr3
 tmp6=xpr6
-IF (iptflg <= 0) WRITE(3,155)  xpr1,xpr2,xpr3,hpol(ixtyp),xpr6
+IF (iptflg <= 0) WRITE(3,155)  xpr1,xpr2,xpr3,trim(hpol(ixtyp)),xpr6
 56    CALL etmns (tmp1,tmp2,tmp3,tmp4,tmp5,tmp6,ixtyp,cur)
 !
 !     MATRIX SOLVING  (NETWK CALLS SOLVES)
@@ -862,7 +862,7 @@ DO  i=1,2
     IF (itmp2 >= 2.AND.x11i(j) <= 0.) x11i(j)=wlam*SQRT((x(itmp5)-  &
         x(itmp4))**2+(y(itmp5)-y(itmp4))**2+(z(itmp5)-z(itmp4))**2)
     WRITE(3,157) itag(itmp4),itmp4,itag(itmp5),itmp5,x11r(j),x11i(j), &
-        x12r(j),x12i(j),x22r(j),x22i(j),pnet(2*itmp2-1),pnet(2*itmp2)
+        x12r(j),x12i(j),x22r(j),x22i(j),trim(pnet(itmp2))
   END DO
   IF (itmp3 == 0) EXIT
   itmp1=itmp3
@@ -1104,7 +1104,7 @@ GO TO 14
 156   FORMAT (/,31X,'POSITION (METERS)',14X,'ORIENTATION (DEG)=',/,28X,  &
     'X',12X,'Y',12X,'Z',10X,'ALPHA',5X,'BETA',4X,'DIPOLE MOMENT',//  &
     ,4X,'CURRENT SOURCE',1X,3(3X,f10.5),1X,2(3X,f7.2),4X,f8.3)
-157   FORMAT (4X,4(i5,1X),1P,6(3X,e11.4),3X,a6,a2)
+157   FORMAT (4X,4(i5,1X),1P,6(3X,e11.4),3X,a8)
 158   FORMAT (///,44X,'- - - NETWORK DATA - - -')
 159   FORMAT (/,6X,'- FROM -    - TO -',11X,'TRANSMISSION LINE',15X,  &
     '-  -  SHUNT ADMITTANCES (MHOS)  -  -',14X,'LINE',/,6X,'TAG  SEG.'  &
@@ -1189,9 +1189,9 @@ SUBROUTINE som2d (rmhz, repr, rsig)
 
 IMPLICIT REAL*8(a-h,o-z)
 
-REAL, INTENT(IN)                         :: rmhz
-REAL, INTENT(IN)                         :: repr
-REAL, INTENT(IN)                         :: rsig
+REAL*8, INTENT(IN)                         :: rmhz
+REAL*8, INTENT(IN)                         :: repr
+REAL*8, INTENT(IN)                         :: rsig
 !***
 COMPLEX*16 ck1,ck1sq,erv,ezv,erh,eph,cksm,ct1,ct2,ct3,cl1,cl2,con,  &
     ar1,ar2,ar3,epscf
@@ -1382,81 +1382,82 @@ SUBROUTINE bessel (z,j0,j0p)
 !     BESSEL EVALUATES THE ZERO-ORDER BESSEL FUNCTION AND ITS DERIVATIVE
 !     FOR COMPLEX ARGUMENT Z.
 !
-IMPLICIT REAL*8(a-h,o-z)
+    IMPLICIT REAL*8(a-h,o-z)
 
-COMPLEX*16, INTENT(IN)                   :: z
-COMPLEX*16, INTENT(OUT)                  :: j0
-COMPLEX*16, INTENT(OUT)                  :: j0p
-SAVE
-COMPLEX*16  p0z,p1z,q0z,q1z, zi,zi2,zk,fj,cz,sz,j0x,j0px
-DIMENSION m(101), a1(25), a2(25), fjx(2)
-EQUIVALENCE (fj,fjx)
+    COMPLEX*16, INTENT(IN)                   :: z
+    COMPLEX*16, INTENT(OUT)                  :: j0
+    COMPLEX*16, INTENT(OUT)                  :: j0p
+    SAVE
+    COMPLEX*16  p0z,p1z,q0z,q1z, zi,zi2,zk,fj,cz,sz,j0x,j0px
+    DIMENSION m(101), a1(25), a2(25), fjx(2)
+    EQUIVALENCE (fj,fjx)
 
-DATA c3,p10,p20,q10,q20/.7978845608,.0703125,.1121520996,.125,.0732421875/
-DATA p11,p21,q11,q21/.1171875,.1441955566,.375,.1025390625/
-DATA pof,init/.7853981635,0/,fjx/0.,1./
+    DATA c3,p10,p20,q10,q20/.7978845608,.0703125,.1121520996,.125,.0732421875/
+    DATA p11,p21,q11,q21/.1171875,.1441955566,.375,.1025390625/
+    DATA pof,init/.7853981635,0/,fjx/0.,1./
 
-IF (init == 0) GO TO 5
-1     zms=z*DCONJG(z)
-IF (zms > 1.e-12) GO TO 2
-j0=(1.,0.)
-j0p=-.5*z
-RETURN
+    IF (init == 0) GO TO 5
+
+1   zms=z*DCONJG(z)
+    IF (zms > 1.e-12) GO TO 2
+    j0=(1.,0.)
+    j0p=-.5*z
+    RETURN
 
 2     ib=0
-IF (zms > 37.21) GO TO 4
-IF (zms > 36.) ib=1
-!     SERIES EXPANSION
-iz=1.+zms
-miz=m(iz)
-j0=(1.,0.)
-j0p=j0
-zk=j0
-zi=z*z
-DO  k=1,miz
-  zk=zk*a1(k)*zi
-  j0=j0+zk
-  j0p=j0p+a2(k)*zk
-END DO
-j0p=-.5*z*j0p
-IF (ib == 0) RETURN
-j0x=j0
-j0px=j0p
-!     ASYMPTOTIC EXPANSION
+    IF (zms > 37.21) GO TO 4
+    IF (zms > 36.) ib=1
+    !     SERIES EXPANSION
+    iz=1.+zms
+    miz=m(iz)
+    j0=(1.,0.)
+    j0p=j0
+    zk=j0
+    zi=z*z
+    DO  k=1,miz
+      zk=zk*a1(k)*zi
+      j0=j0+zk
+      j0p=j0p+a2(k)*zk
+    END DO
+    j0p=-.5*z*j0p
+    IF (ib == 0) RETURN
+    j0x=j0
+    j0px=j0p
+    !     ASYMPTOTIC EXPANSION
 4     zi=1./z
-zi2=zi*zi
-p0z=1.+(p20*zi2-p10)*zi2
-p1z=1.+(p11-p21*zi2)*zi2
-q0z=(q20*zi2-q10)*zi
-q1z=(q11-q21*zi2)*zi
-zk=EXP(fj*(z-pof))
-zi2=1./zk
-cz=.5*(zk+zi2)
-sz=fj*.5*(zi2-zk)
-zk=c3*SQRT(zi)
-j0=zk*(p0z*cz-q0z*sz)
-j0p=-zk*(p1z*sz+q1z*cz)
-IF (ib == 0) RETURN
-zms=COS((SQRT(zms)-6.)*31.41592654)
-j0=.5*(j0x*(1.+zms)+j0*(1.-zms))
-j0p=.5*(j0px*(1.+zms)+j0p*(1.-zms))
-RETURN
+    zi2=zi*zi
+    p0z=1.+(p20*zi2-p10)*zi2
+    p1z=1.+(p11-p21*zi2)*zi2
+    q0z=(q20*zi2-q10)*zi
+    q1z=(q11-q21*zi2)*zi
+    zk=EXP(fj*(z-pof))
+    zi2=1./zk
+    cz=.5*(zk+zi2)
+    sz=fj*.5*(zi2-zk)
+    zk=c3*SQRT(zi)
+    j0=zk*(p0z*cz-q0z*sz)
+    j0p=-zk*(p1z*sz+q1z*cz)
+    IF (ib == 0) RETURN
+    zms=COS((SQRT(zms)-6.)*31.41592654)
+    j0=.5*(j0x*(1.+zms)+j0*(1.-zms))
+    j0p=.5*(j0px*(1.+zms)+j0p*(1.-zms))
+    RETURN
 
 !     INITIALIZATION OF CONSTANTS
 5     DO  k=1,25
-  a1(k)=-.25D0/(k*k)
-  a2(k)=1.d0/(k+1.d0)
-END DO
+      a1(k)=-.25D0/(k*k)
+      a2(k)=1.d0/(k+1.d0)
+    END DO
 loop8:  DO  i=1,101
-  test=1.d0
-  DO  k=1,24
-    init=k
-    test=-test*i*a1(k)
-    IF (test < 1.d-6) GO TO 8
-  END DO
-  m(i)=init
-END DO loop8
-GO TO 1
+      test=1.d0
+      DO  k=1,24
+        init=k
+        test=-test*i*a1(k)
+        IF (test < 1.d-6) EXIT
+      END DO
+      m(i)=init
+    END DO loop8
+    GO TO 1
 END SUBROUTINE bessel
 
 !***********************************************************************
@@ -1588,7 +1589,7 @@ COMPLEX*16, INTENT(IN)                   :: dela
 COMPLEX*16, INTENT(IN OUT)               :: sum(6)
 INTEGER, INTENT(IN)                      :: nans
 COMPLEX*16, INTENT(IN)                   :: seed(6)
-INTEGER, INTENT(IN OUT)                  :: ibk
+INTEGER, INTENT(IN)                      :: ibk
 COMPLEX*16, INTENT(IN)                   :: bk
 COMPLEX*16, INTENT(IN)                   :: delb
 SAVE
@@ -1708,88 +1709,89 @@ SUBROUTINE hankel (z,h0,h0p)
 !     HANKEL EVALUATES HANKEL FUNCTION OF THE FIRST KIND, ORDER ZERO,
 !     AND ITS DERIVATIVE FOR COMPLEX ARGUMENT Z.
 !
-IMPLICIT REAL*8(a-h,o-z)
+    IMPLICIT REAL*8(a-h,o-z)
 
-COMPLEX*16, INTENT(IN OUT)               :: z
-COMPLEX*16, INTENT(OUT)                  :: h0
-COMPLEX*16, INTENT(OUT)                  :: h0p
-SAVE
-COMPLEX*16 clogz, j0,j0p,p0z,p1z,q0z,q1z,y0,y0p, zi,zi2,zk, fj
-DIMENSION m(101), a1(25), a2(25), a3(25), a4(25), fjx(2)
-EQUIVALENCE (fj,fjx)
-DATA pi,gamma,c1,c2,c3,p10,p20/3.141592654,.5772156649,-.0245785095,.3674669052,.7978845608,.0703125,.1121520996/
-DATA q10,q20,p11,p21,q11,q21/.125,.0732421875,.1171875,.1441955566,.375,.1025390625/
-DATA pof,init/.7853981635,0/,fjx/0.,1./
+    COMPLEX*16, INTENT(IN)                   :: z
+    COMPLEX*16, INTENT(OUT)                  :: h0
+    COMPLEX*16, INTENT(OUT)                  :: h0p
+    SAVE
+    COMPLEX*16 clogz, j0,j0p,p0z,p1z,q0z,q1z,y0,y0p, zi,zi2,zk, fj
+    DIMENSION m(101), a1(25), a2(25), a3(25), a4(25), fjx(2)
+    EQUIVALENCE (fj,fjx)
+    DATA pi,gamma,c1,c2,c3,p10,p20/3.141592654,.5772156649,-.0245785095,.3674669052,.7978845608,.0703125,.1121520996/
+    DATA q10,q20,p11,p21,q11,q21/.125,.0732421875,.1171875,.1441955566,.375,.1025390625/
+    DATA pof,init/.7853981635,0/,fjx/0.,1./
 
-IF (init == 0) GO TO 5
-1     zms=z*DCONJG(z)
-IF (zms /= 0.) GO TO 2
-WRITE(*,9)
-STOP
-2     ib=0
-IF (zms > 16.81) GO TO 4
-IF (zms > 16.) ib=1
-!     SERIES EXPANSION
-iz=1.+zms
-miz=m(iz)
-j0=(1.,0.)
-j0p=j0
-y0=(0.,0.)
-y0p=y0
-zk=j0
-zi=z*z
-DO  k=1,miz
-  zk=zk*a1(k)*zi
-  j0=j0+zk
-  j0p=j0p+a2(k)*zk
-  y0=y0+a3(k)*zk
-  y0p=y0p+a4(k)*zk
-END DO
-j0p=-.5*z*j0p
-clogz=LOG(.5*z)
-y0=(2.*j0*clogz-y0)/pi+c2
-y0p=(2./z+2.*j0p*clogz+.5*y0p*z)/pi+c1*z
-h0=j0+fj*y0
-h0p=j0p+fj*y0p
-IF (ib == 0) RETURN
-y0=h0
-y0p=h0p
-!     ASYMPTOTIC EXPANSION
-4     zi=1./z
-zi2=zi*zi
-p0z=1.+(p20*zi2-p10)*zi2
-p1z=1.+(p11-p21*zi2)*zi2
-q0z=(q20*zi2-q10)*zi
-q1z=(q11-q21*zi2)*zi
-zk=EXP(fj*(z-pof))*SQRT(zi)*c3
-h0=zk*(p0z+fj*q0z)
-h0p=fj*zk*(p1z+fj*q1z)
-IF (ib == 0) RETURN
-zms=COS((SQRT(zms)-4.)*31.41592654)
-h0=.5*(y0*(1.+zms)+h0*(1.-zms))
-h0p=.5*(y0p*(1.+zms)+h0p*(1.-zms))
-RETURN
+    IF (init == 0) GO TO 5
+
+    1     zms=z*DCONJG(z)
+    IF (zms /= 0.) GO TO 2
+    WRITE(*,9)
+    STOP
+    2     ib=0
+    IF (zms > 16.81) GO TO 4
+    IF (zms > 16.) ib=1
+    !     SERIES EXPANSION
+    iz=1.+zms
+    miz=m(iz)
+    j0=(1.,0.)
+    j0p=j0
+    y0=(0.,0.)
+    y0p=y0
+    zk=j0
+    zi=z*z
+    DO  k=1,miz
+      zk=zk*a1(k)*zi
+      j0=j0+zk
+      j0p=j0p+a2(k)*zk
+      y0=y0+a3(k)*zk
+      y0p=y0p+a4(k)*zk
+    END DO
+    j0p=-.5*z*j0p
+    clogz=LOG(.5*z)
+    y0=(2.*j0*clogz-y0)/pi+c2
+    y0p=(2./z+2.*j0p*clogz+.5*y0p*z)/pi+c1*z
+    h0=j0+fj*y0
+    h0p=j0p+fj*y0p
+    IF (ib == 0) RETURN
+    y0=h0
+    y0p=h0p
+    !     ASYMPTOTIC EXPANSION
+    4     zi=1./z
+    zi2=zi*zi
+    p0z=1.+(p20*zi2-p10)*zi2
+    p1z=1.+(p11-p21*zi2)*zi2
+    q0z=(q20*zi2-q10)*zi
+    q1z=(q11-q21*zi2)*zi
+    zk=EXP(fj*(z-pof))*SQRT(zi)*c3
+    h0=zk*(p0z+fj*q0z)
+    h0p=fj*zk*(p1z+fj*q1z)
+    IF (ib == 0) RETURN
+    zms=COS((SQRT(zms)-4.)*31.41592654)
+    h0=.5*(y0*(1.+zms)+h0*(1.-zms))
+    h0p=.5*(y0p*(1.+zms)+h0p*(1.-zms))
+    RETURN
 
 !     INITIALIZATION OF CONSTANTS
-5     psi=-gamma
-DO  k=1,25
-  a1(k)=-.25D0/(k*k)
-  a2(k)=1.d0/(k+1.d0)
-  psi=psi+1.d0/k
-  a3(k)=psi+psi
-  a4(k)=(psi+psi+1.d0/(k+1.d0))/(k+1.d0)
-END DO
+5   psi=-gamma
+    DO  k=1,25
+      a1(k)=-.25D0/(k*k)
+      a2(k)=1.d0/(k+1.d0)
+      psi=psi+1.d0/k
+      a3(k)=psi+psi
+      a4(k)=(psi+psi+1.d0/(k+1.d0))/(k+1.d0)
+    END DO
 loop8:  DO  i=1,101
-  test=1.d0
-  DO  k=1,24
-    init=k
-    test=-test*i*a1(k)
-    IF (test*a3(k) < 1.d-6) GO TO 8
-  END DO
-  m(i)=init
-END DO loop8
-GO TO 1
-!
+      test=1.d0
+      DO  k=1,24
+        init=k
+        test=-test*i*a1(k)
+        IF (test*a3(k) < 1.d-6) EXIT
+      END DO
+      m(i)=init
+    END DO loop8
+    GO TO 1
+
 9     FORMAT (34H error - hankel NOT valid for z=0.)
 END SUBROUTINE hankel
 
@@ -1803,7 +1805,7 @@ SUBROUTINE lambda (t,xlam,dxlam)
 !
 IMPLICIT REAL*8(a-h,o-z)
 
-REAL, INTENT(IN)                         :: t
+REAL*8, INTENT(IN)                         :: t
 COMPLEX*16, INTENT(OUT)                  :: xlam
 COMPLEX*16, INTENT(OUT)                  :: dxlam
 SAVE
@@ -1932,7 +1934,7 @@ SUBROUTINE saoa (t,ans)
 !
 IMPLICIT REAL*8(a-h,o-z)
 
-REAL, INTENT(IN OUT)                     :: t
+REAL*8, INTENT(IN)                       :: t
 COMPLEX*16, INTENT(OUT)                  :: ans(6)
 SAVE
 COMPLEX*16  xl,dxl,cgam1,cgam2,b0,b0p,com,ck1,ck1sq,cksm,ct1,  &
@@ -2003,10 +2005,10 @@ IMPLICIT REAL*8(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: itg
 INTEGER, INTENT(IN)                      :: ns
-REAL, INTENT(IN)                         :: rada
-REAL, INTENT(IN)                         :: ang1
-REAL, INTENT(IN OUT)                     :: ang2
-REAL, INTENT(IN)                         :: rad
+REAL*8, INTENT(IN)                       :: rada
+REAL*8, INTENT(IN)                       :: ang1
+REAL*8, INTENT(IN)                       :: ang2
+REAL*8, INTENT(IN)                       :: rad
 ! ***
 !
 !     ARC GENERATES SEGMENT GEOMETRY DATA FOR AN ARC OF NS SEGMENTS
@@ -2058,8 +2060,8 @@ FUNCTION atgn2 (x,y)
 IMPLICIT REAL*8(a-h,o-z)
 
 
-REAL, INTENT(IN OUT)                     :: x
-REAL, INTENT(IN OUT)                     :: y
+REAL*8, INTENT(IN OUT)                     :: x
+REAL*8, INTENT(IN OUT)                     :: y
 ! ***
 !
 !     ATGN2 IS ARCTANGENT FUNCTION MODIFIED TO RETURN 0. WHEN X=Y=0.
@@ -2082,43 +2084,60 @@ END FUNCTION atgn2
 !----------------------------------------------------------------------------
 
 SUBROUTINE blckot (ar,nunit,ix1,ix2,nblks,neof)
-! ***
-!     DOUBLE PRECISION 6/4/85
-!
-IMPLICIT REAL*8(a-h,o-z)
+    ! ***
+    !     DOUBLE PRECISION 6/4/85
+    !
+    ! FIXME eliminate unused parameters
+    IMPLICIT REAL*8(a-h,o-z)
 
-COMPLEX*16, INTENT(IN OUT)               :: ar(1)
-INTEGER, INTENT(IN OUT)                  :: nunit
-INTEGER, INTENT(IN OUT)                  :: ix1
-INTEGER, INTENT(IN OUT)                  :: ix2
-INTEGER, INTENT(IN OUT)                  :: nblks
-INTEGER, INTENT(OUT)                     :: neof
-! ***
-!
-!     BLCKOT CONTROLS THE READING AND WRITING OF MATRIX BLOCKS ON FILES
-!     FOR THE OUT-OF-CORE MATRIX SOLUTION.
-!
+    COMPLEX*16, INTENT(IN)                   :: ar(1)
+    INTEGER, INTENT(IN)                      :: nunit
+    INTEGER, INTENT(IN)                      :: ix1
+    INTEGER, INTENT(IN)                      :: ix2
+    INTEGER, INTENT(IN)                      :: nblks
+    INTEGER, INTENT(IN)                      :: neof
+    ! ***
+    !
+    !     BLCKOT CONTROLS THE READING AND WRITING OF MATRIX BLOCKS ON FILES
+    !     FOR THE OUT-OF-CORE MATRIX SOLUTION.
+    !
+    i1=(ix1+1)/2
+    i2=(ix2+1)/2
+1   WRITE (nunit) (ar(j),j=i1,i2)
+    RETURN
 
-
-
-i1=(ix1+1)/2
-i2=(ix2+1)/2
-1     WRITE (nunit) (ar(j),j=i1,i2)
-RETURN
-ENTRY blckin(ar,nunit,ix1,ix2,nblks,neof)
-i1=(ix1+1)/2
-i2=(ix2+1)/2
-DO  i=1,nblks
-  READ (nunit,END=3) (ar(j),j=i1,i2)
-END DO
-RETURN
-3     WRITE(3,4)  nunit,nblks,neof
-IF (neof /= 777) STOP
-neof=0
-RETURN
-!
-4     FORMAT (13H  eof on UNIT,i3,9H  nblks= ,i3,8H  neof= ,i5)
 END SUBROUTINE blckot
+!----------------------------------------------------------------------------
+
+SUBROUTINE blckin(ar,nunit,ix1,ix2,nblks,neof)
+    IMPLICIT REAL*8(a-h,o-z)
+
+    COMPLEX*16, INTENT(IN OUT)               :: ar(1)
+    INTEGER, INTENT(IN)                      :: nunit
+    INTEGER, INTENT(IN)                      :: ix1
+    INTEGER, INTENT(IN)                      :: ix2
+    INTEGER, INTENT(IN)                      :: nblks
+    INTEGER, INTENT(IN)                      :: neof
+    ! ***
+    !
+    !     BLCKOT CONTROLS THE READING AND WRITING OF MATRIX BLOCKS ON FILES
+    !     FOR THE OUT-OF-CORE MATRIX SOLUTION.
+    !
+
+    i1=(ix1+1)/2
+    i2=(ix2+1)/2
+    DO  i=1,nblks
+      READ (nunit,END=1) (ar(j),j=i1,i2)
+    END DO
+    RETURN
+
+1   WRITE(3,2)  nunit,nblks,neof
+    IF (neof /= 777) STOP
+    ! hwh neof=0
+    RETURN
+    !
+2   FORMAT ('  eof on UNIT',i3,'  nblks= ',i3,'  neof= ',i5)
+END SUBROUTINE blckin
 !----------------------------------------------------------------------------
 
 SUBROUTINE cabc (curx)
@@ -2251,7 +2270,7 @@ COMPLEX*16, INTENT(OUT)                  :: cd(nd,1)
 INTEGER, INTENT(IN)                      :: nb
 INTEGER, INTENT(IN)                      :: nc
 INTEGER, INTENT(IN)                      :: nd
-REAL, INTENT(IN)                         :: rkhx
+REAL*8, INTENT(IN)                         :: rkhx
 INTEGER, INTENT(IN)                      :: iexkx
 ! ***
 !     CMNGF FILLS INTERACTION MATRICIES B, C, AND D FOR N.G.F. SOLUTION
@@ -2540,7 +2559,7 @@ IMPLICIT REAL*8(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: nrow
 COMPLEX*16, INTENT(OUT)                  :: cm(nrow,1)
-REAL, INTENT(IN)                         :: rkhx
+REAL*8, INTENT(IN)                         :: rkhx
 INTEGER, INTENT(IN)                      :: iexkx
 ! ***
 !
@@ -2674,8 +2693,8 @@ INTEGER, INTENT(IN)                      :: j2
 INTEGER, INTENT(IN OUT)                  :: im1
 INTEGER, INTENT(IN OUT)                  :: im2
 COMPLEX*16, INTENT(OUT)                  :: cm(nrow,1)
-INTEGER, INTENT(IN OUT)                  :: nrow
-INTEGER, INTENT(IN OUT)                  :: itrp
+INTEGER, INTENT(IN)                      :: nrow
+INTEGER, INTENT(IN)                      :: itrp
 ! ***
 !     CMSS COMPUTES MATRIX ELEMENTS FOR SURFACE-SURFACE INTERACTIONS.
 COMPLEX*16 g11,g12,g21,g22, exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc
@@ -2771,8 +2790,8 @@ INTEGER, INTENT(IN)                      :: i2
 COMPLEX*16, INTENT(OUT)                  :: cm(nrow,1)
 COMPLEX*16, INTENT(OUT)                  :: cw(nrow,1)
 INTEGER, INTENT(IN)                      :: ncw
-INTEGER, INTENT(IN OUT)                  :: nrow
-INTEGER, INTENT(IN OUT)                  :: itrp
+INTEGER, INTENT(IN)                      :: nrow
+INTEGER, INTENT(IN)                      :: itrp
 ! ***
 !     COMPUTES MATRIX ELEMENTS FOR E ALONG WIRES DUE TO PATCH CURRENT
 COMPLEX*16  zrati,zrati2,t1,exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc ,emel, frati
@@ -2929,8 +2948,8 @@ INTEGER, INTENT(IN)                      :: i2
 COMPLEX*16, INTENT(OUT)                  :: cm(nr,1)
 INTEGER, INTENT(IN)                      :: nr
 COMPLEX*16, INTENT(OUT)                  :: cw(nw,1)
-INTEGER, INTENT(IN OUT)                  :: nw
-INTEGER, INTENT(IN OUT)                  :: itrp
+INTEGER, INTENT(IN)                      :: nw
+INTEGER, INTENT(IN)                      :: itrp
 ! ***
 !
 !     CMWS COMPUTES MATRIX ELEMENTS FOR WIRE-SURFACE INTERACTIONS
@@ -3031,8 +3050,8 @@ INTEGER, INTENT(IN)                      :: i2
 COMPLEX*16, INTENT(OUT)                  :: cm(nr,1)
 INTEGER, INTENT(IN)                      :: nr
 COMPLEX*16, INTENT(OUT)                  :: cw(nw,1)
-INTEGER, INTENT(IN OUT)                  :: nw
-INTEGER, INTENT(IN OUT)                  :: itrp
+INTEGER, INTENT(IN)                      :: nw
+INTEGER, INTENT(IN)                      :: itrp
 ! ***
 !
 !     CMWW COMPUTES MATRIX ELEMENTS FOR WIRE-WIRE INTERACTIONS
@@ -3501,7 +3520,7 @@ INCLUDE 'nec2dpar.inc'
 IMPLICIT REAL*8(a-h,o-z)
 
 COMPLEX*16, INTENT(IN)                   :: cur(1)
-REAL, INTENT(IN)                         :: wlam
+REAL*8, INTENT(IN)                         :: wlam
 ! ***
 !
 !     COUPLE COMPUTES THE MAXIMUM COUPLING BETWEEN PAIRS OF SEGMENTS.
@@ -3586,7 +3605,12 @@ IMPLICIT REAL*8(a-h,o-z)
 !     DATAGN IS THE MAIN ROUTINE FOR INPUT OF GEOMETRY DATA.
 !
 !***
-CHARACTER (LEN=2) :: gm,atst
+CHARACTER (LEN=2)  :: gm
+CHARACTER (LEN=1), DIMENSION(4), PARAMETER :: ipt = (/'P','R','T','Q'/)
+CHARACTER (LEN=2), DIMENSION(13), PARAMETER :: atst = (/'GW','GX','GR','GS','GE','GM','SP','SM','GF','GA','SC', 'GC','GH'/)
+CHARACTER (LEN=1), DIMENSION(2), PARAMETER :: ifx = (/' ','X'/)
+CHARACTER (LEN=1), DIMENSION(2), PARAMETER :: ify = (/' ','Y'/)
+CHARACTER (LEN=1), DIMENSION(2), PARAMETER :: ifz = (/' ','Z'/)
 !***
 COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
     alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
@@ -3596,14 +3620,12 @@ COMMON /angl/ salp(maxseg)
 COMMON /plot/ iplp1,iplp2,iplp3,iplp4
 !***
 DIMENSION x2(1), y2(1), z2(1), t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), &
-    t2z(1), atst(13), ifx(2), ify(2), ifz(2), cab(1), sab(1), ipt (4)
+    t2z(1), cab(1), sab(1)
 EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), (t2y,icon2), &
     (t2z,itag), (x2,si), (y2,alp), (z2,bet), (cab,alp), (sab,bet)
 !***
-DATA atst/'GW','GX','GR','GS','GE','GM','SP','SM','GF','GA','SC', 'GC','GH'/
 !***
-DATA ifx/' ','X'/,ify/' ','Y'/,ifz/' ','Z'/
-DATA ta/0.01745329252D+0/,td/57.29577951D+0/,ipt/'P','R','T','Q'/
+DATA ta/0.01745329252D+0/,td/57.29577951D+0/
 ipsym=0
 nwire=0
 n=0
@@ -3926,7 +3948,7 @@ FUNCTION db10 (x)
 IMPLICIT REAL*8(a-h,o-z)
 
 
-REAL, INTENT(IN OUT)                     :: x
+REAL*8, INTENT(IN OUT)                     :: x
 ! ***
 !
 !     FUNCTION DB-- RETURNS DB FOR MAGNITUDE (FIELD) OR MAG**2 (POWER) I
@@ -3949,10 +3971,10 @@ SUBROUTINE efld (xi,yi,zi,ai,ij)
 !
 IMPLICIT REAL*8(a-h,o-z)
 
-REAL, INTENT(IN)                         :: xi
-REAL, INTENT(IN)                         :: yi
-REAL, INTENT(IN)                         :: zi
-REAL, INTENT(IN)                         :: ai
+REAL*8, INTENT(IN)                         :: xi
+REAL*8, INTENT(IN)                         :: yi
+REAL*8, INTENT(IN)                         :: zi
+REAL*8, INTENT(IN)                         :: ai
 INTEGER, INTENT(IN)                      :: ij
 ! ***
 !
@@ -4190,10 +4212,10 @@ SUBROUTINE eksc (s,z,rh,xk,ij,ezs,ers,ezc,erc,ezk,erk)
 !
 IMPLICIT REAL*8(a-h,o-z)
 
-REAL, INTENT(IN)                         :: s
-REAL, INTENT(IN)                         :: z
-REAL, INTENT(IN)                         :: rh
-REAL, INTENT(IN)                         :: xk
+REAL*8, INTENT(IN)                         :: s
+REAL*8, INTENT(IN)                         :: z
+REAL*8, INTENT(IN)                         :: rh
+REAL*8, INTENT(IN)                         :: xk
 INTEGER, INTENT(IN)                      :: ij
 COMPLEX*16, INTENT(OUT)                  :: ezs
 COMPLEX*16, INTENT(OUT)                  :: ers
@@ -4247,11 +4269,11 @@ SUBROUTINE ekscx (bx,s,z,rhx,xk,ij,inx1,inx2,ezs,ers,ezc,erc,ezk,erk)
 !
 IMPLICIT REAL*8(a-h,o-z)
 
-REAL, INTENT(IN)                         :: bx
-REAL, INTENT(IN)                         :: s
-REAL, INTENT(IN)                         :: z
-REAL, INTENT(IN)                         :: rhx
-REAL, INTENT(IN)                         :: xk
+REAL*8, INTENT(IN)                         :: bx
+REAL*8, INTENT(IN)                         :: s
+REAL*8, INTENT(IN)                         :: z
+REAL*8, INTENT(IN)                         :: rhx
+REAL*8, INTENT(IN)                         :: xk
 INTEGER, INTENT(IN)                      :: ij
 INTEGER, INTENT(IN OUT)                  :: inx1
 INTEGER, INTENT(IN OUT)                  :: inx2
@@ -4328,12 +4350,12 @@ SUBROUTINE etmns (p1,p2,p3,p4,p5,p6,ipr,e)
 INCLUDE 'nec2dpar.inc'
 IMPLICIT REAL*8(a-h,o-z)
 
-REAL, INTENT(IN)                         :: p1
-REAL, INTENT(IN)                         :: p2
-REAL, INTENT(IN)                         :: p3
-REAL, INTENT(IN OUT)                     :: p4
-REAL, INTENT(IN OUT)                     :: p5
-REAL, INTENT(IN)                         :: p6
+REAL*8, INTENT(IN)                         :: p1
+REAL*8, INTENT(IN)                         :: p2
+REAL*8, INTENT(IN)                         :: p3
+REAL*8, INTENT(IN OUT)                     :: p4
+REAL*8, INTENT(IN OUT)                     :: p5
+REAL*8, INTENT(IN)                         :: p6
 INTEGER, INTENT(IN OUT)                  :: ipr
 COMPLEX*16, INTENT(OUT)                  :: e(2*maxseg)
 ! ***
@@ -4582,8 +4604,8 @@ SUBROUTINE facgf (a,b,c,d,bx,ip,ix,np,n1,mp,m1,n1c,n2c)
 IMPLICIT REAL*8(a-h,o-z)
 
 COMPLEX*16, INTENT(IN OUT)               :: a(1)
-COMPLEX*16, INTENT(IN)                   :: b(n1c,1)
-COMPLEX*16, INTENT(IN)                   :: c(n1c,1)
+COMPLEX*16, INTENT(IN OUT)               :: b(n1c,1)
+COMPLEX*16, INTENT(IN OUT)               :: c(n1c,1)
 COMPLEX*16, INTENT(OUT)                  :: d(n2c,1)
 COMPLEX*16, INTENT(IN OUT)               :: bx(n1c,1)
 INTEGER, INTENT(IN OUT)                  :: ip(1)
@@ -4773,7 +4795,7 @@ IMPLICIT REAL*8(a-h,o-z)
 INTEGER, INTENT(IN)                      :: n
 COMPLEX*16, INTENT(IN OUT)               :: a(ndim,ndim)
 INTEGER, INTENT(IN OUT)                  :: ip(ndim)
-INTEGER, INTENT(IN OUT)                  :: ndim
+INTEGER, INTENT(IN)                      :: ndim
 ! ***
 !
 !     SUBROUTINE TO FACTOR A MATRIX INTO A UNIT LOWER TRIANGULAR MATRIX
@@ -4868,10 +4890,10 @@ INTEGER, INTENT(IN)                      :: nrow
 COMPLEX*16, INTENT(IN OUT)               :: a(1)
 INTEGER, INTENT(IN OUT)                  :: ip(nrow)
 INTEGER, INTENT(IN OUT)                  :: ix(nrow)
-INTEGER, INTENT(IN OUT)                  :: iu1
-INTEGER, INTENT(IN OUT)                  :: iu2
-INTEGER, INTENT(IN OUT)                  :: iu3
-INTEGER, INTENT(IN OUT)                  :: iu4
+INTEGER, INTENT(IN)                      :: iu1
+INTEGER, INTENT(IN)                      :: iu2
+INTEGER, INTENT(IN)                      :: iu3
+INTEGER, INTENT(IN)                      :: iu4
 ! ***
 !
 !     FACTRS, FOR SYMMETRIC STRUCTURE, TRANSFORMS SUBMATRICIES TO FORM
@@ -5146,7 +5168,7 @@ IMPLICIT REAL*8(a-h,o-z)
 
 INTEGER, INTENT(IN OUT)                  :: neq
 INTEGER, INTENT(IN OUT)                  :: neq2
-INTEGER, INTENT(IN OUT)                  :: iresrv
+INTEGER, INTENT(IN)                      :: iresrv
 INTEGER, INTENT(OUT)                     :: ib11
 INTEGER, INTENT(OUT)                     :: ic11
 INTEGER, INTENT(OUT)                     :: id11
@@ -5230,8 +5252,8 @@ SUBROUTINE ffld (thet,phi,eth,eph)
 INCLUDE 'nec2dpar.inc'
 IMPLICIT REAL*8(a-h,o-z)
 
-REAL, INTENT(IN OUT)                     :: thet
-REAL, INTENT(IN OUT)                     :: phi
+REAL*8, INTENT(IN OUT)                   :: thet
+REAL*8, INTENT(IN OUT)                   :: phi
 COMPLEX*16, INTENT(OUT)                  :: eth
 COMPLEX*16, INTENT(OUT)                  :: eph
 ! ***
@@ -5498,9 +5520,9 @@ SUBROUTINE gf (zk,co,si)
 !
 IMPLICIT REAL*8(a-h,o-z)
 
-REAL, INTENT(IN)                         :: zk
-REAL, INTENT(OUT)                        :: co
-REAL, INTENT(OUT)                        :: si
+REAL*8, INTENT(IN)                         :: zk
+REAL*8, INTENT(OUT)                        :: co
+REAL*8, INTENT(OUT)                        :: si
 ! ***
 !
 !     GF COMPUTES THE INTEGRAND EXP(JKR)/(KR) FOR NUMERICAL INTEGRATION.
@@ -5709,9 +5731,9 @@ SUBROUTINE gfld (rho,phi,rz,eth,epi,erd,ux,ksymp)
 INCLUDE 'nec2dpar.inc'
 IMPLICIT REAL*8(a-h,o-z)
 
-REAL, INTENT(IN)                         :: rho
-REAL, INTENT(IN OUT)                     :: phi
-REAL, INTENT(IN)                         :: rz
+REAL*8, INTENT(IN)                       :: rho
+REAL*8, INTENT(IN OUT)                   :: phi
+REAL*8, INTENT(IN)                       :: rz
 COMPLEX*16, INTENT(OUT)                  :: eth
 COMPLEX*16, INTENT(OUT)                  :: epi
 COMPLEX*16, INTENT(OUT)                  :: erd
@@ -5990,9 +6012,9 @@ SUBROUTINE gh (zk,hr,hi)
 !
 IMPLICIT REAL*8(a-h,o-z)
 
-REAL, INTENT(IN)                         :: zk
-REAL, INTENT(OUT)                        :: hr
-REAL, INTENT(OUT)                        :: hi
+REAL*8, INTENT(IN)                         :: zk
+REAL*8, INTENT(OUT)                        :: hr
+REAL*8, INTENT(OUT)                        :: hi
 ! ***
 !     INTEGRAND FOR H FIELD OF A WIRE
 COMMON /tmh/ zpk,rhks
@@ -6106,9 +6128,9 @@ SUBROUTINE gx (zz,rh,xk,gz,gzp)
 !
 IMPLICIT REAL*8(a-h,o-z)
 
-REAL, INTENT(IN)                         :: zz
-REAL, INTENT(IN)                         :: rh
-REAL, INTENT(IN)                         :: xk
+REAL*8, INTENT(IN)                         :: zz
+REAL*8, INTENT(IN)                         :: rh
+REAL*8, INTENT(IN)                         :: xk
 COMPLEX*16, INTENT(OUT)                  :: gz
 COMPLEX*16, INTENT(OUT)                  :: gzp
 ! ***
@@ -6130,11 +6152,11 @@ SUBROUTINE gxx (zz,rh,a,a2,xk,ira,g1,g1p,g2,g2p,g3,gzp)
 !
 IMPLICIT REAL*8(a-h,o-z)
 
-REAL, INTENT(IN)                         :: zz
-REAL, INTENT(IN)                         :: rh
-REAL, INTENT(IN)                         :: a
-REAL, INTENT(IN)                         :: a2
-REAL, INTENT(IN)                         :: xk
+REAL*8, INTENT(IN)                         :: zz
+REAL*8, INTENT(IN)                         :: rh
+REAL*8, INTENT(IN)                         :: a
+REAL*8, INTENT(IN)                         :: a2
+REAL*8, INTENT(IN)                         :: xk
 INTEGER, INTENT(IN OUT)                  :: ira
 COMPLEX*16, INTENT(OUT)                  :: g1
 COMPLEX*16, INTENT(OUT)                  :: g1p
@@ -6192,13 +6214,13 @@ SUBROUTINE helix(s,hl,a1,b1,a2,b2,rad,ns,itg)
 INCLUDE 'nec2dpar.inc'
 IMPLICIT REAL*8(a-h,o-z)
 
-REAL, INTENT(IN OUT)                     :: s
-REAL, INTENT(IN OUT)                     :: hl
-REAL, INTENT(IN)                         :: a1
-REAL, INTENT(OUT)                        :: b1
-REAL, INTENT(IN)                         :: a2
-REAL, INTENT(OUT)                        :: b2
-REAL, INTENT(IN)                         :: rad
+REAL*8, INTENT(IN OUT)                     :: s
+REAL*8, INTENT(IN OUT)                     :: hl
+REAL*8, INTENT(IN)                         :: a1
+REAL*8, INTENT(OUT)                        :: b1
+REAL*8, INTENT(IN)                         :: a2
+REAL*8, INTENT(OUT)                        :: b2
+REAL*8, INTENT(IN)                         :: rad
 INTEGER, INTENT(IN)                      :: ns
 INTEGER, INTENT(IN)                      :: itg
 ! ***
@@ -6279,12 +6301,12 @@ SUBROUTINE hfk (el1,el2,rhk,zpkx,sgr,sgi)
 !
 IMPLICIT REAL*8(a-h,o-z)
 
-REAL, INTENT(IN)                         :: el1
-REAL, INTENT(IN)                         :: el2
-REAL, INTENT(IN)                         :: rhk
-REAL, INTENT(IN)                         :: zpkx
-REAL, INTENT(OUT)                        :: sgr
-REAL, INTENT(OUT)                        :: sgi
+REAL*8, INTENT(IN)                         :: el1
+REAL*8, INTENT(IN)                         :: el2
+REAL*8, INTENT(IN)                         :: rhk
+REAL*8, INTENT(IN)                         :: zpkx
+REAL*8, INTENT(OUT)                        :: sgr
+REAL*8, INTENT(OUT)                        :: sgi
 ! ***
 !     HFK COMPUTES THE H FIELD OF A UNIFORM CURRENT FILAMENT BY
 !     NUMERICAL INTEGRATION
@@ -6410,9 +6432,9 @@ SUBROUTINE hintg (xi,yi,zi)
 !
 IMPLICIT REAL*8(a-h,o-z)
 
-REAL, INTENT(IN)                         :: xi
-REAL, INTENT(IN)                         :: yi
-REAL, INTENT(IN)                         :: zi
+REAL*8, INTENT(IN)                         :: xi
+REAL*8, INTENT(IN)                         :: yi
+REAL*8, INTENT(IN)                         :: zi
 ! ***
 !     HINTG COMPUTES THE H FIELD OF A PATCH CURRENT
 COMPLEX*16 exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc,zrati,zrati2,gam,  &
@@ -6502,10 +6524,10 @@ SUBROUTINE hsfld (xi,yi,zi,ai)
 !
 IMPLICIT REAL*8(a-h,o-z)
 
-REAL, INTENT(IN)                         :: xi
-REAL, INTENT(IN)                         :: yi
-REAL, INTENT(IN)                         :: zi
-REAL, INTENT(IN)                         :: ai
+REAL*8, INTENT(IN)                         :: xi
+REAL*8, INTENT(IN)                         :: yi
+REAL*8, INTENT(IN)                         :: zi
+REAL*8, INTENT(IN)                         :: ai
 ! ***
 !     HSFLD COMPUTES THE H FIELD FOR CONSTANT, SINE, AND COSINE CURRENT
 !     ON A SEGMENT INCLUDING GROUND EFFECTS.
@@ -6622,9 +6644,9 @@ SUBROUTINE hsflx (s,rh,zpx,hpk,hps,hpc)
 !
 IMPLICIT REAL*8(a-h,o-z)
 
-REAL, INTENT(IN)                         :: s
-REAL, INTENT(IN)                         :: rh
-REAL, INTENT(IN)                         :: zpx
+REAL*8, INTENT(IN)                         :: s
+REAL*8, INTENT(IN)                         :: rh
+REAL*8, INTENT(IN)                         :: zpx
 COMPLEX*16, INTENT(OUT)                  :: hpk
 COMPLEX*16, INTENT(OUT)                  :: hps
 COMPLEX*16, INTENT(OUT)                  :: hpc
@@ -6689,8 +6711,8 @@ SUBROUTINE intrp (x,y,f1,f2,f3,f4)
 !
 IMPLICIT REAL*8(a-h,o-z)
 
-REAL, INTENT(IN OUT)                     :: x
-REAL, INTENT(IN OUT)                     :: y
+REAL*8, INTENT(IN OUT)                     :: x
+REAL*8, INTENT(IN OUT)                     :: y
 COMPLEX*16, INTENT(OUT)                  :: f1
 COMPLEX*16, INTENT(OUT)                  :: f2
 COMPLEX*16, INTENT(OUT)                  :: f3
@@ -6862,12 +6884,12 @@ SUBROUTINE intx (el1,el2,b,ij,sgr,sgi)
 !
 IMPLICIT REAL*8(a-h,o-z)
 
-REAL, INTENT(IN)                         :: el1
-REAL, INTENT(IN)                         :: el2
-REAL, INTENT(IN)                         :: b
-INTEGER, INTENT(IN OUT)                  :: ij
-REAL, INTENT(OUT)                        :: sgr
-REAL, INTENT(OUT)                        :: sgi
+REAL*8, INTENT(IN)                         :: el1
+REAL*8, INTENT(IN)                         :: el2
+REAL*8, INTENT(IN)                         :: b
+INTEGER, INTENT(IN)                        :: ij
+REAL*8, INTENT(OUT)                        :: sgr
+REAL*8, INTENT(OUT)                        :: sgi
 ! ***
 !
 !     INTX PERFORMS NUMERICAL INTEGRATION OF EXP(JKR)/R BY THE METHOD OF
@@ -7010,6 +7032,7 @@ RETURN
 !
 20    FORMAT (24H step size limited at z=,f10.5)
 END SUBROUTINE intx
+!---------------------------------------------------------------------
 
 FUNCTION isegno (itagi,mx)
 ! ***
@@ -7018,7 +7041,7 @@ FUNCTION isegno (itagi,mx)
 INCLUDE 'nec2dpar.inc'
 IMPLICIT REAL*8(a-h,o-z)
 
-INTEGER, INTENT(IN OUT)                  :: itagi
+INTEGER, INTENT(IN)                      :: itagi
 INTEGER, INTENT(IN)                      :: mx
 ! ***
 !
@@ -7184,9 +7207,9 @@ INTEGER, INTENT(IN)                      :: ldtyp(1)
 INTEGER, INTENT(IN)                      :: ldtag(1)
 INTEGER, INTENT(IN)                      :: ldtagf(1)
 INTEGER, INTENT(IN)                      :: ldtagt(1)
-REAL, INTENT(IN)                         :: zlr(1)
-REAL, INTENT(IN)                         :: zli(1)
-REAL, INTENT(IN)                         :: zlc(1)
+REAL*8, INTENT(IN)                         :: zlr(1)
+REAL*8, INTENT(IN)                         :: zli(1)
+REAL*8, INTENT(IN)                         :: zlc(1)
 ! ***
 !
 !     LOAD CALCULATES THE IMPEDANCE OF SPECIFIED SEGMENTS FOR VARIOUS
@@ -7450,9 +7473,9 @@ INTEGER, INTENT(IN)                      :: nrow
 INTEGER, INTENT(IN)                      :: nop
 INTEGER, INTENT(OUT)                     :: ix(nrow)
 INTEGER, INTENT(IN)                      :: ip(nrow)
-INTEGER, INTENT(IN OUT)                  :: iu2
-INTEGER, INTENT(IN OUT)                  :: iu3
-INTEGER, INTENT(IN OUT)                  :: iu4
+INTEGER, INTENT(IN)                      :: iu2
+INTEGER, INTENT(IN)                      :: iu3
+INTEGER, INTENT(IN)                      :: iu4
 ! ***
 !
 !     S/R WHICH UNSCRAMBLES, SCRAMBLED FACTORED MATRIX
@@ -7523,15 +7546,15 @@ SUBROUTINE move (rox,roy,roz,xs,ys,zs,its,nrpt,itgi)
 INCLUDE 'nec2dpar.inc'
 IMPLICIT REAL*8(a-h,o-z)
 
-REAL, INTENT(IN OUT)                     :: rox
-REAL, INTENT(IN OUT)                     :: roy
-REAL, INTENT(IN OUT)                     :: roz
-REAL, INTENT(IN)                         :: xs
-REAL, INTENT(IN)                         :: ys
-REAL, INTENT(IN)                         :: zs
-INTEGER, INTENT(IN OUT)                  :: its
-INTEGER, INTENT(IN)                      :: nrpt
-INTEGER, INTENT(IN)                      :: itgi
+REAL*8, INTENT(IN OUT)                     :: rox
+REAL*8, INTENT(IN OUT)                     :: roy
+REAL*8, INTENT(IN OUT)                     :: roz
+REAL*8, INTENT(IN)                         :: xs
+REAL*8, INTENT(IN)                         :: ys
+REAL*8, INTENT(IN)                         :: zs
+INTEGER, INTENT(IN)                        :: its
+INTEGER, INTENT(IN)                        :: nrpt
+INTEGER, INTENT(IN)                        :: itgi
 ! ***
 !
 !     SUBROUTINE MOVE MOVES THE STRUCTURE WITH RESPECT TO ITS
@@ -7644,9 +7667,9 @@ SUBROUTINE nefld (xob,yob,zob,ex,ey,ez)
 INCLUDE 'nec2dpar.inc'
 IMPLICIT REAL*8(a-h,o-z)
 
-REAL, INTENT(IN)                         :: xob
-REAL, INTENT(IN)                         :: yob
-REAL, INTENT(IN)                         :: zob
+REAL*8, INTENT(IN)                         :: xob
+REAL*8, INTENT(IN)                         :: yob
+REAL*8, INTENT(IN)                         :: zob
 COMPLEX*16, INTENT(OUT)                  :: ex
 COMPLEX*16, INTENT(OUT)                  :: ey
 COMPLEX*16, INTENT(OUT)                  :: ez
@@ -8272,9 +8295,9 @@ SUBROUTINE nhfld (xob,yob,zob,hx,hy,hz)
 INCLUDE 'nec2dpar.inc'
 IMPLICIT REAL*8(a-h,o-z)
 
-REAL, INTENT(IN)                         :: xob
-REAL, INTENT(IN)                         :: yob
-REAL, INTENT(IN)                         :: zob
+REAL*8, INTENT(IN)                         :: xob
+REAL*8, INTENT(IN)                         :: yob
+REAL*8, INTENT(IN)                         :: zob
 COMPLEX*16, INTENT(OUT)                  :: hx
 COMPLEX*16, INTENT(OUT)                  :: hy
 COMPLEX*16, INTENT(OUT)                  :: hz
@@ -8391,18 +8414,18 @@ IMPLICIT REAL*8(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: nx
 INTEGER, INTENT(IN)                      :: ny
-REAL, INTENT(IN)                         :: x1
-REAL, INTENT(IN)                         :: y1
-REAL, INTENT(IN)                         :: z1
-REAL, INTENT(IN)                         :: x2
-REAL, INTENT(IN)                         :: y2
-REAL, INTENT(IN)                         :: z2
-REAL, INTENT(IN)                         :: x3
-REAL, INTENT(IN)                         :: y3
-REAL, INTENT(IN)                         :: z3
-REAL, INTENT(IN)                         :: x4
-REAL, INTENT(IN)                         :: y4
-REAL, INTENT(IN)                         :: z4
+REAL*8, INTENT(IN)                         :: x1
+REAL*8, INTENT(IN)                         :: y1
+REAL*8, INTENT(IN)                         :: z1
+REAL*8, INTENT(IN)                         :: x2
+REAL*8, INTENT(IN)                         :: y2
+REAL*8, INTENT(IN)                         :: z2
+REAL*8, INTENT(IN)                         :: x3
+REAL*8, INTENT(IN)                         :: y3
+REAL*8, INTENT(IN)                         :: z3
+REAL*8, INTENT(IN)                         :: x4
+REAL*8, INTENT(IN)                         :: y4
+REAL*8, INTENT(IN)                         :: z4
 ! ***
 !     PATCH GENERATES AND MODIFIES PATCH GEOMETRY DATA
 COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
@@ -8606,12 +8629,12 @@ SUBROUTINE pcint (xi,yi,zi,cabi,sabi,salpi,e)
 !
 IMPLICIT REAL*8(a-h,o-z)
 
-REAL, INTENT(IN OUT)                     :: xi
-REAL, INTENT(IN OUT)                     :: yi
-REAL, INTENT(IN OUT)                     :: zi
-REAL, INTENT(IN)                         :: cabi
-REAL, INTENT(IN)                         :: sabi
-REAL, INTENT(IN)                         :: salpi
+REAL*8, INTENT(IN OUT)                     :: xi
+REAL*8, INTENT(IN OUT)                     :: yi
+REAL*8, INTENT(IN OUT)                     :: zi
+REAL*8, INTENT(IN)                         :: cabi
+REAL*8, INTENT(IN)                         :: sabi
+REAL*8, INTENT(IN)                         :: salpi
 COMPLEX*16, INTENT(OUT)                  :: e(9)
 ! ***
 !     INTEGRATE OVER PATCHES AT WIRE CONNECTION POINT
@@ -8711,43 +8734,44 @@ SUBROUTINE prnt(in1,in2,in3,fl1,fl2,fl3,fl4,fl5,fl6,ctype)
 !     FL1-6 = REAL VALUES TO BE PRINTED
 !     CTYPE = CHARACTER STRING TO BE PRINTED
 !
-IMPLICIT REAL*8(a-h,o-z)
+    IMPLICIT NONE
 
-INTEGER, INTENT(IN OUT)                  :: in1
-INTEGER, INTENT(IN OUT)                  :: in2
-INTEGER, INTENT(IN OUT)                  :: in3
-REAL, INTENT(IN OUT)                     :: fl1
-REAL, INTENT(IN OUT)                     :: fl2
-REAL, INTENT(IN OUT)                     :: fl3
-REAL, INTENT(IN OUT)                     :: fl4
-REAL, INTENT(IN OUT)                     :: fl5
-REAL, INTENT(IN OUT)                     :: fl6
-CHARACTER (LEN=*), INTENT(IN)            :: ctype
-! hwh
-CHARACTER (LEN=5)  :: cint(3)
-CHARACTER (LEN=13) :: cflt(6)
-!
-DO  i=1,3
-  cint(i)='     '
-END DO
-IF(in1 == 0.AND.in2 == 0.AND.in3 == 0)THEN
-  cint(1)='  ALL'
-ELSE
-  IF(in1 /= 0)WRITE(cint(1),90)in1
-  IF(in2 /= 0)WRITE(cint(2),90)in2
-  IF(in3 /= 0)WRITE(cint(3),90)in3
-END IF
-DO  i=1,6
-  cflt(i)='     '
-END DO
-IF(ABS(fl1) > 1.e-30)WRITE(cflt(1),91)fl1
-IF(ABS(fl2) > 1.e-30)WRITE(cflt(2),91)fl2
-IF(ABS(fl3) > 1.e-30)WRITE(cflt(3),91)fl3
-IF(ABS(fl4) > 1.e-30)WRITE(cflt(4),91)fl4
-IF(ABS(fl5) > 1.e-30)WRITE(cflt(5),91)fl5
-IF(ABS(fl6) > 1.e-30)WRITE(cflt(6),91)fl6
-WRITE(3,92)(cint(i),i=1,3),(cflt(i),i=1,6),ctype
-RETURN
+    INTEGER, INTENT(IN)                      :: in1
+    INTEGER, INTENT(IN)                      :: in2
+    INTEGER, INTENT(IN)                      :: in3
+    REAL*8, INTENT(IN)                       :: fl1
+    REAL*8, INTENT(IN)                       :: fl2
+    REAL*8, INTENT(IN)                       :: fl3
+    REAL*8, INTENT(IN)                       :: fl4
+    REAL*8, INTENT(IN)                       :: fl5
+    REAL*8, INTENT(IN)                       :: fl6
+    CHARACTER (LEN=*), INTENT(IN)            :: ctype
+
+    INTEGER                                  :: i
+    CHARACTER (LEN=5)                        :: cint(3)
+    CHARACTER (LEN=13)                       :: cflt(6)
+
+    DO  i=1,3
+      cint(i)='     '
+    END DO
+    IF(in1 == 0.AND.in2 == 0.AND.in3 == 0)THEN
+      cint(1)='  ALL'
+    ELSE
+      IF(in1 /= 0)WRITE(cint(1),90)in1
+      IF(in2 /= 0)WRITE(cint(2),90)in2
+      IF(in3 /= 0)WRITE(cint(3),90)in3
+    END IF
+    DO  i=1,6
+      cflt(i)='     '
+    END DO
+    IF(ABS(fl1) > 1.e-30)WRITE(cflt(1),91)fl1
+    IF(ABS(fl2) > 1.e-30)WRITE(cflt(2),91)fl2
+    IF(ABS(fl3) > 1.e-30)WRITE(cflt(3),91)fl3
+    IF(ABS(fl4) > 1.e-30)WRITE(cflt(4),91)fl4
+    IF(ABS(fl5) > 1.e-30)WRITE(cflt(5),91)fl5
+    IF(ABS(fl6) > 1.e-30)WRITE(cflt(6),91)fl6
+    WRITE(3,92)(cint(i),i=1,3),(cflt(i),i=1,6),ctype
+    RETURN
 !
 90    FORMAT(i5)
 91    FORMAT(1P,e13.4)
@@ -9202,39 +9226,39 @@ SUBROUTINE readgm(inunit,code,i1,i2,r1,r2,r3,r4,r5,r6,r7)
 !     I1 - I2     integer values from record
 !     R1 - R7     real values from record
 !
-IMPLICIT REAL*8(a-h,o-z)
+    IMPLICIT REAL*8(a-h,o-z)
 
-INTEGER, INTENT(IN OUT)                  :: inunit
-CHARACTER (LEN=*), INTENT(OUT)           :: code
-INTEGER, INTENT(OUT)                     :: i1
-INTEGER, INTENT(OUT)                     :: i2
-REAL, INTENT(OUT)                        :: r1
-REAL, INTENT(OUT)                        :: r2
-REAL, INTENT(OUT)                        :: r3
-REAL, INTENT(OUT)                        :: r4
-REAL, INTENT(OUT)                        :: r5
-REAL, INTENT(OUT)                        :: r6
-REAL, INTENT(OUT)                        :: r7
+    INTEGER, INTENT(IN)                      :: inunit
+    CHARACTER (LEN=*), INTENT(OUT)           :: code
+    INTEGER, INTENT(OUT)                     :: i1
+    INTEGER, INTENT(OUT)                     :: i2
+    REAL*8, INTENT(OUT)                      :: r1
+    REAL*8, INTENT(OUT)                      :: r2
+    REAL*8, INTENT(OUT)                      :: r3
+    REAL*8, INTENT(OUT)                      :: r4
+    REAL*8, INTENT(OUT)                      :: r5
+    REAL*8, INTENT(OUT)                      :: r6
+    REAL*8, INTENT(OUT)                      :: r7
 
-DIMENSION intval(2),reaval(7)
+    DIMENSION intval(2),reaval(7)
 !
 !  Call the routine to read the record and parse it.
 !
-CALL parsit(inunit,2,7,code,intval,reaval,ieof)
-!
-!  Set the return variables to the buffer array elements.
-!
-IF(ieof < 0)code='GE'
-i1=intval(1)
-i2=intval(2)
-r1=reaval(1)
-r2=reaval(2)
-r3=reaval(3)
-r4=reaval(4)
-r5=reaval(5)
-r6=reaval(6)
-r7=reaval(7)
-RETURN
+    CALL parsit(inunit,2,7,code,intval,reaval,ieof)
+    !
+    !  Set the return variables to the buffer array elements.
+    !
+    IF(ieof < 0)code='GE'
+    i1=intval(1)
+    i2=intval(2)
+    r1=reaval(1)
+    r2=reaval(2)
+    r3=reaval(3)
+    r4=reaval(4)
+    r5=reaval(5)
+    r6=reaval(6)
+    r7=reaval(7)
+    RETURN
 END SUBROUTINE readgm
 !----------------------------------------------------------------------------
 
@@ -9242,44 +9266,43 @@ SUBROUTINE readmn(inunit,code,i1,i2,i3,i4,f1,f2,f3,f4,f5,f6)
 !
 !  READMN reads a control record and parses it.
 !
-IMPLICIT REAL*8(a-h,o-z)
+    IMPLICIT NONE
 
-INTEGER, INTENT(IN OUT)                  :: inunit
-CHARACTER (LEN=*), INTENT(OUT)           :: code
-INTEGER, INTENT(OUT)                     :: i1
-INTEGER, INTENT(OUT)                     :: i2
-INTEGER, INTENT(OUT)                     :: i3
-INTEGER, INTENT(OUT)                     :: i4
-REAL, INTENT(OUT)                        :: f1
-REAL, INTENT(OUT)                        :: f2
-REAL, INTENT(OUT)                        :: f3
-REAL, INTENT(OUT)                        :: f4
-REAL, INTENT(OUT)                        :: f5
-REAL, INTENT(OUT)                        :: f6
+    INTEGER, INTENT(IN)                      :: inunit
+    CHARACTER (LEN=*), INTENT(OUT)           :: code
+    INTEGER, INTENT(OUT)                     :: i1
+    INTEGER, INTENT(OUT)                     :: i2
+    INTEGER, INTENT(OUT)                     :: i3
+    INTEGER, INTENT(OUT)                     :: i4
+    REAL*8, INTENT(OUT)                      :: f1
+    REAL*8, INTENT(OUT)                      :: f2
+    REAL*8, INTENT(OUT)                      :: f3
+    REAL*8, INTENT(OUT)                      :: f4
+    REAL*8, INTENT(OUT)                      :: f5
+    REAL*8, INTENT(OUT)                      :: f6
 
-DIMENSION intval(4),reaval(6)
-!
-!  Call the routine to read the record and parse it.
-!
-CALL parsit(inunit,4,6,code,intval,reaval,ieof)
-!
-!  Set the return variables to the buffer array elements.
-IF(ieof < 0)code='EN'
-i1=intval(1)
-i2=intval(2)
-i3=intval(3)
-i4=intval(4)
-f1=reaval(1)
-f2=reaval(2)
-f3=reaval(3)
-f4=reaval(4)
-f5=reaval(5)
-f6=reaval(6)
-RETURN
+    INTEGER, DIMENSION(4)                    :: intval
+    REAL*8, DIMENSION(6)                     :: reaval
+    INTEGER                                  :: ieof
+    !
+    !  Call the routine to read the record and parse it.
+    !
+    CALL parsit(inunit,4,6,code,intval,reaval,ieof)
+    !
+    !  Set the return variables to the buffer array elements.
+    IF(ieof < 0) code='EN'
+    i1=intval(1)
+    i2=intval(2)
+    i3=intval(3)
+    i4=intval(4)
+    f1=reaval(1)
+    f2=reaval(2)
+    f3=reaval(3)
+    f4=reaval(4)
+    f5=reaval(5)
+    f6=reaval(6)
+    RETURN
 END SUBROUTINE readmn
-
-
-
 !----------------------------------------------------------------------------
 
 SUBROUTINE parsit(inunit,maxint,maxrea,cmnd,intfld,reafld,ieof)
@@ -9308,12 +9331,12 @@ SUBROUTINE parsit(inunit,maxint,maxrea,cmnd,intfld,reafld,ieof)
 
 IMPLICIT REAL*8(a-h,o-z)
 
-INTEGER, INTENT(IN OUT)                  :: inunit
+INTEGER, INTENT(IN)                      :: inunit
 INTEGER, INTENT(IN)                      :: maxint
 INTEGER, INTENT(IN)                      :: maxrea
 CHARACTER (LEN=2), INTENT(OUT)           :: cmnd
 INTEGER, INTENT(OUT)                     :: intfld(maxint)
-REAL, INTENT(OUT)                        :: reafld(maxrea)
+REAL*8, INTENT(OUT)                      :: reafld(maxrea)
 INTEGER, INTENT(IN OUT)                  :: ieof
 
 !  *****  Global variables
@@ -9487,46 +9510,46 @@ SUBROUTINE reblk (b,bx,nb,nbx,n2c)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-IMPLICIT REAL*8(a-h,o-z)
+    IMPLICIT REAL*8(a-h,o-z)
 
-COMPLEX*16, INTENT(OUT)                  :: b(nb,1)
-COMPLEX*16, INTENT(IN)                   :: bx(nbx,1)
-INTEGER, INTENT(IN OUT)                  :: nb
-INTEGER, INTENT(IN OUT)                  :: nbx
-INTEGER, INTENT(IN OUT)                  :: n2c
-! ***
-!     REBLOCK ARRAY B IN N.G.F. SOLUTION FROM BLOCKS OF ROWS ON TAPE14
-!     TO BLOCKS OF COLUMNS ON TAPE16
+    COMPLEX*16, INTENT(OUT)                  :: b(nb,1)
+    COMPLEX*16, INTENT(IN OUT)               :: bx(nbx,1)
+    INTEGER, INTENT(IN OUT)                  :: nb
+    INTEGER, INTENT(IN OUT)                  :: nbx
+    INTEGER, INTENT(IN OUT)                  :: n2c
+    ! ***
+    !     REBLOCK ARRAY B IN N.G.F. SOLUTION FROM BLOCKS OF ROWS ON TAPE14
+    !     TO BLOCKS OF COLUMNS ON TAPE16
 
-COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat, &
-    icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
+    COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat, &
+        icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
 
-REWIND 16
+    REWIND 16
 
-nib=0
-npb=npbl
-DO  ib=1,nbbl
-  IF (ib == nbbl) npb=nlbl
-  REWIND 14
-  nix=0
-  npx=npbx
-  DO  ibx=1,nbbx
-    IF (ibx == nbbx) npx=nlbx
-    READ (14) ((bx(i,j),i=1,npx),j=1,n2c)
-    DO  i=1,npx
-      ix=i+nix
-      DO  j=1,npb
-        b(ix,j)=bx(i,j+nib)
+    nib=0
+    npb=npbl
+    DO  ib=1,nbbl
+      IF (ib == nbbl) npb=nlbl
+      REWIND 14
+      nix=0
+      npx=npbx
+      DO  ibx=1,nbbx
+        IF (ibx == nbbx) npx=nlbx
+        READ (14) ((bx(i,j),i=1,npx),j=1,n2c)
+        DO  i=1,npx
+          ix=i+nix
+          DO  j=1,npb
+            b(ix,j)=bx(i,j+nib)
+          END DO
+        END DO
+        nix=nix+npbx
       END DO
+      WRITE (16) ((b(i,j),i=1,nb),j=1,npb)
+      nib=nib+npbl
     END DO
-    nix=nix+npbx
-  END DO
-  WRITE (16) ((b(i,j),i=1,nb),j=1,npb)
-  nib=nib+npbl
-END DO
-REWIND 14
-REWIND 16
-RETURN
+    REWIND 14
+    REWIND 16
+    RETURN
 END SUBROUTINE reblk
 !----------------------------------------------------------------------------
 
@@ -9767,10 +9790,10 @@ SUBROUTINE rom2 (a,b,sum,dmin)
 !
 IMPLICIT REAL*8(a-h,o-z)
 
-REAL, INTENT(IN)                         :: a
-REAL, INTENT(IN)                         :: b
+REAL*8, INTENT(IN)                         :: a
+REAL*8, INTENT(IN)                         :: b
 COMPLEX*16, INTENT(OUT)                  :: sum(9)
-REAL, INTENT(IN OUT)                     :: dmin
+REAL*8, INTENT(IN OUT)                     :: dmin
 ! ***
 !
 !     FOR THE SOMMERFELD GROUND OPTION, ROM2 INTEGRATES OVER THE SOURCE
@@ -9894,10 +9917,10 @@ INCLUDE 'nec2dpar.inc'
 IMPLICIT REAL*8(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: i
-INTEGER, INTENT(IN OUT)                  :: is
-REAL, INTENT(OUT)                        :: aa
-REAL, INTENT(OUT)                        :: bb
-REAL, INTENT(OUT)                        :: cc
+INTEGER, INTENT(IN)                      :: is
+REAL*8, INTENT(OUT)                      :: aa
+REAL*8, INTENT(OUT)                      :: bb
+REAL*8, INTENT(OUT)                      :: cc
 ! ***
 !     COMPUTE COMPONENT OF BASIS FUNCTION I ON SEGMENT IS.
 COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
@@ -10062,7 +10085,7 @@ SUBROUTINE sflds (t,e)
 !
 IMPLICIT REAL*8(a-h,o-z)
 
-REAL, INTENT(IN)                         :: t
+REAL*8, INTENT(IN)                         :: t
 COMPLEX*16, INTENT(OUT)                  :: e(9)
 ! ***
 !
@@ -10553,7 +10576,7 @@ INCLUDE 'nec2dpar.inc'
 IMPLICIT REAL*8(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: i
-INTEGER, INTENT(IN OUT)                  :: icap
+INTEGER, INTENT(IN)                      :: icap
 ! ***
 !     COMPUTE BASIS FUNCTION I
 COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
@@ -10720,32 +10743,34 @@ SUBROUTINE test (f1r,f2r,tr,f1i,f2i,ti,dmin)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-IMPLICIT REAL*8(a-h,o-z)
+    IMPLICIT NONE
 
+    REAL*8, INTENT(IN)                         :: f1r
+    REAL*8, INTENT(IN)                         :: f2r
+    REAL*8, INTENT(OUT)                        :: tr
+    REAL*8, INTENT(IN)                         :: f1i
+    REAL*8, INTENT(IN)                         :: f2i
+    REAL*8, INTENT(OUT)                        :: ti
+    REAL*8, INTENT(IN)                         :: dmin
 
-REAL, INTENT(IN OUT)                     :: f1r
-REAL, INTENT(IN OUT)                     :: f2r
-REAL, INTENT(OUT)                        :: tr
-REAL, INTENT(IN OUT)                     :: f1i
-REAL, INTENT(IN OUT)                     :: f2i
-REAL, INTENT(OUT)                        :: ti
-REAL, INTENT(IN)                         :: dmin
-! ***
-!
-!     TEST FOR CONVERGENCE IN NUMERICAL INTEGRATION
-!
-den=ABS(f2r)
-tr=ABS(f2i)
-IF (den < tr) den=tr
-IF (den < dmin) den=dmin
-IF (den < 1.d-37) GO TO 1
-tr=ABS((f1r-f2r)/den)
-ti=ABS((f1i-f2i)/den)
-RETURN
+    REAL*8                                     :: den
+    ! ***
+    !
+    !     TEST FOR CONVERGENCE IN NUMERICAL INTEGRATION
+    !
+    den=ABS(f2r)
+    tr=ABS(f2i)
+    IF (den < tr) den=tr
+    IF (den < dmin) den=dmin
+    IF (den < 1.d-37) THEN
+        tr=0.
+        ti=0.
+        RETURN
+    END IF
+    tr=ABS((f1r-f2r)/den)
+    ti=ABS((f1i-f2i)/den)
+    RETURN
 
-1     tr=0.
-ti=0.
-RETURN
 END SUBROUTINE test
 
 !----------------------------------------------------------------------------
@@ -10827,9 +10852,9 @@ SUBROUTINE unere (xob,yob,zob)
 !
 IMPLICIT REAL*8(a-h,o-z)
 
-REAL, INTENT(IN)                         :: xob
-REAL, INTENT(IN)                         :: yob
-REAL, INTENT(IN)                         :: zob
+REAL*8, INTENT(IN)                         :: xob
+REAL*8, INTENT(IN)                         :: yob
+REAL*8, INTENT(IN)                         :: zob
 ! ***
 !     CALCULATES THE ELECTRIC FIELD DUE TO UNIT CURRENT IN THE T1 AND T2
 !     DIRECTIONS ON A PATCH
@@ -10919,15 +10944,15 @@ SUBROUTINE wire (xw1,yw1,zw1,xw2,yw2,zw2,rad,rdel,rrad,ns,itg)
 INCLUDE 'nec2dpar.inc'
 IMPLICIT REAL*8(a-h,o-z)
 
-REAL, INTENT(IN)                         :: xw1
-REAL, INTENT(IN)                         :: yw1
-REAL, INTENT(IN)                         :: zw1
-REAL, INTENT(IN)                         :: xw2
-REAL, INTENT(IN)                         :: yw2
-REAL, INTENT(IN)                         :: zw2
-REAL, INTENT(IN)                         :: rad
-REAL, INTENT(IN)                         :: rdel
-REAL, INTENT(IN)                         :: rrad
+REAL*8, INTENT(IN)                         :: xw1
+REAL*8, INTENT(IN)                         :: yw1
+REAL*8, INTENT(IN)                         :: zw1
+REAL*8, INTENT(IN)                         :: xw2
+REAL*8, INTENT(IN)                         :: yw2
+REAL*8, INTENT(IN)                         :: zw2
+REAL*8, INTENT(IN)                         :: rad
+REAL*8, INTENT(IN)                         :: rdel
+REAL*8, INTENT(IN)                         :: rrad
 INTEGER, INTENT(IN)                      :: ns
 INTEGER, INTENT(IN)                      :: itg
 ! ***
@@ -10998,56 +11023,58 @@ COMPLEX*16 FUNCTION zint(sigl,rolam)
 !
 IMPLICIT REAL*8(a-h,o-z)
 
-REAL, INTENT(IN OUT)                     :: sigl
-REAL, INTENT(IN)                         :: rolam
-! ***
-!
-!     ZINT COMPUTES THE INTERNAL IMPEDANCE OF A CIRCULAR WIRE
-!
-!
-COMPLEX*16 th,ph,f,g,fj,cn,br1,br2
-COMPLEX*16 cc1,cc2,cc3,cc4,cc5,cc6,cc7,cc8,cc9,cc10,cc11,cc12 ,cc13,cc14
-DIMENSION fjx(2), cnx(2), ccn(28)
-EQUIVALENCE (fj,fjx), (cn,cnx), (cc1,ccn(1)), (cc2,ccn(3)), &
-    (cc3,ccn(5)), (cc4,ccn(7)), (cc5,ccn(9)), (cc6,ccn(11)), (cc7,ccn(13)),  &
-    (cc8,ccn(15)), (cc9,ccn(17)), (cc10,ccn(19)), (cc11,ccn(21)), &
-    (cc12,ccn(23)), (cc13,ccn(25)), (cc14,ccn(27))
-DATA pi,pot,tp,tpcmu/3.1415926D+0,1.5707963D+0,6.2831853D+0, 2.368705D+3/
-DATA cmotp/60.00/,fjx/0.,1./,cnx/.70710678D+0,.70710678D+0/
-DATA ccn/6.d-7,1.9D-6,-3.4D-6,5.1D-6,-2.52D-5,0.,-9.06D-5,-9.01D-5,  &
-    0.,-9.765D-4,.0110486D+0,-.0110485D+0,0.,-.3926991D+0,1.6D-6,  &
-    -3.2D-6,1.17D-5,-2.4D-6,3.46D-5,3.38D-5,5.d-7,2.452D-4,-1.3813D-3,  &
-    1.3811D-3,-6.25001D-2,-1.d-7,.7071068D+0,.7071068D+0/
+    REAL*8, INTENT(IN)                         :: sigl
+    REAL*8, INTENT(IN)                         :: rolam
+    ! ***
+    !
+    !     ZINT COMPUTES THE INTERNAL IMPEDANCE OF A CIRCULAR WIRE
+    !
+    !
+    COMPLEX*16 th,ph,f,g,fj,cn,br1,br2
+    COMPLEX*16 cc1,cc2,cc3,cc4,cc5,cc6,cc7,cc8,cc9,cc10,cc11,cc12 ,cc13,cc14
+    DIMENSION fjx(2), cnx(2), ccn(28)
+    EQUIVALENCE (fj,fjx), (cn,cnx), (cc1,ccn(1)), (cc2,ccn(3)), &
+        (cc3,ccn(5)), (cc4,ccn(7)), (cc5,ccn(9)), (cc6,ccn(11)), (cc7,ccn(13)),  &
+        (cc8,ccn(15)), (cc9,ccn(17)), (cc10,ccn(19)), (cc11,ccn(21)), &
+        (cc12,ccn(23)), (cc13,ccn(25)), (cc14,ccn(27))
+    DATA pi,pot,tp,tpcmu/3.1415926D+0,1.5707963D+0,6.2831853D+0, 2.368705D+3/
+    DATA cmotp/60.00/,fjx/0.,1./,cnx/.70710678D+0,.70710678D+0/
+    DATA ccn/6.d-7,1.9D-6,-3.4D-6,5.1D-6,-2.52D-5,0.,-9.06D-5,-9.01D-5,  &
+        0.,-9.765D-4,.0110486D+0,-.0110485D+0,0.,-.3926991D+0,1.6D-6,  &
+        -3.2D-6,1.17D-5,-2.4D-6,3.46D-5,3.38D-5,5.d-7,2.452D-4,-1.3813D-3,  &
+        1.3811D-3,-6.25001D-2,-1.d-7,.7071068D+0,.7071068D+0/
 
-th(d)=(((((cc1*d+cc2)*d+cc3)*d+cc4)*d+cc5)*d+cc6)*d+cc7
-ph(d)=(((((cc8*d+cc9)*d+cc10)*d+cc11)*d+cc12)*d+cc13)*d+cc14
-f(d)=SQRT(pot/d)*EXP(-cn*d+th(-8./x))
-g(d)=EXP(cn*d+th(8./x))/SQRT(tp*d)
-x=SQRT(tpcmu*sigl)*rolam
-IF (x > 110.) GO TO 2
-IF (x > 8.) GO TO 1
-y=x/8.
-y=y*y
-s=y*y
-ber=((((((-9.01D-6*s+1.22552D-3)*s-.08349609D+0)*s+2.6419140D+0)  &
-    *s-32.363456D+0)*s+113.77778D+0)*s-64.)*s+1.
-bei=((((((1.1346D-4*s-.01103667D+0)*s+.52185615D+0)*s-  &
-    10.567658D+0)*s+72.817777D+0)*s-113.77778D+0)*s+16.)*y
-br1=DCMPLX(ber,bei)
-ber=(((((((-3.94D-6*s+4.5957D-4)*s-.02609253D+0)*s+.66047849D+0)  &
-    *s-6.0681481D+0)*s+14.222222D+0)*s-4.)*y)*x
-bei=((((((4.609D-5*s-3.79386D-3)*s+.14677204D+0)*s-2.3116751D+0)  &
-    *s+11.377778D+0)*s-10.666667D+0)*s+.5)*x
-br2=DCMPLX(ber,bei)
-br1=br1/br2
-GO TO 3
-1     br2=fj*f(x)/pi
-br1=g(x)+br2
-br2=g(x)*ph(8./x)-br2*ph(-8./x)
-br1=br1/br2
-GO TO 3
-2     br1=DCMPLX(.70710678D+0,-.70710678D+0)
-3     zint=fj*SQRT(cmotp/sigl)*br1/rolam
-RETURN
+    th(d)=(((((cc1*d+cc2)*d+cc3)*d+cc4)*d+cc5)*d+cc6)*d+cc7
+    ph(d)=(((((cc8*d+cc9)*d+cc10)*d+cc11)*d+cc12)*d+cc13)*d+cc14
+    f(d)=SQRT(pot/d)*EXP(-cn*d+th(-8./x))
+    g(d)=EXP(cn*d+th(8./x))/SQRT(tp*d)
+    x=SQRT(tpcmu*sigl)*rolam
+    IF (x > 110.) GO TO 2
+    IF (x > 8.) GO TO 1
+    y=x/8.
+    y=y*y
+    s=y*y
+    ber=((((((-9.01D-6*s+1.22552D-3)*s-.08349609D+0)*s+2.6419140D+0)  &
+        *s-32.363456D+0)*s+113.77778D+0)*s-64.)*s+1.
+    bei=((((((1.1346D-4*s-.01103667D+0)*s+.52185615D+0)*s-  &
+        10.567658D+0)*s+72.817777D+0)*s-113.77778D+0)*s+16.)*y
+    br1=DCMPLX(ber,bei)
+    ber=(((((((-3.94D-6*s+4.5957D-4)*s-.02609253D+0)*s+.66047849D+0)  &
+        *s-6.0681481D+0)*s+14.222222D+0)*s-4.)*y)*x
+    bei=((((((4.609D-5*s-3.79386D-3)*s+.14677204D+0)*s-2.3116751D+0)  &
+        *s+11.377778D+0)*s-10.666667D+0)*s+.5)*x
+    br2=DCMPLX(ber,bei)
+    br1=br1/br2
+    GO TO 3
+
+1   br2=fj*f(x)/pi
+    br1=g(x)+br2
+    br2=g(x)*ph(8./x)-br2*ph(-8./x)
+    br1=br1/br2
+    GO TO 3
+
+2   br1=DCMPLX(.70710678D+0,-.70710678D+0)
+3   zint=fj*SQRT(cmotp/sigl)*br1/rolam
+    RETURN
 END FUNCTION zint
 
