@@ -1,7 +1,7 @@
 module nec2dpar
     integer, parameter:: b8 = selected_real_kind(14)
 
-    !real(b8), parameter :: pi = 3.141592654_b8
+    real(b8), parameter :: pi = 3.141592654_b8
     !real(b8), parameter :: pi = 3.141592653589793239_b8
 
     integer, parameter      :: maxseg=500       ! Max number of segments     (Windows-95 <= 4950)
@@ -192,6 +192,7 @@ GO TO 707
 708   STOP
 
 705   CONTINUE
+
 PRINT *,''
 CALL second(starttime)
 fj=(0.,1.)
@@ -1730,6 +1731,8 @@ SUBROUTINE hankel (z,h0,h0p)
 !     HANKEL EVALUATES HANKEL FUNCTION OF THE FIRST KIND, ORDER ZERO,
 !     AND ITS DERIVATIVE FOR COMPLEX ARGUMENT Z.
 !
+    use nec2dpar,  only : pi
+
     IMPLICIT REAL*8(a-h,o-z)
 
     COMPLEX*16, INTENT(IN)                   :: z
@@ -1739,7 +1742,7 @@ SUBROUTINE hankel (z,h0,h0p)
     COMPLEX*16 clogz, j0,j0p,p0z,p1z,q0z,q1z,y0,y0p, zi,zi2,zk, fj
     DIMENSION m(101), a1(25), a2(25), a3(25), a4(25), fjx(2)
     EQUIVALENCE (fj,fjx)
-    DATA pi,gamma,c1,c2,c3,p10,p20/3.141592654,.5772156649,-.0245785095,.3674669052,.7978845608,.0703125,.1121520996/
+    DATA gamma,c1,c2,c3,p10,p20/.5772156649,-.0245785095,.3674669052,.7978845608,.0703125,.1121520996/
     DATA q10,q20,p11,p21,q11,q21/.125,.0732421875,.1171875,.1441955566,.375,.1025390625/
     DATA pof,init/.7853981635,0/,fjx/0.,1./
 
@@ -2821,7 +2824,6 @@ DIMENSION cab(1), sab(1)
 DIMENSION t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1), emel(9)
 EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), (t2y,icon2), (t2z,itag), (cab,alp), (sab,bet)
 EQUIVALENCE (t1xj,cabj), (t1yj,sabj), (t1zj,salpj), (t2xj,b), (t2yj,ind1), (t2zj,ind2)
-DATA pi/3.141592654D+0/
 
 ldp=ld+1
 neqs=n-n1+2*(m-m1)
@@ -3995,6 +3997,8 @@ SUBROUTINE efld (xi,yi,zi,ai,ij)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
+use nec2dpar, only : pi
+
 IMPLICIT REAL*8(a-h,o-z)
 
 REAL*8, INTENT(IN)                         :: xi
@@ -4018,7 +4022,7 @@ DIMENSION egnd(9)
 EQUIVALENCE (egnd(1),txk), (egnd(2),tyk), (egnd(3),tzk), (egnd(4),  &
     txs), (egnd(5),tys), (egnd(6),tzs), (egnd(7),txc), (egnd(8),tyc),  &
     (egnd(9),tzc)
-DATA eta/376.73/,pi/3.141592654D+0/,tp/6.283185308D+0/
+DATA eta/376.73/,tp/6.283185308D+0/
 
 xij=xi-xj
 yij=yi-yj
@@ -5299,7 +5303,7 @@ COMMON /crnt/ air(maxseg),aii(maxseg),bir(maxseg),bii(maxseg),  &
 COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
 DIMENSION cab(1), sab(1), consx(2)
 EQUIVALENCE (cab,alp), (sab,bet), (const,consx)
-DATA pi,tp,eta/3.141592654D+0,6.283185308D+0,376.73/
+DATA tp,eta/6.283185308D+0,376.73/
 DATA consx/0.,-29.97922085D+0/
 
 phx=-SIN(phi)
@@ -5783,7 +5787,7 @@ COMMON /crnt/ air(maxseg),aii(maxseg),bir(maxseg),bii(maxseg),  &
 COMMON /gwav/ u,u2,xx1,xx2,r1,r2,zmh,zph
 DIMENSION cab(1), sab(1)
 EQUIVALENCE (cab(1),alp(1)), (sab(1),bet(1))
-DATA pi,tp/3.141592654D+0,6.283185308D+0/
+DATA tp/6.283185308D+0/
 
 r=SQRT(rho*rho+rz*rz)
 IF (ksymp == 1) GO TO 1
@@ -6260,7 +6264,6 @@ COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
     itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 DIMENSION x2(1),y2(1),z2(1)
 EQUIVALENCE (x2(1),si(1)), (y2(1),alp(1)), (z2(1),bet(1))
-DATA pi/3.1415926D+0/
 
 ist=n+1
 n=n+ns
@@ -8983,7 +8986,6 @@ CHARACTER (LEN=6), DIMENSION(10), PARAMETER   :: igntp = (/' MAJOR',' AXIS ',' M
 CHARACTER (LEN=6)                             :: hclif
 CHARACTER (LEN=6)                             :: isens
 
-REAL*8                                        ::  pi = 3.141592654D+0
 REAL*8                                        ::  ta = 1.745329252D-02
 REAL*8                                        ::  td = 57.29577951D+0
 
@@ -9962,7 +9964,6 @@ COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
     alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
     itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 
-DATA pi/3.141592654D+0/
 
 aa=0.
 bb=0.
@@ -10118,6 +10119,8 @@ SUBROUTINE sflds (t,e)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
+use nec2dpar, only : pi
+
 IMPLICIT REAL*8(a-h,o-z)
 
 REAL*8, INTENT(IN)                         :: t
@@ -10135,7 +10138,7 @@ COMMON /incom/ xo,yo,zo,sn,xsn,ysn,isnor
 COMMON /gwav/ u,u2,xx1,xx2,r1,r2,zmh,zph
 COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
 
-DATA pi/3.141592654D+0/,tp/6.283185308D+0/,pot/1.570796327D+0/
+DATA tp/6.283185308D+0/,pot/1.570796327D+0/
 
 xt=xj+t*cabj
 yt=yj+t*sabj
@@ -10397,7 +10400,8 @@ SUBROUTINE solve (n,a,ip,b,ndim)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-    use nec2dpar
+    use nec2dpar, only : maxseg
+
     IMPLICIT REAL*8(a-h,o-z)
 
     INTEGER, INTENT(IN)                      :: n
@@ -10620,8 +10624,6 @@ COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
 
 COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
     jsno,iscon(50),nscon,ipcon(10),npcon
-
-DATA pi/3.141592654D+0/
 
 jsno=0
 pp=0.
@@ -11056,6 +11058,8 @@ COMPLEX*16 FUNCTION zint(sigl,rolam)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
+use nec2dpar, only : pi
+
 IMPLICIT REAL*8(a-h,o-z)
 
     REAL*8, INTENT(IN)                         :: sigl
@@ -11072,7 +11076,7 @@ IMPLICIT REAL*8(a-h,o-z)
         (cc3,ccn(5)), (cc4,ccn(7)), (cc5,ccn(9)), (cc6,ccn(11)), (cc7,ccn(13)),  &
         (cc8,ccn(15)), (cc9,ccn(17)), (cc10,ccn(19)), (cc11,ccn(21)), &
         (cc12,ccn(23)), (cc13,ccn(25)), (cc14,ccn(27))
-    DATA pi,pot,tp,tpcmu/3.1415926D+0,1.5707963D+0,6.2831853D+0, 2.368705D+3/
+    DATA pot,tp,tpcmu/1.5707963D+0,6.2831853D+0, 2.368705D+3/
     DATA cmotp/60.00/,fjx/0.,1./,cnx/.70710678D+0,.70710678D+0/
     DATA ccn/6.d-7,1.9D-6,-3.4D-6,5.1D-6,-2.52D-5,0.,-9.06D-5,-9.01D-5,  &
         0.,-9.765D-4,.0110486D+0,-.0110485D+0,0.,-.3926991D+0,1.6D-6,  &
