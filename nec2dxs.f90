@@ -1,4 +1,6 @@
 MODULE nec2dpar
+    IMPLICIT NONE
+
     integer, parameter:: b8 = selected_real_kind(14)
 
     real(b8), parameter :: pi = 3.141592654_b8
@@ -22,6 +24,28 @@ MODULE nec2dpar
 
 END MODULE
 
+!***********************************************************************
+!
+! formerly BLOCK DATA somset with common /ggrid/
+!
+MODULE somset
+    IMPLICIT NONE
+
+    REAL*8, DIMENSION(3)                  :: dxa(3) = (/.02,.05,.1/)
+    REAL*8, DIMENSION(3)                  :: dya(3) = (/.1745329252,.0872664626,.1745329252/)
+    REAL*8, DIMENSION(3)                  :: xsa(3) = (/0.,.2,.2/)
+    REAL*8, DIMENSION(3)                  :: ysa(3) = (/0.,0.,.3490658504/)
+    INTEGER, DIMENSION(3)                 :: nxa(3) = (/11,17,9/)
+    INTEGER, DIMENSION(3)                 :: nya(3) = (/10,5,8/)
+
+    COMPLEX*16              :: ar1(11,10,4)
+    COMPLEX*16              :: ar2(17,5,4)
+    COMPLEX*16              :: ar3(9,8,4)
+    COMPLEX*16              :: epscf
+
+END MODULE
+
+!***********************************************************************
 PROGRAM nec2dxs
 !    av00    01-mar-02    First compile with Gnu77 compiler for windows
 
@@ -79,6 +103,7 @@ PROGRAM nec2dxs
 !     DOUBLE PRECISION 6/4/85
 !
 use nec2dpar
+use somset
 
 PARAMETER (iresrv=maxmat**2)
 
@@ -106,7 +131,8 @@ INTEGER*2                   :: llneg
 
 COMPLEX*16  cm,fj,vsant,eth,eph,zrati,cur,curi,zarray,zrati2
 COMPLEX*16  ex,ey,ez,zped,vqd,vqds,t1,y11a,y12a,epsc,u,u2,xx1,xx2
-COMPLEX*16  ar1,ar2,ar3,epscf,frati
+!COMPLEX*16  ar1,ar2,ar3,epscf,frati
+COMPLEX*16  frati
 
 COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
     alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
@@ -144,8 +170,8 @@ COMMON/fpat/thets,phis,dth,dph,rfld,gnor,clt,cht,epsr2,sig2,  &
     xpr6,pinr,pnlr,ploss,xnr,ynr,znr,dxnr,dynr,dznr,nth,nph,ipd,iavp,  &
     inor,iax,ixtyp,near,nfeh,nrx,nry,nrz
 
-COMMON /ggrid/ ar1(11,10,4),ar2(17,5,4),ar3(9,8,4),epscf,dxa(3),  &
-    dya(3),xsa(3),ysa(3),nxa(3),nya(3)
+!COMMON /ggrid/ ar1(11,10,4),ar2(17,5,4),ar3(9,8,4),epscf,dxa(3),  &
+!    dya(3),xsa(3),ysa(3),nxa(3),nya(3)
 
 COMMON/gwav/u,u2,xx1,xx2,r1,r2,zmh,zph
 
@@ -1249,6 +1275,7 @@ END SUBROUTINE show_program_info
 
 SUBROUTINE som2d (rmhz, repr, rsig)
 !***********************************************************************
+use somset
 
 IMPLICIT REAL*8(a-h,o-z)
 
@@ -1256,10 +1283,10 @@ REAL*8, INTENT(IN)                         :: rmhz
 REAL*8, INTENT(IN)                         :: repr
 REAL*8, INTENT(IN)                         :: rsig
 !***
-COMPLEX*16 ck1,ck1sq,erv,ezv,erh,eph,cksm,ct1,ct2,ct3,cl1,cl2,con,  &
-    ar1,ar2,ar3,epscf
+COMPLEX*16 ck1,ck1sq,erv,ezv,erh,eph,cksm,ct1,ct2,ct3,cl1,cl2,con
+!    ar1,ar2,ar3,epscf
 COMMON /evlcom/ cksm,ct1,ct2,ct3,ck1,ck1sq,ck2,ck2sq,tkmag,tsmag,ck1r,zph,rho,jh
-COMMON /ggrid/ ar1(11,10,4),ar2(17,5,4),ar3(9,8,4),epscf,dxa(3),dya(3),xsa(3),ysa(3),nxa(3),nya(3)
+!COMMON /ggrid/ ar1(11,10,4),ar2(17,5,4),ar3(9,8,4),epscf,dxa(3),dya(3),xsa(3),ysa(3),nxa(3),nya(3)
 
 CHARACTER (LEN=3), DIMENSION(4)  :: lcomp = (/'ERV','EZV','ERH','EPH'/)
 
@@ -1422,20 +1449,6 @@ END DO
 22    FORMAT(' STARTING COMPUTATION OF SOMMERFELD INTEGRAL TABLES')
 END SUBROUTINE som2d
 
-!***********************************************************************
-BLOCK DATA somset
-!***********************************************************************
-
-IMPLICIT REAL*8(a-h,o-z)
-COMPLEX*16 ar1,ar2,ar3,epscf
-COMMON /ggrid/ ar1(11,10,4),ar2(17,5,4),ar3(9,8,4),epscf,dxa(3), &
-    dya(3),xsa(3),ysa(3),nxa(3),nya(3)
-DATA nxa/11,17,9/,nya/10,5,8/,xsa/0.,.2,.2/,ysa/0.,0.,.3490658504/
-DATA dxa/.02,.05,.1/,dya/.1745329252,.0872664626,.1745329252/
-
-END
-
-!***********************************************************************
 !----------------------------------------------------------------------------
 
 SUBROUTINE bessel (z,j0,j0p)
@@ -2073,6 +2086,8 @@ REAL*8, INTENT(IN)                       :: rada
 REAL*8, INTENT(IN)                       :: ang1
 REAL*8, INTENT(IN)                       :: ang2
 REAL*8, INTENT(IN)                       :: rad
+
+REAL*8                                   :: ta = 0.01745329252D+0
 ! ***
 !
 !     ARC GENERATES SEGMENT GEOMETRY DATA FOR AN ARC OF NS SEGMENTS
@@ -2082,7 +2097,6 @@ COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
     itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 DIMENSION x2(1), y2(1), z2(1)
 EQUIVALENCE (x2,si), (y2,alp), (z2,bet)
-DATA ta/.01745329252D+0/
 
 ist=n+1
 n=n+ns
@@ -2326,6 +2340,9 @@ INTEGER, INTENT(IN)                      :: nc
 INTEGER, INTENT(IN)                      :: nd
 REAL*8, INTENT(IN)                         :: rkhx
 INTEGER, INTENT(IN)                      :: iexkx
+
+INTEGER                                  :: ix
+
 ! ***
 !     CMNGF FILLS INTERACTION MATRICIES B, C, AND D FOR N.G.F. SOLUTION
 COMPLEX*16  zarray,exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc
@@ -2846,6 +2863,9 @@ COMPLEX*16, INTENT(OUT)                  :: cw(nrow,1)
 INTEGER, INTENT(IN)                      :: ncw
 INTEGER, INTENT(IN)                      :: nrow
 INTEGER, INTENT(IN)                      :: itrp
+
+INTEGER                                  :: ip
+
 ! ***
 !     COMPUTES MATRIX ELEMENTS FOR E ALONG WIRES DUE TO PATCH CURRENT
 COMPLEX*16  zrati,zrati2,t1,exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc ,emel, frati
@@ -4062,11 +4082,13 @@ use nec2dpar, only : pi
 
 IMPLICIT REAL*8(a-h,o-z)
 
-REAL*8, INTENT(IN)                         :: xi
-REAL*8, INTENT(IN)                         :: yi
-REAL*8, INTENT(IN)                         :: zi
-REAL*8, INTENT(IN)                         :: ai
+REAL*8, INTENT(IN)                       :: xi
+REAL*8, INTENT(IN)                       :: yi
+REAL*8, INTENT(IN)                       :: zi
+REAL*8, INTENT(IN)                       :: ai
 INTEGER, INTENT(IN)                      :: ij
+
+INTEGER                                  :: ip
 ! ***
 !
 !     COMPUTE NEAR E FIELDS OF A SEGMENT WITH SINE, COSINE, AND
@@ -5347,6 +5369,9 @@ REAL*8, INTENT(IN OUT)                   :: thet
 REAL*8, INTENT(IN OUT)                   :: phi
 COMPLEX*16, INTENT(OUT)                  :: eth
 COMPLEX*16, INTENT(OUT)                  :: eph
+
+INTEGER                                  :: ip
+
 ! ***
 !
 !     FFLD CALCULATES THE FAR ZONE RADIATED ELECTRIC FIELDS,
@@ -5646,6 +5671,8 @@ SUBROUTINE gfil (iprt)
 !     DOUBLE PRECISION 6/4/85
 !
 use nec2dpar
+use somset
+
 IMPLICIT REAL*8(a-h,o-z)
 
 INTEGER, INTENT(IN OUT)                  :: iprt
@@ -5654,15 +5681,16 @@ INTEGER, PARAMETER :: iresrv=maxmat**2
 !
 !     GFIL READS THE N.G.F. FILE
 !
-COMPLEX*16 cm,ssx,zrati,zrati2,t1,zarray,ar1,ar2,ar3,epscf,frati
+COMPLEX*16 cm,ssx,zrati,zrati2,t1,zarray,frati
+
 COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
     alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
     itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 COMMON /cmb/ cm(iresrv)
 COMMON /angl/ salp(maxseg)
 COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
-COMMON /ggrid/ ar1(11,10,4),ar2(17,5,4),ar3(9,8,4),epscf,dxa(3), &
-    dya(3),xsa(3),ysa(3),nxa(3),nya(3)
+!COMMON /ggrid/ ar1(11,10,4),ar2(17,5,4),ar3(9,8,4),epscf,dxa(3), &
+!    dya(3),xsa(3),ysa(3),nxa(3),nya(3)
 COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat, &
     icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
 COMMON /smat/ ssx(16,16)
@@ -5990,21 +6018,24 @@ SUBROUTINE gfout
 !     DOUBLE PRECISION 6/4/85
 !
 use nec2dpar
+use somset
+
 PARAMETER (iresrv=maxmat**2)
 IMPLICIT REAL*8(a-h,o-z)
 ! ***
 !
 !     WRITE N.G.F. FILE
 !
-COMPLEX*16 cm,ssx,zrati,zrati2,t1,zarray,ar1,ar2,ar3,epscf,frati
+COMPLEX*16 cm,ssx,zrati,zrati2,t1,zarray,frati
+
 COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
     alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
     itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 COMMON /cmb/ cm(iresrv)
 COMMON /angl/ salp(maxseg)
 COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
-COMMON /ggrid/ ar1(11,10,4),ar2(17,5,4),ar3(9,8,4),epscf,dxa(3), &
-    dya(3),xsa(3),ysa(3),nxa(3),nya(3)
+!COMMON /ggrid/ ar1(11,10,4),ar2(17,5,4),ar3(9,8,4),epscf,dxa(3), &
+!    dya(3),xsa(3),ysa(3),nxa(3),nya(3)
 COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat, &
     icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
 COMMON /smat/ ssx(16,16)
@@ -6528,6 +6559,9 @@ IMPLICIT REAL*8(a-h,o-z)
 REAL*8, INTENT(IN)                         :: xi
 REAL*8, INTENT(IN)                         :: yi
 REAL*8, INTENT(IN)                         :: zi
+
+INTEGER                                    :: ip
+
 ! ***
 !     HINTG COMPUTES THE H FIELD OF A PATCH CURRENT
 COMPLEX*16 exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc,zrati,zrati2,gam,  &
@@ -6621,6 +6655,9 @@ REAL*8, INTENT(IN)                         :: xi
 REAL*8, INTENT(IN)                         :: yi
 REAL*8, INTENT(IN)                         :: zi
 REAL*8, INTENT(IN)                         :: ai
+
+INTEGER                                    :: ip
+
 ! ***
 !     HSFLD COMPUTES THE H FIELD FOR CONSTANT, SINE, AND COSINE CURRENT
 !     ON A SEGMENT INCLUDING GROUND EFFECTS.
@@ -6802,6 +6839,7 @@ SUBROUTINE intrp (x,y,f1,f2,f3,f4)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
+use somset
 IMPLICIT REAL*8(a-h,o-z)
 
 REAL*8, INTENT(IN OUT)                     :: x
@@ -6820,9 +6858,7 @@ COMPLEX*16  a,b,c,d,fx1,fx2,fx3,fx4,p1,p2,p3,p4,a11,a12  &
     ,b13,b14,b21,b22,b23,b24,b31,b32,b33,b34,b41,b42,b43,b44,c11,c12  &
     ,c13,c14,c21,c22,c23,c24,c31,c32,c33,c34,c41,c42,c43,c44,d11,d12  &
     ,d13,d14,d21,d22,d23,d24,d31,d32,d33,d34,d41,d42,d43,d44
-COMPLEX*16 ar1,ar2,ar3,arl1,arl2,arl3,epscf
-COMMON /ggrid/ ar1(11,10,4),ar2(17,5,4),ar3(9,8,4),epscf,dxa(3), &
-    dya(3),xsa(3),ysa(3),nxa(3),nya(3)
+COMPLEX*16 arl1,arl2,arl3
 DIMENSION nda(3), ndpa(3)
 DIMENSION a(4,4), b(4,4), c(4,4), d(4,4), arl1(1), arl2(1), arl3(1 )
 EQUIVALENCE (a(1,1),a11), (a(1,2),a12), (a(1,3),a13), (a(1,4),a14)

@@ -18,5 +18,7 @@ discard:
 	git checkout -- .
 
 nocomment:
+	git add nec2dxs.f90
 	git commit -m "more general cleanup"
+	git push
 
