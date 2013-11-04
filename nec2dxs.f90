@@ -909,41 +909,42 @@ IF (iptflg > 0) GO TO 62
 WRITE(3,161)
 WRITE(3,162)
 GO TO 63
-62    IF (iptflg == 3.OR.inc > 1) GO TO 63
-WRITE(3,163)  xpr3,hpol(ixtyp),xpr6
-63    ploss=0.
-itmp1=0
-jump=iptflg+1
-DO  i=1,n
-  curi=cur(i)*wlam
-  cmag=ABS(curi)
-  ph=cang(curi)
-  IF (nload == 0.AND.nlodf == 0) GO TO 64
-  IF (ABS(dreal(zarray(i))) < 1.d-20) GO TO 64
-  ploss=ploss+.5*cmag*cmag*dreal(zarray(i))*si(i)
 
-64 IF (jump < 0) THEN
-    GO TO    68
-  ELSE IF (jump == 0) THEN
-    GO TO    69
-  END IF
-  65    IF (iptag == 0) GO TO 66
-  IF (itag(i) /= iptag) CYCLE
-  66    itmp1=itmp1+1
-  IF (itmp1 < iptagf.OR.itmp1 > iptagt) CYCLE
-  IF (iptflg == 0) GO TO 68
-  IF (iptflg < 2.OR.inc > normf) GO TO 67
-  fnorm(inc)=cmag
-  isave=i
-  67    IF (iptflg /= 3) WRITE(3,164)  xpr1,xpr2,cmag,ph,i
-  CYCLE
-  68    WRITE(3,165)  i,itag(i),x(i),y(i),z(i),si(i),curi,cmag,ph
-!***
-  IF(iplp1 /= 1) CYCLE
-  IF(iplp2 == 1) WRITE(8,*) curi
-  IF(iplp2 == 2) WRITE(8,*) cmag,ph
-!***
-END DO
+62  IF (iptflg == 3.OR.inc > 1) GO TO 63
+    WRITE(3,163)  xpr3,hpol(ixtyp),xpr6
+63  ploss=0.
+    itmp1=0
+    jump=iptflg+1
+
+    DO  i=1,n
+      curi=cur(i)*wlam
+      cmag=ABS(curi)
+      ph=cang(curi)
+      IF (nload == 0.AND.nlodf == 0) GO TO 64
+      IF (ABS(dreal(zarray(i))) < 1.d-20) GO TO 64
+      ploss=ploss+.5*cmag*cmag*dreal(zarray(i))*si(i)
+64    IF (jump < 0) THEN
+        GO TO    68
+      ELSE IF (jump == 0) THEN
+        CYCLE                 ! HWH was missing target of GO TO 69
+      END IF
+65    IF (iptag == 0) GO TO 66
+      IF (itag(i) /= iptag) CYCLE
+66    itmp1=itmp1+1
+      IF (itmp1 < iptagf.OR.itmp1 > iptagt) CYCLE
+      IF (iptflg == 0) GO TO 68
+      IF (iptflg < 2.OR.inc > normf) GO TO 67
+      fnorm(inc)=cmag
+      isave=i
+67    IF (iptflg /= 3) WRITE(3,164)  xpr1,xpr2,cmag,ph,i
+      CYCLE
+
+68    WRITE(3,165)  i,itag(i),x(i),y(i),z(i),si(i),curi,cmag,ph
+      IF(iplp1 /= 1) CYCLE
+      IF(iplp2 == 1) WRITE(8,*) curi
+      IF(iplp2 == 2) WRITE(8,*) cmag,ph
+    END DO
+
 IF(iptflq == (-1))GO TO 308
 WRITE(3,315)
 itmp1=0
@@ -5492,50 +5493,53 @@ eph=ex*phx+ey*phy
 RETURN
 END SUBROUTINE ffld
 !----------------------------------------------------------------------------
-
-SUBROUTINE fflds (rox,roy,roz,scur,ex,ey,ez)
-! ***
-!     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
-
-REAL, INTENT(IN)                         :: rox
-REAL, INTENT(IN)                         :: roy
-REAL, INTENT(IN)                         :: roz
-COMPLEX*16, INTENT(IN)                   :: scur(1)
-COMPLEX*16, INTENT(OUT)                  :: ex
-COMPLEX*16, INTENT(OUT)                  :: ey
-COMPLEX*16, INTENT(OUT)                  :: ez
-! ***
 !     CALCULATES THE XYZ COMPONENTS OF THE ELECTRIC FIELD DUE TO
 !     SURFACE CURRENTS
-COMPLEX*16 ct,cons
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
-DIMENSION xs(1), ys(1), zs(1), s(1), consx(2)
-EQUIVALENCE (xs,x), (ys,y), (zs,z), (s,bi), (cons,consx)
-DATA tpi/6.283185308D+0/,consx/0.,188.365/
+!
+SUBROUTINE fflds (rox,roy,roz,scur,ex,ey,ez)
 
-ex=(0.,0.)
-ey=(0.,0.)
-ez=(0.,0.)
-i=ld+1
-DO  j=1,m
-  i=i-1
-  arg=tpi*(rox*xs(i)+roy*ys(i)+roz*zs(i))
-  ct=DCMPLX(COS(arg)*s(i),SIN(arg)*s(i))
-  k=3*j
-  ex=ex+scur(k-2)*ct
-  ey=ey+scur(k-1)*ct
-  ez=ez+scur(k)*ct
-END DO
-ct=rox*ex+roy*ey+roz*ez
-ex=cons*(ct*rox-ex)
-ey=cons*(ct*roy-ey)
-ez=cons*(ct*roz-ez)
-RETURN
+    use nec2dpar
+    IMPLICIT REAL*8(a-h,o-z)
+
+    REAL*8, INTENT(IN)                       :: rox
+    REAL*8, INTENT(IN)                       :: roy
+    REAL*8, INTENT(IN)                       :: roz
+    COMPLEX*16, INTENT(IN)                   :: scur(1)
+    COMPLEX*16, INTENT(OUT)                  :: ex
+    COMPLEX*16, INTENT(OUT)                  :: ey
+    COMPLEX*16, INTENT(OUT)                  :: ez
+
+    COMPLEX*16 ct,cons
+
+    COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
+        alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
+        itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
+
+    DIMENSION xs(1), ys(1), zs(1), s(1), consx(2)
+
+    EQUIVALENCE (xs,x), (ys,y), (zs,z), (s,bi), (cons,consx)
+
+    DATA tpi/6.283185308D+0/,consx/0.,188.365/
+
+    ex=(0.,0.)
+    ey=(0.,0.)
+    ez=(0.,0.)
+    i=ld+1
+    DO  j=1,m
+      i=i-1
+      arg=tpi*(rox*xs(i)+roy*ys(i)+roz*zs(i))
+      ct=DCMPLX(COS(arg)*s(i),SIN(arg)*s(i))
+      k=3*j
+      ex=ex+scur(k-2)*ct
+      ey=ey+scur(k-1)*ct
+      ez=ez+scur(k)*ct
+    END DO
+    ct=rox*ex+roy*ey+roz*ez
+    ex=cons*(ct*rox-ex)
+    ey=cons*(ct*roy-ey)
+    ez=cons*(ct*roz-ez)
+    RETURN
 END SUBROUTINE fflds
 !----------------------------------------------------------------------------
 
