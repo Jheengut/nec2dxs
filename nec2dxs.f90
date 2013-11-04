@@ -1,7 +1,7 @@
 module nec2dpar
     integer, parameter:: b8 = selected_real_kind(14)
 
-    real(b8), parameter :: pi = 3.141592654_b8
+    !real(b8), parameter :: pi = 3.141592654_b8
     !real(b8), parameter :: pi = 3.141592653589793239_b8
 
     integer, parameter      :: maxseg=500       ! Max number of segments     (Windows-95 <= 4950)
@@ -14,6 +14,8 @@ module nec2dpar
     integer, parameter      :: netmxp1=65       ! Max number of segs connected to NT/TL 
 
     integer, parameter      :: jmax=60          ! Max segments connected to a single segment or junction
+
+    character (LEN=49)      :: g77port = 'GNU Fortran (Ubuntu/Linaro 4.8.1-10ubuntu8) 4.8.1'
 
 end module
 
@@ -72,8 +74,7 @@ end module
 !
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'    ! Declares MAXSEG,MAXMAT,LOADMX,NETMX and NSMAX
-! AV05,AV06,AV07
+use nec2dpar
 
 PARAMETER (iresrv=maxmat**2)
 
@@ -148,8 +149,6 @@ DATA ta/1.745329252D-02/,cvel/299.8/
 
 DATA normf/200/
 
-INCLUDE 'g77port.inc'    ! Sets G77 port and version used to compile/link.
-
 PRINT *, ''
 PRINT *, 'Numerical Electromagnetics Code, ',  &
     'double precision version (nec2d)'
@@ -168,6 +167,7 @@ PRINT *,'Build 2.7  30-jan-08  ',  &
     '(maxLD=',loadmx,', MaxEX=',nsmax,', MaxTL=',netmx,')'
 PRINT *,'Using ',g77port        ! 'XX port for G77 version YY'
 PRINT *, ''
+
 
 706   CONTINUE
 WRITE(*,700)
@@ -921,7 +921,8 @@ DO  i=1,n
   IF (nload == 0.AND.nlodf == 0) GO TO 64
   IF (ABS(dreal(zarray(i))) < 1.d-20) GO TO 64
   ploss=ploss+.5*cmag*cmag*dreal(zarray(i))*si(i)
-  64    IF (jump < 0) THEN
+
+64 IF (jump < 0) THEN
     GO TO    68
   ELSE IF (jump == 0) THEN
     GO TO    69
@@ -2018,7 +2019,7 @@ SUBROUTINE arc (itg,ns,rada,ang1,ang2,rad)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 
 IMPLICIT REAL*8(a-h,o-z)
 
@@ -2071,34 +2072,26 @@ RETURN
 !
 3     FORMAT (40H error -- arc angle exceeds 360. degrees)
 END SUBROUTINE arc
+!------------------------------------------------------------------
 
-FUNCTION atgn2 (x,y)
-! ***
-!     DOUBLE PRECISION 6/4/85
-!
-IMPLICIT REAL*8(a-h,o-z)
-
-
-REAL*8, INTENT(IN OUT)                     :: x
-REAL*8, INTENT(IN OUT)                     :: y
-! ***
 !
 !     ATGN2 IS ARCTANGENT FUNCTION MODIFIED TO RETURN 0. WHEN X=Y=0.
 !
-IF (x == 0.0) THEN
-  GO TO     1
-ELSE
-  GO TO     3
-END IF
-1     IF (y == 0.0) THEN
-  GO TO     2
-ELSE
-  GO TO     3
-END IF
-2     atgn2=0.
-RETURN
-3     atgn2=ATAN2(x,y)
-RETURN
+REAL*8 FUNCTION atgn2 (x,y)
+    IMPLICIT NONE
+
+    REAL*8, INTENT(IN)                     :: x
+    REAL*8, INTENT(IN)                     :: y
+
+    IF (x == 0.0) THEN
+        IF (y == 0.0) THEN
+            atgn2=0.0
+            RETURN
+        END IF
+    END IF
+
+    atgn2=ATAN2(x,y)
+    RETURN
 END FUNCTION atgn2
 !----------------------------------------------------------------------------
 
@@ -2106,7 +2099,7 @@ SUBROUTINE blckot (ar,nunit,ix1,ix2,nblks,neof)
     ! ***
     !     DOUBLE PRECISION 6/4/85
     !
-    ! FIXME eliminate unused parameters
+    ! FIXME eliminate unused parameters???
     IMPLICIT REAL*8(a-h,o-z)
 
     COMPLEX*16, INTENT(IN)                   :: ar(1)
@@ -2163,7 +2156,7 @@ SUBROUTINE cabc (curx)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 
 COMPLEX*16, INTENT(OUT)                  :: curx(1)
@@ -2269,8 +2262,6 @@ COMPLEX*16, INTENT(IN OUT)               :: z
 !
 !     CANG RETURNS THE PHASE ANGLE OF A COMPLEX NUMBER IN DEGREES.
 !
-
-
 cang=atgn2(DIMAG(z),dreal(z))*57.29577951D+0
 RETURN
 END FUNCTION cang
@@ -2280,7 +2271,7 @@ SUBROUTINE cmngf (cb,cc,cd,nb,nc,nd,rkhx,iexkx)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 
 COMPLEX*16, INTENT(OUT)                  :: cb(nb,1)
@@ -2573,7 +2564,7 @@ SUBROUTINE cmset (nrow,cm,rkhx,iexkx)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: nrow
@@ -2704,7 +2695,7 @@ SUBROUTINE cmss (j1,j2,im1,im2,cm,nrow,itrp)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: j1
@@ -2799,7 +2790,7 @@ SUBROUTINE cmsw (j1,j2,i1,i2,cm,cw,ncw,nrow,itrp)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: j1
@@ -2958,7 +2949,7 @@ SUBROUTINE cmws (j,i1,i2,cm,nr,cw,nw,itrp)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 
 INTEGER, INTENT(IN OUT)                  :: j
@@ -3060,7 +3051,7 @@ SUBROUTINE cmww (j,i1,i2,cm,nr,cw,nw,itrp)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: j
@@ -3210,7 +3201,7 @@ SUBROUTINE conect (ignd)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 
 INTEGER, INTENT(IN OUT)                  :: ignd
@@ -3535,7 +3526,7 @@ SUBROUTINE couple (cur,wlam)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 
 COMPLEX*16, INTENT(IN)                   :: cur(1)
@@ -3617,7 +3608,7 @@ SUBROUTINE datagn
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 ! ***
 !
@@ -4381,7 +4372,7 @@ SUBROUTINE etmns (p1,p2,p3,p4,p5,p6,ipr,e)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 
 REAL*8, INTENT(IN)                         :: p1
@@ -4823,7 +4814,7 @@ SUBROUTINE factr (n,a,ip,ndim)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: n
@@ -5283,7 +5274,7 @@ SUBROUTINE ffld (thet,phi,eth,eph)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 
 REAL*8, INTENT(IN OUT)                   :: thet
@@ -5506,7 +5497,7 @@ SUBROUTINE fflds (rox,roy,roz,scur,ex,ey,ez)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 
 REAL, INTENT(IN)                         :: rox
@@ -5585,7 +5576,7 @@ SUBROUTINE gfil (iprt)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 
 INTEGER, INTENT(IN OUT)                  :: iprt
@@ -5762,7 +5753,7 @@ SUBROUTINE gfld (rho,phi,rz,eth,epi,erd,ux,ksymp)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 
 REAL*8, INTENT(IN)                       :: rho
@@ -5929,7 +5920,7 @@ SUBROUTINE gfout
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 PARAMETER (iresrv=maxmat**2)
 IMPLICIT REAL*8(a-h,o-z)
 ! ***
@@ -6245,7 +6236,7 @@ SUBROUTINE helix(s,hl,a1,b1,a2,b2,rad,ns,itg)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 
 REAL*8, INTENT(IN OUT)                     :: s
@@ -7072,7 +7063,7 @@ FUNCTION isegno (itagi,mx)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: itagi
@@ -7113,7 +7104,7 @@ SUBROUTINE lfactr (a,nrow,ix1,ix2,ip)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 
 COMPLEX*16, INTENT(IN OUT)               :: a(nrow,1)
@@ -7234,7 +7225,7 @@ SUBROUTINE load (ldtyp,ldtag,ldtagf,ldtagt,zlr,zli,zlc)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: ldtyp(1)
@@ -7408,7 +7399,7 @@ SUBROUTINE ltsolv (a,nrow,ix,b,neq,nrh,ifl1,ifl2)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-    INCLUDE 'nec2dpar.inc'
+    use nec2dpar
     IMPLICIT REAL*8(a-h,o-z)
 
     COMPLEX*16, INTENT(IN OUT)               :: a(nrow,nrow)
@@ -7577,7 +7568,7 @@ SUBROUTINE move (rox,roy,roz,xs,ys,zs,its,nrpt,itgi)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 
 REAL*8, INTENT(IN OUT)                     :: rox
@@ -7698,7 +7689,7 @@ SUBROUTINE nefld (xob,yob,zob,ex,ey,ez)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 
 REAL*8, INTENT(IN)                         :: xob
@@ -7852,7 +7843,7 @@ SUBROUTINE netwk (cm,cmb,cmc,cmd,ip,einc)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 
 COMPLEX*16, INTENT(IN OUT)               :: cm(1)
@@ -8218,7 +8209,7 @@ SUBROUTINE nfpat
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 ! ***
 !     COMPUTE NEAR E OR H FIELDS OVER A RANGE OF POINTS
@@ -8326,7 +8317,7 @@ SUBROUTINE nhfld (xob,yob,zob,hx,hy,hz)
 !     NHFLD COMPUTES THE NEAR FIELD AT SPECIFIED POINTS IN SPACE AFTER
 !     THE STRUCTURE CURRENTS HAVE BEEN COMPUTED.
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 
 REAL*8, INTENT(IN)                         :: xob
@@ -8443,7 +8434,7 @@ SUBROUTINE patch (nx,ny,x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: nx
@@ -8818,7 +8809,7 @@ SUBROUTINE qdsrc (is,v,e)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: is
@@ -8972,7 +8963,7 @@ SUBROUTINE rdpat
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 PARAMETER(normax=4*maxseg)
 IMPLICIT REAL*8(a-h,o-z)
 ! ***
@@ -9597,7 +9588,7 @@ SUBROUTINE reflc (ix,iy,iz,itx,nop)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 
 INTEGER, INTENT(IN OUT)                  :: ix
@@ -9953,7 +9944,7 @@ SUBROUTINE sbf (i,is,aa,bb,cc)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: i
@@ -10246,7 +10237,7 @@ SUBROUTINE solgf (a,b,c,d,xy,ip,np,n1,n,mp,m1,m,n1c,n2c,n2cz)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 
 COMPLEX*16, INTENT(IN OUT)               :: a(1)
@@ -10402,7 +10393,7 @@ SUBROUTINE solve (n,a,ip,b,ndim)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-    INCLUDE 'nec2dpar.inc'
+    use nec2dpar
     IMPLICIT REAL*8(a-h,o-z)
 
     INTEGER, INTENT(IN)                      :: n
@@ -10457,7 +10448,7 @@ SUBROUTINE solves (a,ip,b,neq,nrh,np,n,mp,m,ifl1,ifl2)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 
 COMPLEX*16, INTENT(IN OUT)               :: a(1)
@@ -10612,7 +10603,7 @@ SUBROUTINE tbf (i,icap)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: i
@@ -10819,7 +10810,7 @@ SUBROUTINE trio (j)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: j
@@ -10981,7 +10972,7 @@ SUBROUTINE wire (xw1,yw1,zw1,xw2,yw2,zw2,rad,rdel,rrad,ns,itg)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-INCLUDE 'nec2dpar.inc'
+use nec2dpar
 IMPLICIT REAL*8(a-h,o-z)
 
 REAL*8, INTENT(IN)                         :: xw1
