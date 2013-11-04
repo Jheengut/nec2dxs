@@ -17,6 +17,9 @@ module nec2dpar
 
     character (LEN=49)      :: g77port = 'GNU Fortran (Ubuntu/Linaro 4.8.1-10ubuntu8) 4.8.1'
 
+    logical                 :: debugging = .TRUE.
+    !logical                 :: debugging = .FALSE.
+
 end module
 
 !    av00    01-mar-02    First compile with Gnu77 compiler for windows
@@ -94,7 +97,11 @@ REAL :: starttime, endtime, elapsed
 REAL :: tim, tim1, tim2
 REAL*8 tmp1
 
-INTEGER*2   llneg
+REAL*8                      :: ta = 1.745329252D-02
+REAL*8                      :: cvel = 299.8
+INTEGER                     :: normf = 20
+
+INTEGER*2                   :: llneg
 
 COMPLEX*16  cm,fj,vsant,eth,eph,zrati,cur,curi,zarray,zrati2
 COMPLEX*16  ex,ey,ez,zped,vqd,vqds,t1,y11a,y12a,epsc,u,u2,xx1,xx2
@@ -103,16 +110,25 @@ COMPLEX*16  ar1,ar2,ar3,epscf,frati
 COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
     alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
     itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
+
 COMMON /cmb/cm(iresrv)
+
 COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat,  &
     icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
+
 COMMON/SAVE/epsr,sig,scrwlt,scrwrt,fmhz,ip(2*maxseg),kcom
+
 COMMON/csave/com(19,5)
+
 COMMON /crnt/ air(maxseg),aii(maxseg),bir(maxseg),bii(maxseg),  &
     cir(maxseg),cii(maxseg),cur(3*maxseg)
+
 COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
+
 COMMON /zload/ zarray(maxseg),nload,nlodf
+
 COMMON/yparm/y11a(5),y12a(20),ncoup,icoup,nctag(5),ncseg(5)
+
 COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
     jsno,iscon(50),nscon,ipcon(10),npcon
 
@@ -126,12 +142,14 @@ COMMON/netcx/zped,pin,pnls,x11r(netmx),x11i(netmx),x12r(netmx),  &
 COMMON/fpat/thets,phis,dth,dph,rfld,gnor,clt,cht,epsr2,sig2,  &
     xpr6,pinr,pnlr,ploss,xnr,ynr,znr,dxnr,dynr,dznr,nth,nph,ipd,iavp,  &
     inor,iax,ixtyp,near,nfeh,nrx,nry,nrz
+
 COMMON /ggrid/ ar1(11,10,4),ar2(17,5,4),ar3(9,8,4),epscf,dxa(3),  &
     dya(3),xsa(3),ysa(3),nxa(3),nya(3)
+
 COMMON/gwav/u,u2,xx1,xx2,r1,r2,zmh,zph
-!***
+
 COMMON /plot/ iplp1,iplp2,iplp3,iplp4
-!***
+
 DIMENSION cab(1),sab(1),x2(1),y2(1),z2(1)
 
 DIMENSION ldtyp(loadmx),ldtag(loadmx),ldtagf(loadmx),  &
@@ -140,54 +158,35 @@ DIMENSION ldtyp(loadmx),ldtag(loadmx),ldtagf(loadmx),  &
 DIMENSION ix(2*maxseg)
 DIMENSION fnorm(200)
 DIMENSION t1x(1),t1y(1),t1z(1),t2x(1),t2y(1),t2z(1)
-!***
+
 DIMENSION xtemp(maxseg),ytemp(maxseg),ztemp(maxseg),  &
     sitemp(maxseg),bitemp(maxseg)
+
 EQUIVALENCE (cab,alp),(sab,bet),(x2,si),(y2,alp),(z2,bet)
 EQUIVALENCE (t1x,si),(t1y,alp),(t1z,bet),(t2x,icon1),(t2y,icon2), (t2z,itag)
-DATA ta/1.745329252D-02/,cvel/299.8/
-
-DATA normf/200/
-
-PRINT *, ''
-PRINT *, 'Numerical Electromagnetics Code, ',  &
-    'double precision version (nec2d)'
-PRINT *, 'developed at Lawrence Livermore Lab., ',  &
-    'Livermore, CA., by G. Burke'
-PRINT *, '(burke@icdc.llnl.gov) and A. Poggio.'
-WRITE(*,*) 'Fortran file was created 4/11/80, changed: Jan 15, 96, by'
-WRITE(*,*) 'J. Bergervoet (bergervo@prl.philips.nl)'
-PRINT *, 'Maximum number of segments in core : MAXMAT=',maxmat
-IF(maxseg /= maxmat)  &
-    PRINT *, 'Maximum when using swap files      : MAXSEG=',maxseg
-
-PRINT *, ''
-PRINT *, 'Merged nec2d/som2d file created by Arie Voors. (4nec2@gmx.net)'
-PRINT *,'Build 2.7  30-jan-08  ',  &
-    '(maxLD=',loadmx,', MaxEX=',nsmax,', MaxTL=',netmx,')'
-PRINT *,'Using ',g77port        ! 'XX port for G77 version YY'
-PRINT *, ''
 
 
-706   CONTINUE
-WRITE(*,700)
-700   FORMAT(' ENTER NAME OF INPUT FILE >',$)
-READ(*,701,ERR=706,END=708) infile
-701   FORMAT(a)
-OPEN (UNIT=2,FILE=infile,STATUS='OLD',ERR=702)
+    CALL show_program_info()
 
-707   CONTINUE
-WRITE(*,703)
-703   FORMAT(' ENTER NAME OF OUTPUT FILE >',$)
-READ(*,701,ERR=707,END=706) outfile
-OPEN (UNIT=3,FILE=outfile,STATUS='UNKNOWN',ERR=704)
-GO TO 705
+    706   CONTINUE
+    WRITE(*,700)
+    700   FORMAT(' ENTER NAME OF INPUT FILE >',$)
+    READ(*,701,ERR=706,END=708) infile
+    701   FORMAT(a)
+    OPEN (UNIT=2,FILE=infile,STATUS='OLD',ERR=702)
 
-702   PRINT *, 'Error opening input-file:',infile
-GO TO 706
+    707   CONTINUE
+    WRITE(*,703)
+    703   FORMAT(' ENTER NAME OF OUTPUT FILE >',$)
+    READ(*,701,ERR=707,END=706) outfile
+    OPEN (UNIT=3,FILE=outfile,STATUS='UNKNOWN',ERR=704)
+    GO TO 705
 
-704   PRINT *, 'Error opening output-file:',outfile
-GO TO 707
+    702   PRINT *, 'Error opening input-file:',infile
+    GO TO 706
+
+    704   PRINT *, 'Error opening output-file:',outfile
+    GO TO 707
 
 708   STOP
 
@@ -204,7 +203,13 @@ ifrtimp=0
 !***
 2     kcom=kcom+1
 IF (kcom > 5) kcom=5
-READ(2,125)ain,(com(i,kcom),i=1,19)
+READ(2,125) ain,(com(i,kcom),i=1,19)
+
+if (debugging) THEN
+    write (*,7193) ain, ain
+7193 format (' card read: ain=',a2,' com=',a)
+END IF
+
 CALL upcase(ain,ain,lain)
 IF(kcom > 1)GO TO 3
 
@@ -212,9 +217,9 @@ WRITE(3,126)
 WRITE(3,127)
 WRITE(3,128)
 
-3     WRITE(3,129) (com(i,kcom),i=1,19)
-IF (ain == atst(11)) GO TO 2
-IF (ain == atst(1)) GO TO 4
+3   WRITE(3,129) (com(i,kcom),i=1,19)
+    IF (ain == atst(11)) GO TO 2
+    IF (ain == atst(1)) GO TO 4
 
 WRITE(3,130)
 STOP
@@ -228,7 +233,10 @@ imat=0
 !
 !     SET UP GEOMETRY DATA IN SUBROUTINE DATAGN
 !
+if (debugging) print *, 'calling datagn'  
 CALL datagn
+if (debugging) print *, 'returned from datagn'
+
 iflow=1
 IF(imat == 0)GO TO 326
 !
@@ -287,10 +295,12 @@ iperf=0
 !     MAIN INPUT SECTION - STANDARD READ STATEMENT - JUMPS TO APPRO-
 !     PRIATE SECTION FOR SPECIFIC PARAMETER SET UP
 !
-14    CALL readmn(2,ain,itmp1,itmp2,itmp3,itmp4,tmp1,tmp2,tmp3,tmp4,  &
-    tmp5,tmp6)
+14    CALL readmn(2,ain,itmp1,itmp2,itmp3,itmp4,tmp1,tmp2,tmp3,tmp4,tmp5,tmp6)
+
 mpcnt=mpcnt+1
+
 WRITE(3,137) mpcnt,ain,itmp1,itmp2,itmp3,itmp4,tmp1,tmp2,tmp3, tmp4,tmp5,tmp6
+
 IF (ain == atst(2)) GO TO 16   ! FR
 IF (ain == atst(3)) GO TO 17   ! LD
 IF (ain == atst(4)) GO TO 21   ! GN
@@ -1199,7 +1209,35 @@ GO TO 14
     ' COMPLEX dielectric constant from FILE is',1P,2E12.5,/,32X,'REQUESTED',2E12.5)
 900   FORMAT(' ERROR OPENING SOMMERFELD GROUND FILE - SOM2D.NEC')
 END
+!--------------------------------------------------------------------------------
 
+SUBROUTINE show_program_info()
+    use nec2dpar
+
+    PRINT *, ''
+    PRINT *, 'Numerical Electromagnetics Code, '
+    PRINT *, ''
+    PRINT *, 'double precision version (nec2d)'
+    PRINT *, ''
+    PRINT *, 'developed at Lawrence Livermore Lab., Livermore, CA.'
+    PRINT *, 'by G. Burke (burke@icdc.llnl.gov) and A. Poggio.'
+    PRINT *, ''
+    PRINT *, 'Fortran file was created 4/11/80'
+    PRINT *, 'changed: Jan 15, 96, by J. Bergervoet (bergervo@prl.philips.nl)'
+
+    PRINT *, ''
+    PRINT *, 'Maximum number of segments in core : MAXMAT=',maxmat
+    IF(maxseg /= maxmat) PRINT *, 'Maximum when using swap files      : MAXSEG=',maxseg
+
+    PRINT *, ''
+    PRINT *, 'Merged nec2d/som2d file created by Arie Voors. (4nec2@gmx.net)'
+    PRINT *, ''
+    PRINT *,'Build 2.7  30-jan-08  ','(maxLD=',loadmx,', MaxEX=',nsmax,', MaxTL=',netmx,')'
+    PRINT *, ''
+    PRINT *,'Using ',g77port        ! 'XX port for G77 version YY'
+    PRINT *, ''
+
+END SUBROUTINE show_program_info
 
 ! ################## START OF SOM2D INCLUDE ########################
 
@@ -1220,9 +1258,8 @@ COMPLEX*16 ck1,ck1sq,erv,ezv,erh,eph,cksm,ct1,ct2,ct3,cl1,cl2,con,  &
 COMMON /evlcom/ cksm,ct1,ct2,ct3,ck1,ck1sq,ck2,ck2sq,tkmag,tsmag,ck1r,zph,rho,jh
 COMMON /ggrid/ ar1(11,10,4),ar2(17,5,4),ar3(9,8,4),epscf,dxa(3),dya(3),xsa(3),ysa(3),nxa(3),nya(3)
 
-CHARACTER (LEN=3) :: lcomp(4)
-DATA lcomp/'ERV','EZV','ERH','EPH'/
-!
+CHARACTER (LEN=3), DIMENSION(4)  :: lcomp = (/'ERV','EZV','ERH','EPH'/)
+
 epr = repr
 sig = rsig
 fmhz = rmhz
@@ -3501,8 +3538,9 @@ DO  j=1,n1
 END DO
 48    CONTINUE
 RETURN
-49    WRITE(3,53)  ix
-STOP
+
+49      WRITE(3,53)  ix
+        STOP
 !
 50    FORMAT (//,9X,'- multiple wire junctions -',/,1X,'JUNCTION',4X,'segments  (- for END 1, + for END 2)')
 51    FORMAT (1X,i5,5X,20I5,/,(11X,20I5))
@@ -3608,312 +3646,332 @@ END SUBROUTINE couple
 !----------------------------------------------------------------------------
 
 SUBROUTINE datagn
-! ***
-!     DOUBLE PRECISION 6/4/85
-!
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
-! ***
 !
 !     DATAGN IS THE MAIN ROUTINE FOR INPUT OF GEOMETRY DATA.
 !
-!***
-CHARACTER (LEN=2)  :: gm
-CHARACTER (LEN=1), DIMENSION(4), PARAMETER :: ipt = (/'P','R','T','Q'/)
-CHARACTER (LEN=2), DIMENSION(13), PARAMETER :: atst = (/'GW','GX','GR','GS','GE','GM','SP','SM','GF','GA','SC', 'GC','GH'/)
-CHARACTER (LEN=1), DIMENSION(2), PARAMETER :: ifx = (/' ','X'/)
-CHARACTER (LEN=1), DIMENSION(2), PARAMETER :: ify = (/' ','Y'/)
-CHARACTER (LEN=1), DIMENSION(2), PARAMETER :: ifz = (/' ','Z'/)
-!***
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
-COMMON /angl/ salp(maxseg)
-!***
-COMMON /plot/ iplp1,iplp2,iplp3,iplp4
-!***
-DIMENSION x2(1), y2(1), z2(1), t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), &
-    t2z(1), cab(1), sab(1)
-EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), (t2y,icon2), &
-    (t2z,itag), (x2,si), (y2,alp), (z2,bet), (cab,alp), (sab,bet)
-!***
-!***
-DATA ta/0.01745329252D+0/,td/57.29577951D+0/
-ipsym=0
-nwire=0
-n=0
-np=0
-m=0
-mp=0
-n1=0
-n2=1
-m1=0
-m2=1
-isct=0
-iphd=0
-!
-!     READ GEOMETRY DATA CARD AND BRANCH TO SECTION FOR OPERATION
-!     REQUESTED
-!
-1     CALL readgm(2,gm,itg,ns,xw1,yw1,zw1,xw2,yw2,zw2,rad)
-IF (n+m > ld) GO TO 37
-IF (gm == atst(9)) GO TO 27
-IF (iphd == 1) GO TO 2
-WRITE(3,40)
-WRITE(3,41)
-iphd=1
-2     IF (gm == atst(11)) GO TO 10
-isct=0
-IF (gm == atst(1)) GO TO 3
-IF (gm == atst(2)) GO TO 18
-IF (gm == atst(3)) GO TO 19
-IF (gm == atst(4)) GO TO 21
-IF (gm == atst(7)) GO TO 9
-IF (gm == atst(8)) GO TO 13
-IF (gm == atst(5)) GO TO 29
-IF (gm == atst(6)) GO TO 26
-IF (gm == atst(10)) GO TO 8
-!***
-IF (gm == atst(13)) GO TO 123
-!***
-GO TO 36
-!
-!     GENERATE SEGMENT DATA FOR STRAIGHT WIRE.
-!
-3     nwire=nwire+1
-i1=n+1
-i2=n+ns
-WRITE(3,43)  nwire,xw1,yw1,zw1,xw2,yw2,zw2,rad,ns,i1,i2,itg
-IF (rad == 0) GO TO 4
-xs1=1.
-ys1=1.
-GO TO 7
-4     CALL readgm(2,gm,ix,iy,xs1,ys1,zs1,dummy,dummy,dummy,dummy)
-!***
-IF (gm == atst(12)) GO TO 6
-5     WRITE(3,48)
-STOP
-6     WRITE(3,61)  xs1,ys1,zs1
-IF (ys1 == 0.OR.zs1 == 0) GO TO 5
-rad=ys1
-ys1=(zs1/ys1)**(1./(ns-1.))
-7     CALL wire (xw1,yw1,zw1,xw2,yw2,zw2,rad,xs1,ys1,ns,itg)
-GO TO 1
-!
-!     GENERATE SEGMENT DATA FOR WIRE ARC
-!
-8     nwire=nwire+1
-i1=n+1
-i2=n+ns
-WRITE(3,38)  nwire,xw1,yw1,zw1,xw2,ns,i1,i2,itg
-CALL arc (itg,ns,xw1,yw1,zw1,xw2)
-GO TO 1
-!***
-!
-!     GENERATE HELIX
-!
-123   nwire=nwire+1
-i1=n+1
-i2=n+ns
-WRITE(3,124) xw1,yw1,nwire,zw1,xw2,yw2,zw2,rad,ns,i1,i2,itg
-CALL helix(xw1,yw1,zw1,xw2,yw2,zw2,rad,ns,itg)
-GO TO 1
-!
-124   FORMAT(5X,'HELIX STRUCTURE-   AXIAL SPACING BETWEEN TURNS =',f8.3,  &
-    ' TOTAL AXIAL LENGTH =',f8.3/1X,i5,2X,'RADIUS OF HELIX =',4(2X,  &
-    f8.3),7X,f11.5,i8,4X,i5,1X,i5,3X,i5)
-!***
-!
-!     GENERATE SINGLE NEW PATCH
-!
-9     i1=m+1
-ns=ns+1
-IF (itg /= 0) GO TO 17
-WRITE(3,51)  i1,ipt(ns),xw1,yw1,zw1,xw2,yw2,zw2
-IF (ns == 2.OR.ns == 4) isct=1
-IF (ns > 1) GO TO 14
-xw2=xw2*ta
-yw2=yw2*ta
-GO TO 16
-10    IF (isct == 0) GO TO 17
-i1=m+1
-ns=ns+1
-IF (itg /= 0) GO TO 17
-IF (ns /= 2.AND.ns /= 4) GO TO 17
-xs1=x4
-ys1=y4
-zs1=z4
-xs2=x3
-ys2=y3
-zs2=z3
-x3=xw1
-y3=yw1
-z3=zw1
-IF (ns /= 4) GO TO 11
-x4=xw2
-y4=yw2
-z4=zw2
-11    xw1=xs1
-yw1=ys1
-zw1=zs1
-xw2=xs2
-yw2=ys2
-zw2=zs2
-IF (ns == 4) GO TO 12
-x4=xw1+x3-xw2
-y4=yw1+y3-yw2
-z4=zw1+z3-zw2
-12    WRITE(3,51)  i1,ipt(ns),xw1,yw1,zw1,xw2,yw2,zw2
-WRITE(3,39)  x3,y3,z3,x4,y4,z4
-GO TO 16
-!
-!     GENERATE MULTIPLE-PATCH SURFACE
-!
-13    i1=m+1
-WRITE(3,59)  i1,ipt(2),xw1,yw1,zw1,xw2,yw2,zw2,itg,ns
-IF (itg < 1.OR.ns < 1) GO TO 17
-14    CALL readgm(2,gm,ix,iy,x3,y3,z3,x4,y4,z4,dummy)
-IF (ns /= 2.AND.itg < 1) GO TO 15
-x4=xw1+x3-xw2
-y4=yw1+y3-yw2
-z4=zw1+z3-zw2
-15    WRITE(3,39)  x3,y3,z3,x4,y4,z4
-IF (gm /= atst(11)) GO TO 17
-16    CALL patch (itg,ns,xw1,yw1,zw1,xw2,yw2,zw2,x3,y3,z3,x4,y4,z4)
-GO TO 1
-17    WRITE(3,60)
-STOP
-!
-!     REFLECT STRUCTURE ALONG X,Y, OR Z AXES OR ROTATE TO FORM CYLINDER.
-!
-18    iy=ns/10
-iz=ns-iy*10
-ix=iy/10
-iy=iy-ix*10
-IF (ix /= 0) ix=1
-IF (iy /= 0) iy=1
-IF (iz /= 0) iz=1
-WRITE(3,44)  ifx(ix+1),ify(iy+1),ifz(iz+1),itg
-GO TO 20
-19    WRITE(3,45)  ns,itg
-ix=-1
-20    CALL reflc (ix,iy,iz,itg,ns)
-GO TO 1
-!
-!     SCALE STRUCTURE DIMENSIONS BY FACTOR XW1.
-!
-21    IF (n < n2) GO TO 23
-DO  i=n2,n
-  x(i)=x(i)*xw1
-  y(i)=y(i)*xw1
-  z(i)=z(i)*xw1
-  x2(i)=x2(i)*xw1
-  y2(i)=y2(i)*xw1
-  z2(i)=z2(i)*xw1
-  bi(i)=bi(i)*xw1
-END DO
-23    IF (m < m2) GO TO 25
-yw1=xw1*xw1
-ix=ld+1-m
-iy=ld-m1
-DO  i=ix,iy
-  x(i)=x(i)*xw1
-  y(i)=y(i)*xw1
-  z(i)=z(i)*xw1
-  bi(i)=bi(i)*yw1
-END DO
-25    WRITE(3,46)  xw1
-GO TO 1
-!
-!     MOVE STRUCTURE OR REPRODUCE ORIGINAL STRUCTURE IN NEW POSITIONS.
-!
-26    WRITE(3,47)  itg,ns,xw1,yw1,zw1,xw2,yw2,zw2,rad
-xw1=xw1*ta
-yw1=yw1*ta
-zw1=zw1*ta
-CALL move (xw1,yw1,zw1,xw2,yw2,zw2,INT(rad+.5),ns,itg)
-GO TO 1
-!
-!     READ NUMERICAL GREEN'S FUNCTION TAPE
-!
-27    IF (n+m == 0) GO TO 28
-WRITE(3,52)
-STOP
-28    CALL gfil (itg)
-npsav=np
-mpsav=mp
-ipsav=ipsym
-GO TO 1
-!
-!     TERMINATE STRUCTURE GEOMETRY INPUT.
-!
-!***
-29    IF(ns == 0) GO TO 290
-iplp1=1
-iplp2=1
-290   ix=n1+m1
-!***
-IF (ix == 0) GO TO 30
-np=n
-mp=m
-ipsym=0
-30    CALL conect (itg)
-IF (ix == 0) GO TO 31
-np=npsav
-mp=mpsav
-ipsym=ipsav
-31    IF (n+m > ld) GO TO 37
-IF (n == 0) GO TO 33
-WRITE(3,53)
-WRITE(3,54)
-DO  i=1,n
-  xw1=x2(i)-x(i)
-  yw1=y2(i)-y(i)
-  zw1=z2(i)-z(i)
-  x(i)=(x(i)+x2(i))*.5
-  y(i)=(y(i)+y2(i))*.5
-  z(i)=(z(i)+z2(i))*.5
-  xw2=xw1*xw1+yw1*yw1+zw1*zw1
-  yw2=SQRT(xw2)
-  yw2=(xw2/yw2+yw2)*.5
-  si(i)=yw2
-  cab(i)=xw1/yw2
-  sab(i)=yw1/yw2
-  xw2=zw1/yw2
-  IF (xw2 > 1.) xw2=1.
-  IF (xw2 < -1.) xw2=-1.
-  salp(i)=xw2
-  xw2=ASIN(xw2)*td
-  yw2=atgn2(yw1,xw1)*td
-  WRITE(3,55) i,x(i),y(i),z(i),si(i),xw2,yw2,bi(i),icon1(i),i,  &
-      icon2(i),itag(i)
-!***
-  IF(iplp1 /= 1) GO TO 320
-  WRITE(8,*)x(i),y(i),z(i),si(i),xw2,yw2,bi(i),icon1(i),i,icon2(i)
-  320   CONTINUE
-!***
-  IF (si(i) > 1.d-20.AND.bi(i) > 0.) CYCLE
-  WRITE(3,56)
-  STOP
-END DO
-33    IF (m == 0) GO TO 35
-WRITE(3,57)
-j=ld+1
-DO  i=1,m
-  j=j-1
-  xw1=(t1y(j)*t2z(j)-t1z(j)*t2y(j))*salp(j)
-  yw1=(t1z(j)*t2x(j)-t1x(j)*t2z(j))*salp(j)
-  zw1=(t1x(j)*t2y(j)-t1y(j)*t2x(j))*salp(j)
-  WRITE(3,58) i,x(j),y(j),z(j),xw1,yw1,zw1,bi(j),t1x(j),t1y(j),  &
-      t1z(j),t2x(j),t2y(j),t2z(j)
-END DO
-35    RETURN
-36    WRITE(3,48)
-WRITE(3,49)  gm,itg,ns,xw1,yw1,zw1,xw2,yw2,zw2,rad
-STOP
-37    WRITE(3,50)
-STOP
-!
+        use nec2dpar
+        IMPLICIT REAL*8(a-h,o-z)
+
+        CHARACTER (LEN=2)  :: gm
+        CHARACTER (LEN=1), DIMENSION(4), PARAMETER :: ipt = (/'P','R','T','Q'/)
+        CHARACTER (LEN=2), DIMENSION(13), PARAMETER :: atst = (/'GW','GX','GR','GS','GE','GM','SP','SM','GF','GA','SC', 'GC','GH'/)
+        CHARACTER (LEN=1), DIMENSION(2), PARAMETER :: ifx = (/' ','X'/)
+        CHARACTER (LEN=1), DIMENSION(2), PARAMETER :: ify = (/' ','Y'/)
+        CHARACTER (LEN=1), DIMENSION(2), PARAMETER :: ifz = (/' ','Z'/)
+
+        COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
+            alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
+            itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
+        COMMON /angl/ salp(maxseg)
+
+        COMMON /plot/ iplp1,iplp2,iplp3,iplp4
+
+        DIMENSION x2(1), y2(1), z2(1), t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), &
+            t2z(1), cab(1), sab(1)
+
+        EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), (t2y,icon2), &
+            (t2z,itag), (x2,si), (y2,alp), (z2,bet), (cab,alp), (sab,bet)
+
+        REAL*8                  :: ta = 0.01745329252D+0
+        REAL*8                  :: td = 57.29577951D+0
+
+        ipsym=0
+        nwire=0
+        n=0
+        np=0
+        m=0
+        mp=0
+        n1=0
+        n2=1
+        m1=0
+        m2=1
+        isct=0
+        iphd=0
+        !
+        !   READ GEOMETRY DATA CARD AND BRANCH TO 
+        !   SECTION FOR OPERATION REQUESTED
+        !
+1       CALL readgm(2,gm,itg,ns,xw1,yw1,zw1,xw2,yw2,zw2,rad)
+
+        IF (n+m > ld) GO TO 37
+        IF (gm == atst(9)) GO TO 27     ! GF
+        IF (iphd == 1) GO TO 2
+        WRITE(3,40)
+        WRITE(3,41)
+        iphd=1
+2       IF (gm == atst(11)) GO TO 10  ! SC
+        isct=0
+        IF (gm == atst(1)) GO TO 3      ! GW
+        IF (gm == atst(2)) GO TO 18     ! GX
+        IF (gm == atst(3)) GO TO 19     ! GR
+        IF (gm == atst(4)) GO TO 21     ! GS
+        IF (gm == atst(5)) GO TO 29     ! GE
+        IF (gm == atst(6)) GO TO 26     ! GM
+        IF (gm == atst(7)) GO TO 9      ! SP
+        IF (gm == atst(8)) GO TO 13     ! SM
+        IF (gm == atst(10)) GO TO 8     ! GA
+        !***
+        IF (gm == atst(13)) GO TO 123   ! GH
+        !***
+        GO TO 36        ! geometry card error
+
+        !---------------------
+        !
+        ! GW   GENERATE SEGMENT DATA FOR STRAIGHT WIRE.
+        !
+3       nwire=nwire+1
+        i1=n+1
+        i2=n+ns
+        WRITE(3,43)  nwire,xw1,yw1,zw1,xw2,yw2,zw2,rad,ns,i1,i2,itg
+        IF (rad == 0) GO TO 4
+        xs1=1.
+        ys1=1.
+        GO TO 7
+        4     CALL readgm(2,gm,ix,iy,xs1,ys1,zs1,dummy,dummy,dummy,dummy)
+        !***
+        IF (gm == atst(12)) GO TO 6             ! GC
+        5     WRITE(3,48)
+        STOP
+        6     WRITE(3,61)  xs1,ys1,zs1
+        IF (ys1 == 0.OR.zs1 == 0) GO TO 5
+        rad=ys1
+        ys1=(zs1/ys1)**(1./(ns-1.))
+        7     CALL wire (xw1,yw1,zw1,xw2,yw2,zw2,rad,xs1,ys1,ns,itg)
+        GO TO 1
+        !=========
+        !
+        ! GA  GENERATE SEGMENT DATA FOR WIRE ARC
+        !
+8       nwire=nwire+1
+        i1=n+1
+        i2=n+ns
+        WRITE(3,38)  nwire,xw1,yw1,zw1,xw2,ns,i1,i2,itg
+        CALL arc (itg,ns,xw1,yw1,zw1,xw2)
+        GO TO 1
+        !=========
+        !***
+        !
+        ! GH    GENERATE HELIX
+        !
+123     nwire=nwire+1
+        i1=n+1
+        i2=n+ns
+        WRITE(3,124) xw1,yw1,nwire,zw1,xw2,yw2,zw2,rad,ns,i1,i2,itg
+        CALL helix(xw1,yw1,zw1,xw2,yw2,zw2,rad,ns,itg)
+        GO TO 1
+        !
+124     FORMAT(5X,'HELIX STRUCTURE-   AXIAL SPACING BETWEEN TURNS =',f8.3,  &
+          ' TOTAL AXIAL LENGTH =',f8.3/1X,i5,2X,'RADIUS OF HELIX =',4(2X,  &
+          f8.3),7X,f11.5,i8,4X,i5,1X,i5,3X,i5)
+        !=========
+        !
+        ! SP    GENERATE SINGLE NEW PATCH
+        !
+9       i1=m+1
+        ns=ns+1
+        IF (itg /= 0) GO TO 17
+        WRITE(3,51)  i1,ipt(ns),xw1,yw1,zw1,xw2,yw2,zw2
+        IF (ns == 2.OR.ns == 4) isct=1
+        IF (ns > 1) GO TO 14
+        xw2=xw2*ta
+        yw2=yw2*ta
+        GO TO 16
+        !=========
+        !
+        ! SC    
+        !
+10      IF (isct == 0) GO TO 17
+        i1=m+1
+        ns=ns+1
+        IF (itg /= 0) GO TO 17
+        IF (ns /= 2.AND.ns /= 4) GO TO 17
+        xs1=x4
+        ys1=y4
+        zs1=z4
+        xs2=x3
+        ys2=y3
+        zs2=z3
+        x3=xw1
+        y3=yw1
+        z3=zw1
+        IF (ns /= 4) GO TO 11
+        x4=xw2
+        y4=yw2
+        z4=zw2
+        11    xw1=xs1
+        yw1=ys1
+        zw1=zs1
+        xw2=xs2
+        yw2=ys2
+        zw2=zs2
+        IF (ns == 4) GO TO 12
+        x4=xw1+x3-xw2
+        y4=yw1+y3-yw2
+        z4=zw1+z3-zw2
+        12    WRITE(3,51)  i1,ipt(ns),xw1,yw1,zw1,xw2,yw2,zw2
+        WRITE(3,39)  x3,y3,z3,x4,y4,z4
+        GO TO 16
+        !===========
+        !
+        ! SM    GENERATE MULTIPLE-PATCH SURFACE
+        !
+13      i1=m+1
+        WRITE(3,59)  i1,ipt(2),xw1,yw1,zw1,xw2,yw2,zw2,itg,ns
+        IF (itg < 1.OR.ns < 1) GO TO 17
+        14    CALL readgm(2,gm,ix,iy,x3,y3,z3,x4,y4,z4,dummy)
+        IF (ns /= 2.AND.itg < 1) GO TO 15
+        x4=xw1+x3-xw2
+        y4=yw1+y3-yw2
+        z4=zw1+z3-zw2
+        15    WRITE(3,39)  x3,y3,z3,x4,y4,z4
+        IF (gm /= atst(11)) GO TO 17
+        16    CALL patch (itg,ns,xw1,yw1,zw1,xw2,yw2,zw2,x3,y3,z3,x4,y4,z4)
+        GO TO 1
+        17    WRITE(3,60)
+        STOP
+        !===========
+        !
+        ! GX    REFLECT STRUCTURE ALONG X,Y, OR Z AXES OR ROTATE TO FORM CYLINDER.
+        !
+18      iy=ns/10
+        iz=ns-iy*10
+        ix=iy/10
+        iy=iy-ix*10
+        IF (ix /= 0) ix=1
+        IF (iy /= 0) iy=1
+        IF (iz /= 0) iz=1
+        WRITE(3,44)  ifx(ix+1),ify(iy+1),ifz(iz+1),itg
+        GO TO 20
+        !===========
+        !
+        ! GR    
+        !
+19      WRITE(3,45)  ns,itg
+        ix=-1
+        20    CALL reflc (ix,iy,iz,itg,ns)
+        GO TO 1
+        !===========
+        !
+        ! GS    SCALE STRUCTURE DIMENSIONS BY FACTOR XW1.
+        !
+21      IF (n < n2) GO TO 23
+        DO  i=n2,n
+          x(i)=x(i)*xw1
+          y(i)=y(i)*xw1
+          z(i)=z(i)*xw1
+          x2(i)=x2(i)*xw1
+          y2(i)=y2(i)*xw1
+          z2(i)=z2(i)*xw1
+          bi(i)=bi(i)*xw1
+        END DO
+23      IF (m < m2) GO TO 25
+        yw1=xw1*xw1
+        ix=ld+1-m
+        iy=ld-m1
+        DO  i=ix,iy
+          x(i)=x(i)*xw1
+          y(i)=y(i)*xw1
+          z(i)=z(i)*xw1
+          bi(i)=bi(i)*yw1
+        END DO
+25      WRITE(3,46)  xw1
+        GO TO 1
+        !===========
+        !
+        ! GM    MOVE STRUCTURE OR REPRODUCE ORIGINAL STRUCTURE IN NEW POSITIONS.
+        !
+26      WRITE(3,47)  itg,ns,xw1,yw1,zw1,xw2,yw2,zw2,rad
+        xw1=xw1*ta
+        yw1=yw1*ta
+        zw1=zw1*ta
+        CALL move (xw1,yw1,zw1,xw2,yw2,zw2,INT(rad+.5),ns,itg)
+        GO TO 1
+        !===========
+        !
+        ! GF     READ NUMERICAL GREEN'S FUNCTION TAPE
+        !
+27      IF (n+m == 0) GO TO 28
+        WRITE(3,52)
+        STOP
+        28    CALL gfil (itg)
+        npsav=np
+        mpsav=mp
+        ipsav=ipsym
+        GO TO 1
+        !===========
+        !
+        ! GE  TERMINATE STRUCTURE GEOMETRY INPUT.
+        !
+        !***
+29      IF(ns == 0) GO TO 290
+        iplp1=1
+        iplp2=1
+290     ix=n1+m1
+        !***
+        IF (ix == 0) GO TO 30
+        np=n
+        mp=m
+        ipsym=0
+30      CALL conect (itg)
+        IF (ix == 0) GO TO 31
+        np=npsav
+        mp=mpsav
+        ipsym=ipsav
+31      IF (n+m > ld) GO TO 37
+        IF (n == 0) GO TO 33
+        WRITE(3,53)
+        WRITE(3,54)
+        DO  i=1,n
+          xw1=x2(i)-x(i)
+          yw1=y2(i)-y(i)
+          zw1=z2(i)-z(i)
+          x(i)=(x(i)+x2(i))*.5
+          y(i)=(y(i)+y2(i))*.5
+          z(i)=(z(i)+z2(i))*.5
+          xw2=xw1*xw1+yw1*yw1+zw1*zw1
+          yw2=SQRT(xw2)
+          yw2=(xw2/yw2+yw2)*.5
+          si(i)=yw2
+          cab(i)=xw1/yw2
+          sab(i)=yw1/yw2
+          xw2=zw1/yw2
+          IF (xw2 > 1.) xw2=1.
+          IF (xw2 < -1.) xw2=-1.
+          salp(i)=xw2
+          xw2=ASIN(xw2)*td
+          yw2=atgn2(yw1,xw1)*td
+          WRITE(3,55) i,x(i),y(i),z(i),si(i),xw2,yw2,bi(i),icon1(i),i,  &
+              icon2(i),itag(i)
+        !***
+          IF(iplp1 /= 1) GO TO 320
+          WRITE(8,*)x(i),y(i),z(i),si(i),xw2,yw2,bi(i),icon1(i),i,icon2(i)
+          320   CONTINUE
+        !***
+          IF (si(i) > 1.d-20.AND.bi(i) > 0.) CYCLE
+          WRITE(3,56)
+          STOP
+        END DO
+33      IF (m == 0) GO TO 35
+        WRITE(3,57)
+        j=ld+1
+        DO  i=1,m
+          j=j-1
+          xw1=(t1y(j)*t2z(j)-t1z(j)*t2y(j))*salp(j)
+          yw1=(t1z(j)*t2x(j)-t1x(j)*t2z(j))*salp(j)
+          zw1=(t1x(j)*t2y(j)-t1y(j)*t2x(j))*salp(j)
+          WRITE(3,58) i,x(j),y(j),z(j),xw1,yw1,zw1,bi(j),t1x(j),t1y(j),  &
+              t1z(j),t2x(j),t2y(j),t2z(j)
+        END DO
+35      RETURN
+
+36      WRITE(3,48)     ! geometry card error
+        WRITE(3,49)  gm,itg,ns,xw1,yw1,zw1,xw2,yw2,zw2,rad
+        STOP
+
+37      WRITE(3,50)
+        STOP
+
+        !
 38    FORMAT (1X,i5,2X,'ARC radius =',f9.5,2X,'FROM',f8.3,' TO',f8.3, &
     ' degrees',11X,f11.5,2X,i5,4X,i5,1X,i5,3X,i5)
 39    FORMAT (6X,3F11.5,1X,3F11.5)
@@ -9341,7 +9399,8 @@ SUBROUTINE readmn(inunit,code,i1,i2,i3,i4,f1,f2,f3,f4,f5,f6)
     RETURN
 END SUBROUTINE readmn
 !----------------------------------------------------------------------------
-
+!
+!
 SUBROUTINE parsit(inunit,maxint,maxrea,cmnd,intfld,reafld,ieof)
 
 !  UPDATED:  21 July 87
@@ -9365,158 +9424,163 @@ SUBROUTINE parsit(inunit,maxint,maxrea,cmnd,intfld,reafld,ieof)
 !     REC        input line as read
 !     TOTCOL     total number of columns in REC
 !     TOTFLD     number of numeric fields
+    use nec2dpar, only : debugging
 
-IMPLICIT REAL*8(a-h,o-z)
+    IMPLICIT REAL*8(a-h,o-z)
 
-INTEGER, INTENT(IN)                      :: inunit
-INTEGER, INTENT(IN)                      :: maxint
-INTEGER, INTENT(IN)                      :: maxrea
-CHARACTER (LEN=2), INTENT(OUT)           :: cmnd
-INTEGER, INTENT(OUT)                     :: intfld(maxint)
-REAL*8, INTENT(OUT)                      :: reafld(maxrea)
-INTEGER, INTENT(IN OUT)                  :: ieof
+    INTEGER, INTENT(IN)                      :: inunit
+    INTEGER, INTENT(IN)                      :: maxint
+    INTEGER, INTENT(IN)                      :: maxrea
+    CHARACTER (LEN=2), INTENT(OUT)           :: cmnd
+    INTEGER, INTENT(OUT)                     :: intfld(maxint)
+    REAL*8, INTENT(OUT)                      :: reafld(maxrea)
+    INTEGER, INTENT(IN OUT)                  :: ieof
 
-!  *****  Global variables
-CHARACTER (LEN=80) :: ngfnam
-COMMON /ngfnam/ ngfnam
+    !  *****  Global variables
+    CHARACTER (LEN=80) :: ngfnam
+    COMMON /ngfnam/ ngfnam
 
-CHARACTER (LEN=80) :: REC
-CHARACTER (LEN=20) :: buffer
+    CHARACTER (LEN=80) :: REC
+    CHARACTER (LEN=20) :: buffer
 
-INTEGER :: bgnfld(12), endfld(12), totcol, totfld
-LOGICAL :: fldtrm
+    INTEGER :: bgnfld(12), endfld(12), totcol, totfld
+    LOGICAL :: fldtrm
 
-!
-READ(inunit, 8000, IOSTAT=ieof) REC
-CALL upcase( REC, REC, totcol )
+    !
+    READ(inunit, 8000, IOSTAT=ieof) REC
 
-!
-!  Store opcode and clear field arrays.
-!
-cmnd= REC(1:2)
-DO  i=1,maxint
-  intfld(i)= 0
-END DO
-DO  i=1,maxrea
-  reafld(i)= 0.0
-END DO
-DO  i=1,12
-  bgnfld(i)= 0
-  endfld(i)= 0
-END DO
-
-!
-!  Find the beginning and ending of each field as well as the total number of
-!  fields.
-!
-totfld= 0
-fldtrm= .false.
-last= maxrea + maxint
-DO  j=3,totcol
-  k= ICHAR( REC(j:j) )
-!
-!  Check for end of line comment (`!').  This is a new modification to allow
-!  VAX-like comments at the end of data records, i.e.
-!       GW 1 7 0 0 0 0 0 .5 .0001 ! DIPOLE WIRE
-!       GE ! END OF GEOMETRY
-!
-  IF (k == 33) THEN                    ! .eq. '!'
-    IF (fldtrm) endfld(totfld)= j - 1
-    GO TO 5000
-!
-!  Set the ending index when the character is a comma or space and the pointer
-!  is in a field position (FLDTRM = .TRUE.).
-!
-  ELSE IF (k == 32  .OR.  k == 44) THEN    ! space or comma ?
-    IF (fldtrm) THEN
-      endfld(totfld)= j - 1
-      fldtrm= .false.
+if (debugging) THEN
+    write (*,7193) REC
+7193 format (' parsit() card read: REC=',a)
     END IF
-!
-!  Set the beginning index when the character is not a comma or space and the
-!  pointer is not currently in a field position (FLDTRM = .FALSE).
-!
-  ELSE IF (.NOT. fldtrm) THEN
-    totfld= totfld + 1
-    fldtrm= .true.
-    bgnfld(totfld)= j
-  END IF
-END DO
-IF (fldtrm) endfld(totfld)= totcol
 
-!  Check to see if the total number of value fields is within the precribed
-!  limits.
+    CALL upcase( REC, REC, totcol )
+
+    !
+    !  Store opcode and clear field arrays.
+    !
+    cmnd= REC(1:2)
+    DO  i=1,maxint
+      intfld(i)= 0
+    END DO
+    DO  i=1,maxrea
+      reafld(i)= 0.0
+    END DO
+    DO  i=1,12
+      bgnfld(i)= 0
+      endfld(i)= 0
+    END DO
+
+    !
+    !  Find the beginning and ending of each field as well as the total number of
+    !  fields.
+    !
+    totfld= 0
+    fldtrm= .false.
+    last= maxrea + maxint
+    DO  j=3,totcol
+      k= ICHAR( REC(j:j) )
+    !
+    !  Check for end of line comment (`!').  This is a new modification to allow
+    !  VAX-like comments at the end of data records, i.e.
+    !       GW 1 7 0 0 0 0 0 .5 .0001 ! DIPOLE WIRE
+    !       GE ! END OF GEOMETRY
+    !
+      IF (k == 33) THEN                    ! .eq. '!'
+        IF (fldtrm) endfld(totfld)= j - 1
+        GO TO 5000
+    !
+    !  Set the ending index when the character is a comma or space and the pointer
+    !  is in a field position (FLDTRM = .TRUE.).
+    !
+      ELSE IF (k == 32  .OR.  k == 44) THEN    ! space or comma ?
+        IF (fldtrm) THEN
+          endfld(totfld)= j - 1
+          fldtrm= .false.
+        END IF
+    !
+    !  Set the beginning index when the character is not a comma or space and the
+    !  pointer is not currently in a field position (FLDTRM = .FALSE).
+    !
+      ELSE IF (.NOT. fldtrm) THEN
+        totfld= totfld + 1
+        fldtrm= .true.
+        bgnfld(totfld)= j
+      END IF
+    END DO
+    IF (fldtrm) endfld(totfld)= totcol
+
+    !  Check to see if the total number of value fields is within the precribed
+    !  limits.
 
 5000  IF ((cmnd == 'WG').OR.(cmnd == 'GF')) THEN  ! Init default NGFNAM
-  ngfnam='NGF2D.NEC'
-END IF
-IF (totfld == 0) THEN
-  RETURN
-ELSE IF (totfld > last) THEN
-  WRITE(3, 8001 )
-  GO TO 9010
-END IF
-j= MIN( totfld, maxint )
-
-!  Parse out integer values and store into integer buffer array.
-
-DO  i=1,j
-  length= endfld(i) - bgnfld(i) + 1
-  buffer= REC(bgnfld(i):endfld(i))
-  
-  IF (((cmnd == 'WG').OR.(cmnd == 'GF')).AND.  &
-        (buffer(1:1) /= '0') .AND. (buffer(1:1) /= '1')) THEN       ! Text field
-    ngfnam = REC(bgnfld(i):endfld(i))
-    RETURN
-  END IF
-  
-  ind= INDEX( buffer(1:length), '.' )
-  IF (ind > 0  .AND.  ind < length) GO TO 9000
-  IF (ind == length) length= length - 1
-  READ( buffer(1:length), *, ERR=9000 ) intfld(i)
-END DO
-
-!  Parse out real values and store into real buffer array.
-
-IF (totfld > maxint) THEN
-  j= maxint + 1
-  DO  i=j,totfld
-    length= endfld(i) - bgnfld(i) + 1
-    buffer= REC(bgnfld(i):endfld(i))
-    ind= INDEX( buffer(1:length), '.' )
-    IF (ind == 0) THEN
-      inde= INDEX( buffer(1:length), 'E' )
-      length= length + 1
-      IF (inde == 0) THEN
-        buffer(length:length)= '.'
-      ELSE
-        buffer= buffer(1:inde-1)//'.'// buffer(inde:length-1)
-      END IF
+      ngfnam='NGF2D.NEC'
     END IF
-    READ( buffer(1:length), *, ERR=9000 ) reafld(i-maxint)
-  END DO
-END IF
-RETURN
+    IF (totfld == 0) THEN
+      RETURN
+    ELSE IF (totfld > last) THEN
+      WRITE(3, 8001 )
+      GO TO 9010
+    END IF
+    j= MIN( totfld, maxint )
 
-!  Print out text of record line when error occurs.
+    !  Parse out integer values and store into integer buffer array.
+
+    DO  i=1,j
+      length= endfld(i) - bgnfld(i) + 1
+      buffer= REC(bgnfld(i):endfld(i))
+      
+      IF (((cmnd == 'WG').OR.(cmnd == 'GF')).AND.  &
+            (buffer(1:1) /= '0') .AND. (buffer(1:1) /= '1')) THEN       ! Text field
+        ngfnam = REC(bgnfld(i):endfld(i))
+        RETURN
+      END IF
+      
+      ind= INDEX( buffer(1:length), '.' )
+      IF (ind > 0  .AND.  ind < length) GO TO 9000
+      IF (ind == length) length= length - 1
+      READ( buffer(1:length), *, ERR=9000 ) intfld(i)
+    END DO
+
+    !  Parse out real values and store into real buffer array.
+
+    IF (totfld > maxint) THEN
+      j= maxint + 1
+      DO  i=j,totfld
+        length= endfld(i) - bgnfld(i) + 1
+        buffer= REC(bgnfld(i):endfld(i))
+        ind= INDEX( buffer(1:length), '.' )
+        IF (ind == 0) THEN
+          inde= INDEX( buffer(1:length), 'E' )
+          length= length + 1
+          IF (inde == 0) THEN
+            buffer(length:length)= '.'
+          ELSE
+            buffer= buffer(1:inde-1)//'.'// buffer(inde:length-1)
+          END IF
+        END IF
+        READ( buffer(1:length), *, ERR=9000 ) reafld(i-maxint)
+      END DO
+    END IF
+    RETURN
+
+    !  Print out text of record line when error occurs.
 
 9000   IF (i <= maxint) THEN
-  WRITE(3, 8002 ) i
-ELSE
-  i= i - maxint
-  WRITE(3, 8003 ) i
-END IF
+      WRITE(3, 8002 ) i
+    ELSE
+      i= i - maxint
+      WRITE(3, 8003 ) i
+    END IF
 9010   WRITE(3, 8004 ) REC
-STOP 'CARD ERROR'
+    STOP 'CARD ERROR'
 !
 !  Input formats and output messages.
 !
 8000   FORMAT (a80)
 8001   FORMAT (//,' ***** CARD ERROR - TOO MANY FIELDS IN RECORD')
-8002   FORMAT (//,' ***** CARD ERROR - INVALID NUMBER AT INTEGER',  &
-    ' POSITION ',i1)
-8003   FORMAT (//,' ***** CARD ERROR - INVALID NUMBER AT REAL',  &
-    ' POSITION ',i1)
+8002   FORMAT (//,' ***** CARD ERROR - INVALID NUMBER AT INTEGER',' POSITION ',i1)
+8003   FORMAT (//,' ***** CARD ERROR - INVALID NUMBER AT REAL',' POSITION ',i1)
 8004   FORMAT (' ***** TEXT -->  ',a80)
 END SUBROUTINE parsit
 !----------------------------------------------------------------------------
@@ -9526,20 +9590,17 @@ SUBROUTINE upcase( intext, outtxt, length )
 !  UPCASE finds the length of INTEXT and converts it to upper case.
 !
 
+    CHARACTER (LEN=*), INTENT(IN)            :: intext
+    CHARACTER (LEN=*), INTENT(OUT)           :: outtxt
+    INTEGER, INTENT(OUT)                     :: length
 
-CHARACTER (LEN=*), INTENT(IN)            :: intext
-CHARACTER (LEN=*), INTENT(OUT)           :: outtxt
-INTEGER, INTENT(OUT)                     :: length
-
-!
-!
-length = LEN( intext )
-DO  i=1,length
-  j  = ICHAR( intext(i:i) )
-  IF (j >= 96) j = j - 32
-  outtxt(i:i) = CHAR( j )
-END DO
-RETURN
+    length = LEN( intext )
+    DO  i=1,length
+        j  = ICHAR( intext(i:i) )
+        IF (j >= 96) j = j - 32
+        outtxt(i:i) = CHAR( j )
+    END DO
+    RETURN
 END SUBROUTINE upcase
 !----------------------------------------------------------------------------
 
