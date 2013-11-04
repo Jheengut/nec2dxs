@@ -1,4 +1,4 @@
-module nec2dpar
+MODULE nec2dpar
     integer, parameter:: b8 = selected_real_kind(14)
 
     real(b8), parameter :: pi = 3.141592654_b8
@@ -15,13 +15,14 @@ module nec2dpar
 
     integer, parameter      :: jmax=60          ! Max segments connected to a single segment or junction
 
-    character (LEN=49)      :: g77port = 'GNU Fortran (Ubuntu/Linaro 4.8.1-10ubuntu8) 4.8.1'
+    character (LEN=26)      :: g77port = 'GNU Fortran (Ubuntu) 4.8.1'
 
     logical                 :: debugging = .TRUE.
     !logical                 :: debugging = .FALSE.
 
-end module
+END MODULE
 
+PROGRAM nec2dxs
 !    av00    01-mar-02    First compile with Gnu77 compiler for windows
 
 ! Code converted using TO_F90 by Alan Miller
@@ -1208,8 +1209,10 @@ GO TO 14
 393   FORMAT(/,' error in ground parameters -',/, &
     ' COMPLEX dielectric constant from FILE is',1P,2E12.5,/,32X,'REQUESTED',2E12.5)
 900   FORMAT(' ERROR OPENING SOMMERFELD GROUND FILE - SOM2D.NEC')
-END
+!END
 !--------------------------------------------------------------------------------
+
+CONTAINS
 
 SUBROUTINE show_program_info()
     use nec2dpar
@@ -11177,4 +11180,6 @@ IMPLICIT REAL*8(a-h,o-z)
 3   zint=fj*SQRT(cmotp/sigl)*br1/rolam
     RETURN
 END FUNCTION zint
+
+END PROGRAM nec2dxs
 
