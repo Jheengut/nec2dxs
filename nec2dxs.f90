@@ -1,21 +1,22 @@
 MODULE nec2dpar
     IMPLICIT NONE
 
-    integer, parameter:: b8 = selected_real_kind(14)
+    INTEGER, PARAMETER:: NEC2REAL = SELECTED_REAL_KIND(14)
 
-    real(b8), parameter :: pi = 3.141592654_b8
-    !real(b8), parameter :: pi = 3.141592653589793239_b8
+    REAL(NEC2REAL), PARAMETER :: pi = 3.141592654_NEC2REAL
+    !REAL(NEC2REAL), PARAMETER :: pi = 3.141592653589793239_NEC2REAL
 
-    integer, parameter      :: maxseg=500       ! Max number of segments     (Windows-95 <= 4950)
-    integer, parameter      :: maxmat=500       ! max nr of 'in-core' alloc.    (MAXMAT <= MAXSEG)
+    INTEGER, PARAMETER      :: maxseg=500       ! Max number of segments     (Windows-95 <= 4950)
+    INTEGER, PARAMETER      :: maxmat=500       ! max nr of 'in-core' alloc.    (MAXMAT <= MAXSEG)
 
-    integer, parameter      :: loadmx=maxseg/10 ! Max number of LD cards
-    integer, parameter      :: nsmax=64         ! Max number of EX cards
-    integer, parameter      :: netmx=64         ! Max number of segs connected to NT/TL 
+    INTEGER, PARAMETER      :: loadmx=maxseg/10 ! Max number of LD cards
+    INTEGER, PARAMETER      :: nsmax=64         ! Max number of EX cards
+    INTEGER, PARAMETER      :: netmx=64         ! Max number of segs connected to NT/TL 
+
     ! FIXME fix where this is used right - hwh
-    integer, parameter      :: netmxp1=65       ! Max number of segs connected to NT/TL 
+    INTEGER, PARAMETER      :: netmxp1=65       ! Max number of segs connected to NT/TL 
 
-    integer, parameter      :: jmax=60          ! Max segments connected to a single segment or junction
+    INTEGER, PARAMETER      :: jmax=60          ! Max segments connected to a single segment or junction
 
     character (LEN=26)      :: g77port = 'GNU Fortran (Ubuntu) 4.8.1'
 
@@ -29,19 +30,20 @@ END MODULE
 ! formerly BLOCK DATA somset with common /ggrid/
 !
 MODULE somset
+    USE nec2dpar
     IMPLICIT NONE
 
-    REAL*8, DIMENSION(3)                  :: dxa(3) = (/.02,.05,.1/)
-    REAL*8, DIMENSION(3)                  :: dya(3) = (/.1745329252,.0872664626,.1745329252/)
-    REAL*8, DIMENSION(3)                  :: xsa(3) = (/0.,.2,.2/)
-    REAL*8, DIMENSION(3)                  :: ysa(3) = (/0.,0.,.3490658504/)
+    REAL(NEC2REAL), DIMENSION(3)          :: dxa(3) = (/.02,.05,.1/)
+    REAL(NEC2REAL), DIMENSION(3)          :: dya(3) = (/.1745329252,.0872664626,.1745329252/)
+    REAL(NEC2REAL), DIMENSION(3)          :: xsa(3) = (/0.,.2,.2/)
+    REAL(NEC2REAL), DIMENSION(3)          :: ysa(3) = (/0.,0.,.3490658504/)
     INTEGER, DIMENSION(3)                 :: nxa(3) = (/11,17,9/)
     INTEGER, DIMENSION(3)                 :: nya(3) = (/10,5,8/)
 
-    COMPLEX*16              :: ar1(11,10,4)
-    COMPLEX*16              :: ar2(17,5,4)
-    COMPLEX*16              :: ar3(9,8,4)
-    COMPLEX*16              :: epscf
+    COMPLEX*16                            :: ar1(11,10,4)
+    COMPLEX*16                            :: ar2(17,5,4)
+    COMPLEX*16                            :: ar3(9,8,4)
+    COMPLEX*16                            :: epscf
 
 END MODULE
 
@@ -54,7 +56,7 @@ PROGRAM nec2dxs
 
 !                         (Thanks to Raymond Anderson for letting me know
 !                         about this compiler and doing initial compilations)
-!    av01    14-mar-02    Var PI not used in routine GWAVE
+!    av01    14-mar-02    Var PI not USEd in routine GWAVE
 !    av02    14-mar-02    Sub SECOND already intrinsic function
 !    av03    15-mar-02    Multiple changes to include SOMNEC routines in nec2dx.exe
 !    av04    16-mar-02    Status='NEW', somehow seems not to replace existing file.
@@ -67,8 +69,8 @@ PROGRAM nec2dxs
 !    av010   30-jan-03    Used DGJJ port of G77 compiler which delivers speed increase
 !                         from 30 to 60% for small segment counts
 !    av011   04-sep-03    Logging of NetMX, NSMAX changed
-!    av012   29-sep-03    Enable user-specified NGF file-name.
-!    av013   29-sep-03    MinGW port used for both 11K segs and virtual memory usage.
+!    av012   29-sep-03    Enable USEr-specified NGF file-name.
+!    av013   29-sep-03    MinGW port USEd for both 11K segs and virtual memory usage.
 !    av014   09-oct-03    Max number of segs at junction/single-seg (JMAX) increased from 30 to 60
 !    av015   05-nov-04    BugFix: Use default NGF name when nothing specified.
 !    av016   09-nov-06    Official Nec2 bugfix by J.Burke, see nec-list at robomod.net
@@ -102,122 +104,118 @@ PROGRAM nec2dxs
 !
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
-use somset
+    USE nec2dpar
+    USE somset
 
-PARAMETER (iresrv=maxmat**2)
+    PARAMETER (iresrv=maxmat**2)
 
-IMPLICIT REAL*8(a-h,o-z)
+    IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-CHARACTER (LEN=80) :: outfile
-CHARACTER (LEN=80) :: infile
-CHARACTER (LEN=2), DIMENSION(22), PARAMETER :: atst &
-    = (/'CE','FR','LD','GN','EX','NT','XQ','NE','GD','RP','CM',  &
-    'NX','EN','TL','PT','KH','NH','PQ','EK','WG','CP','PL'/)
-CHARACTER (LEN=2) :: ain
+    CHARACTER (LEN=80) :: outfile
+    CHARACTER (LEN=80) :: infile
+    CHARACTER (LEN=2), DIMENSION(22), PARAMETER :: atst &
+        = (/'CE','FR','LD','GN','EX','NT','XQ','NE','GD','RP','CM',  &
+        'NX','EN','TL','PT','KH','NH','PQ','EK','WG','CP','PL'/)
+    CHARACTER (LEN=2) :: ain
 
-CHARACTER (LEN=8), DIMENSION(3), PARAMETER :: pnet = (/'        ','STRAIGHT','CROSSED '/)
-CHARACTER (LEN=6), DIMENSION(3), PARAMETER :: hpol = (/'LINEAR','RIGHT ','LEFT  '/)
+    CHARACTER (LEN=8), DIMENSION(3), PARAMETER :: pnet = (/'        ','STRAIGHT','CROSSED '/)
+    CHARACTER (LEN=6), DIMENSION(3), PARAMETER :: hpol = (/'LINEAR','RIGHT ','LEFT  '/)
 
-REAL :: starttime, endtime, elapsed
-REAL :: tim, tim1, tim2
-REAL*8 tmp1
+    REAL :: starttime, endtime, elapsed
+    REAL :: tim, tim1, tim2
+    REAL(NEC2REAL) tmp1
 
-REAL*8                      :: ta = 1.745329252D-02
-REAL*8                      :: cvel = 299.8
-INTEGER                     :: normf = 20
+    REAL(NEC2REAL)                      :: ta = 1.745329252D-02
+    REAL(NEC2REAL)                      :: cvel = 299.8
+    INTEGER                             :: normf = 20
 
-INTEGER*2                   :: llneg
+    INTEGER*2                           :: llneg
 
-COMPLEX*16  cm,fj,vsant,eth,eph,zrati,cur,curi,zarray,zrati2
-COMPLEX*16  ex,ey,ez,zped,vqd,vqds,t1,y11a,y12a,epsc,u,u2,xx1,xx2
-!COMPLEX*16  ar1,ar2,ar3,epscf,frati
-COMPLEX*16  frati
+    COMPLEX*16  cm,fj,vsant,eth,eph,zrati,cur,curi,zarray,zrati2
+    COMPLEX*16  ex,ey,ez,zped,vqd,vqds,t1,y11a,y12a,epsc,u,u2,xx1,xx2
+    COMPLEX*16  frati
 
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
+    COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
+        alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
+        itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 
-COMMON /cmb/cm(iresrv)
+    COMMON /cmb/cm(iresrv)
 
-COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat,  &
-    icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
+    COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat,  &
+        icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
 
-COMMON/SAVE/epsr,sig,scrwlt,scrwrt,fmhz,ip(2*maxseg),kcom
+    COMMON/SAVE/epsr,sig,scrwlt,scrwrt,fmhz,ip(2*maxseg),kcom
 
-COMMON/csave/com(19,5)
+    COMMON/csave/com(19,5)
 
-COMMON /crnt/ air(maxseg),aii(maxseg),bir(maxseg),bii(maxseg),  &
-    cir(maxseg),cii(maxseg),cur(3*maxseg)
+    COMMON /crnt/ air(maxseg),aii(maxseg),bir(maxseg),bii(maxseg),  &
+        cir(maxseg),cii(maxseg),cur(3*maxseg)
 
-COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
+    COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
 
-COMMON /zload/ zarray(maxseg),nload,nlodf
+    COMMON /zload/ zarray(maxseg),nload,nlodf
 
-COMMON/yparm/y11a(5),y12a(20),ncoup,icoup,nctag(5),ncseg(5)
+    COMMON/yparm/y11a(5),y12a(20),ncoup,icoup,nctag(5),ncseg(5)
 
-COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
-    jsno,iscon(50),nscon,ipcon(10),npcon
+    COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
+        jsno,iscon(50),nscon,ipcon(10),npcon
 
-COMMON/vsorc/vqd(nsmax),vsant(nsmax),vqds(nsmax),ivqd(nsmax),  &
-    isant(nsmax),iqds(nsmax),nvqd,nsant,nqds
+    COMMON/vsorc/vqd(nsmax),vsant(nsmax),vqds(nsmax),ivqd(nsmax),  &
+        isant(nsmax),iqds(nsmax),nvqd,nsant,nqds
 
-COMMON/netcx/zped,pin,pnls,x11r(netmx),x11i(netmx),x12r(netmx),  &
-    x12i(netmx),x22r(netmx),x22i(netmx),ntyp(netmx),iseg1(netmx),  &
-    iseg2(netmx),neq,npeq,neq2,nonet,ntsol,nprint,masym
+    COMMON/netcx/zped,pin,pnls,x11r(netmx),x11i(netmx),x12r(netmx),  &
+        x12i(netmx),x22r(netmx),x22i(netmx),ntyp(netmx),iseg1(netmx),  &
+        iseg2(netmx),neq,npeq,neq2,nonet,ntsol,nprint,masym
 
-COMMON/fpat/thets,phis,dth,dph,rfld,gnor,clt,cht,epsr2,sig2,  &
-    xpr6,pinr,pnlr,ploss,xnr,ynr,znr,dxnr,dynr,dznr,nth,nph,ipd,iavp,  &
-    inor,iax,ixtyp,near,nfeh,nrx,nry,nrz
+    COMMON/fpat/thets,phis,dth,dph,rfld,gnor,clt,cht,epsr2,sig2,  &
+        xpr6,pinr,pnlr,ploss,xnr,ynr,znr,dxnr,dynr,dznr,nth,nph,ipd,iavp,  &
+        inor,iax,ixtyp,near,nfeh,nrx,nry,nrz
 
-!COMMON /ggrid/ ar1(11,10,4),ar2(17,5,4),ar3(9,8,4),epscf,dxa(3),  &
-!    dya(3),xsa(3),ysa(3),nxa(3),nya(3)
+    COMMON/gwav/u,u2,xx1,xx2,r1,r2,zmh,zph
 
-COMMON/gwav/u,u2,xx1,xx2,r1,r2,zmh,zph
+    COMMON /plot/ iplp1,iplp2,iplp3,iplp4
 
-COMMON /plot/ iplp1,iplp2,iplp3,iplp4
+    DIMENSION cab(1),sab(1),x2(1),y2(1),z2(1)
 
-DIMENSION cab(1),sab(1),x2(1),y2(1),z2(1)
+    DIMENSION ldtyp(loadmx),ldtag(loadmx),ldtagf(loadmx),  &
+        ldtagt(loadmx),zlr(loadmx),zli(loadmx),zlc(loadmx)
 
-DIMENSION ldtyp(loadmx),ldtag(loadmx),ldtagf(loadmx),  &
-    ldtagt(loadmx),zlr(loadmx),zli(loadmx),zlc(loadmx)
+    DIMENSION ix(2*maxseg)
+    DIMENSION fnorm(200)
+    DIMENSION t1x(1),t1y(1),t1z(1),t2x(1),t2y(1),t2z(1)
 
-DIMENSION ix(2*maxseg)
-DIMENSION fnorm(200)
-DIMENSION t1x(1),t1y(1),t1z(1),t2x(1),t2y(1),t2z(1)
+    DIMENSION xtemp(maxseg),ytemp(maxseg),ztemp(maxseg),  &
+        sitemp(maxseg),bitemp(maxseg)
 
-DIMENSION xtemp(maxseg),ytemp(maxseg),ztemp(maxseg),  &
-    sitemp(maxseg),bitemp(maxseg)
-
-EQUIVALENCE (cab,alp),(sab,bet),(x2,si),(y2,alp),(z2,bet)
-EQUIVALENCE (t1x,si),(t1y,alp),(t1z,bet),(t2x,icon1),(t2y,icon2), (t2z,itag)
+    EQUIVALENCE (cab,alp),(sab,bet),(x2,si),(y2,alp),(z2,bet)
+    EQUIVALENCE (t1x,si),(t1y,alp),(t1z,bet),(t2x,icon1),(t2y,icon2), (t2z,itag)
 
 
-    CALL show_program_info()
+        CALL show_program_info()
 
-    706   CONTINUE
-    WRITE(*,700)
-    700   FORMAT(' ENTER NAME OF INPUT FILE >',$)
-    READ(*,701,ERR=706,END=708) infile
-    701   FORMAT(a)
-    OPEN (UNIT=2,FILE=infile,STATUS='OLD',ERR=702)
+706     CONTINUE
+        WRITE(*,700)
+700     FORMAT(' ENTER NAME OF INPUT FILE >',$)
+        READ(*,701,ERR=706,END=708) infile
+701     FORMAT(a)
+        OPEN (UNIT=2,FILE=infile,STATUS='OLD',ERR=702)
 
-    707   CONTINUE
-    WRITE(*,703)
-    703   FORMAT(' ENTER NAME OF OUTPUT FILE >',$)
-    READ(*,701,ERR=707,END=706) outfile
-    OPEN (UNIT=3,FILE=outfile,STATUS='UNKNOWN',ERR=704)
-    GO TO 705
+707     CONTINUE
+        WRITE(*,703)
+703     FORMAT(' ENTER NAME OF OUTPUT FILE >',$)
+        READ(*,701,ERR=707,END=706) outfile
+        OPEN (UNIT=3,FILE=outfile,STATUS='UNKNOWN',ERR=704)
+        GO TO 705
 
-    702   PRINT *, 'Error opening input-file:',infile
-    GO TO 706
+702     PRINT *, 'Error opening input-file:',infile
+        GO TO 706
 
-    704   PRINT *, 'Error opening output-file:',outfile
-    GO TO 707
+704     PRINT *, 'Error opening output-file:',outfile
+        GO TO 707
 
-708   STOP
+708     STOP
 
-705   CONTINUE
+705     CONTINUE
 
 PRINT *,''
 CALL second(starttime)
@@ -931,7 +929,7 @@ ntsol=1
 IF (iped == 0) GO TO 61
 itmp1=mhz+4*(mhz-1)
 IF (itmp1 > (normf-3)) GO TO 61
-fnorm(itmp1)=dreal(zped)
+fnorm(itmp1)=dREAL(zped)
 fnorm(itmp1+1)=DIMAG(zped)
 fnorm(itmp1+2)=ABS(zped)
 fnorm(itmp1+3)=cang(zped)
@@ -959,8 +957,8 @@ GO TO 63
       cmag=ABS(curi)
       ph=cang(curi)
       IF (nload == 0.AND.nlodf == 0) GO TO 64
-      IF (ABS(dreal(zarray(i))) < 1.d-20) GO TO 64
-      ploss=ploss+.5*cmag*cmag*dreal(zarray(i))*si(i)
+      IF (ABS(dREAL(zarray(i))) < 1.d-20) GO TO 64
+      ploss=ploss+.5*cmag*cmag*dREAL(zarray(i))*si(i)
 64    IF (jump < 0) THEN
         GO TO    68
       ELSE IF (jump == 0) THEN
@@ -1224,15 +1222,15 @@ GO TO 14
     'COORD. of seg. center',5X,'SEG.',10X,  &
     'CHARGE density (coulombs/meter)',/,2X,'NO.',3X,'NO.',5X,'X',8X,  &
     'Y',8X,'Z',6X,'LENGTH',5X,'REAL',8X,'IMAG.',7X,'MAG.',8X,'PHASE')
-321   FORMAT( /,20X,'THE extended thin wire kernel will be used')
+321   FORMAT( /,20X,'THE extended thin wire kernel will be USEd')
 303   FORMAT(/,' error - ',a2,' card is NOT allowed with n.g.f.')
 327   FORMAT(/,35X,' loading only in n.g.f. section')
-302   FORMAT(' error - n.g.f. in use.  cannot WRITE NEW n.g.f.')
+302   FORMAT(' error - n.g.f. in USE.  cannot WRITE NEW n.g.f.')
 313   FORMAT(/,' NUMBER of segments in coupling calculation (cp) exceeds limit')
-390   FORMAT(' radial wire g. s. approximation may NOT be used with sommerfeld ground option')
+390   FORMAT(' radial wire g. s. approximation may NOT be USEd with sommerfeld ground option')
 391   FORMAT(40X,'FINITE ground.  reflection coefficient approximation')
 392   FORMAT(40X,'FINITE ground.  sommerfeld solution')
-393   FORMAT(/,' error in ground parameters -',/, &
+393   FORMAT(/,' error in ground PARAMETERs -',/, &
     ' COMPLEX dielectric constant from FILE is',1P,2E12.5,/,32X,'REQUESTED',2E12.5)
 900   FORMAT(' ERROR OPENING SOMMERFELD GROUND FILE - SOM2D.NEC')
 !END
@@ -1241,7 +1239,7 @@ GO TO 14
 CONTAINS
 
 SUBROUTINE show_program_info()
-    use nec2dpar
+    USE nec2dpar
 
     PRINT *, ''
     PRINT *, 'Numerical Electromagnetics Code, '
@@ -1275,13 +1273,13 @@ END SUBROUTINE show_program_info
 
 SUBROUTINE som2d (rmhz, repr, rsig)
 !***********************************************************************
-use somset
+USE somset
 
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-REAL*8, INTENT(IN)                         :: rmhz
-REAL*8, INTENT(IN)                         :: repr
-REAL*8, INTENT(IN)                         :: rsig
+REAL(NEC2REAL), INTENT(IN)                         :: rmhz
+REAL(NEC2REAL), INTENT(IN)                         :: repr
+REAL(NEC2REAL), INTENT(IN)                         :: rsig
 !***
 COMPLEX*16 ck1,ck1sq,erv,ezv,erh,eph,cksm,ct1,ct2,ct3,cl1,cl2,con
 !    ar1,ar2,ar3,epscf
@@ -1314,7 +1312,7 @@ ck2sq=ck2*ck2
 !
 ck1sq=ck2sq*DCONJG(epscf)
 ck1=SQRT(ck1sq)
-ck1r=dreal(ck1)
+ck1r=dREAL(ck1)
 tkmag=100.*ABS(ck1)
 tsmag=100.*ck1*DCONJG(ck1)
 cksm=ck2sq/(ck1sq+ck2sq)
@@ -1457,7 +1455,7 @@ SUBROUTINE bessel (z,j0,j0p)
 !     BESSEL EVALUATES THE ZERO-ORDER BESSEL FUNCTION AND ITS DERIVATIVE
 !     FOR COMPLEX ARGUMENT Z.
 !
-    IMPLICIT REAL*8(a-h,o-z)
+    IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
     COMPLEX*16, INTENT(IN)                   :: z
     COMPLEX*16, INTENT(OUT)                  :: j0
@@ -1544,7 +1542,7 @@ SUBROUTINE evlua (erv,ezv,erh,eph)
 !     EVALUA CONTROLS THE INTEGRATION CONTOUR IN THE COMPLEX LAMBDA
 !     PLANE FOR EVALUATION OF THE SOMMERFELD INTEGRALS.
 !
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 COMPLEX*16, INTENT(OUT)                  :: erv
 COMPLEX*16, INTENT(OUT)                  :: ezv
@@ -1605,12 +1603,12 @@ del=ptp/del
 delta=DCMPLX(-1.d0,slope)*del/SQRT(1.+slope*slope)
 delta2=-DCONJG(delta)
 CALL gshank (cp1,delta,ans,6,sum,0,bk,bk)
-rmis=rho*(dreal(ck1)-ck2)
+rmis=rho*(dREAL(ck1)-ck2)
 IF (rmis < 2.*ck2) GO TO 8
 IF (rho < 1.e-10) GO TO 8
 IF (zph < 1.e-10) GO TO 6
 bk=DCMPLX(-zph,rho)*(ck1-cp3)
-rmis=-dreal(bk)/ABS(DIMAG(bk))
+rmis=-dREAL(bk)/ABS(DIMAG(bk))
 IF(rmis > 4.*rho/zph)GO TO 8
 !     INTEGRATE UP BETWEEN BRANCH CUTS, THEN TO + INFINITY
 6     cp1=ck1-(.1,.2)
@@ -1630,7 +1628,7 @@ GO TO 10
 8     DO  i=1,6
   sum(i)=-ans(i)
 END DO
-rmis=dreal(ck1)*1.01
+rmis=dREAL(ck1)*1.01
 IF (ck2+1. > rmis) rmis=ck2+1.
 bk=DCMPLX(rmis,.99*DIMAG(ck1))
 delta=bk-cp3
@@ -1657,7 +1655,7 @@ SUBROUTINE gshank (start,dela,sum,nans,seed,ibk,bk,delb)
 !     ALGORITHM TO ACCELERATE CONVERGENCE OF A SLOWLY CONVERGING SERIES
 !     IS USED
 !
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 COMPLEX*16, INTENT(IN)                   :: start
 COMPLEX*16, INTENT(IN)                   :: dela
@@ -1673,7 +1671,7 @@ COMMON /cntour/ a,b
 DIMENSION q1(6,20), q2(6,20), ans1(6), ans2(6)
 DATA crit/1.e-4/,maxh/20/
 
-rbk=dreal(bk)
+rbk=dREAL(bk)
 del=dela
 ibx=0
 IF (ibk == 0) ibx=1
@@ -1687,14 +1685,14 @@ loop20: DO  INT=1,maxh
   inx=INT
   a=b
   b=b+del
-  IF (ibx == 0.AND.dreal(b) >= rbk) GO TO 5
+  IF (ibx == 0.AND.dREAL(b) >= rbk) GO TO 5
   CALL rom1 (nans,sum,2)
   DO  i=1,nans
     ans1(i)=ans2(i)+sum(i)
   END DO
   a=b
   b=b+del
-  IF (ibx == 0.AND.dreal(b) >= rbk) GO TO 6
+  IF (ibx == 0.AND.dREAL(b) >= rbk) GO TO 6
   CALL rom1 (nans,sum,2)
   DO  i=1,nans
     ans2(i)=ans1(i)+sum(i)
@@ -1727,13 +1725,13 @@ loop20: DO  INT=1,maxh
       jm=j-1
       aa=q2(i,jm)
       a1=q1(i,jm)+as1-2.*aa
-      IF (dreal(a1) == 0..AND.DIMAG(a1) == 0.) GO TO 12
+      IF (dREAL(a1) == 0..AND.DIMAG(a1) == 0.) GO TO 12
       a2=aa-q1(i,jm)
       a1=q1(i,jm)-a2*a2/a1
       GO TO 13
       12    a1=q1(i,jm)
       13    a2=aa+as2-2.*as1
-      IF (dreal(a2) == 0..AND.DIMAG(a2) == 0.) GO TO 14
+      IF (dREAL(a2) == 0..AND.DIMAG(a2) == 0.) GO TO 14
       a2=aa-(as1-aa)*(as1-aa)/a2
       GO TO 15
       14    a2=aa
@@ -1744,7 +1742,7 @@ loop20: DO  INT=1,maxh
     END DO
     17    q1(i,INT)=as1
     q2(i,INT)=as2
-    amg=ABS(dreal(as2))+ABS(DIMAG(as2))
+    amg=ABS(dREAL(as2))+ABS(DIMAG(as2))
     IF (amg > den) den=amg
   END DO
   denm=1.e-3*den*crit
@@ -1753,10 +1751,10 @@ loop20: DO  INT=1,maxh
   DO  j=jm,INT
     DO  i=1,nans
       a1=q2(i,j)
-      den=(ABS(dreal(a1))+ABS(DIMAG(a1)))*crit
+      den=(ABS(dREAL(a1))+ABS(DIMAG(a1)))*crit
       IF (den < denm) den=denm
       a1=q1(i,j)-a1
-      amg=ABS(dreal(a1))+ABS(DIMAG(a1))
+      amg=ABS(dREAL(a1))+ABS(DIMAG(a1))
       IF (amg > den) CYCLE loop20
     END DO
   END DO
@@ -1784,9 +1782,9 @@ SUBROUTINE hankel (z,h0,h0p)
 !     HANKEL EVALUATES HANKEL FUNCTION OF THE FIRST KIND, ORDER ZERO,
 !     AND ITS DERIVATIVE FOR COMPLEX ARGUMENT Z.
 !
-    use nec2dpar,  only : pi
+    USE nec2dpar,  ONLY : pi
 
-    IMPLICIT REAL*8(a-h,o-z)
+    IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
     COMPLEX*16, INTENT(IN)                   :: z
     COMPLEX*16, INTENT(OUT)                  :: h0
@@ -1880,9 +1878,9 @@ SUBROUTINE lambda (t,xlam,dxlam)
 !
 !     COMPUTE INTEGRATION PARAMETER XLAM=LAMBDA FROM PARAMETER T.
 !
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-REAL*8, INTENT(IN)                         :: t
+REAL(NEC2REAL), INTENT(IN)                         :: t
 COMPLEX*16, INTENT(OUT)                  :: xlam
 COMPLEX*16, INTENT(OUT)                  :: dxlam
 SAVE
@@ -1903,7 +1901,7 @@ SUBROUTINE rom1 (n,sum,nx)
 !     ROM1 INTEGRATES THE 6 SOMMERFELD INTEGRALS FROM A TO B IN LAMBDA.
 !     THE METHOD OF VARIABLE INTERVAL WIDTH ROMBERG INTEGRATION IS USED.
 !
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: n
 COMPLEX*16, INTENT(OUT)                  :: sum(6)
@@ -1939,7 +1937,7 @@ DO  i=1,n
   t01(i)=(t00+dz*g3(i))*.5
   t10(i)=(4.*t01(i)-t00)/3.
 !     TEST CONVERGENCE OF 3 POINT ROMBERG RESULT
-  CALL test (dreal(t01(i)),dreal(t10(i)),tr,DIMAG(t01(i)),DIMAG(t10  &
+  CALL test (dREAL(t01(i)),dREAL(t10(i)),tr,DIMAG(t01(i)),DIMAG(t10  &
       (i)),ti,0.d0)
   IF (tr > rx.OR.ti > rx) nogo=1
 END DO
@@ -1957,7 +1955,7 @@ DO  i=1,n
   t11=(4.*t02-t01(i))/3.
   t20(i)=(16.*t11-t10(i))/15.
 !     TEST CONVERGENCE OF 5 POINT ROMBERG RESULT
-  CALL test (dreal(t11),dreal(t20(i)),tr,DIMAG(t11),DIMAG(t20(i)),ti ,0.d0)
+  CALL test (dREAL(t11),dREAL(t20(i)),tr,DIMAG(t11),DIMAG(t20(i)),ti ,0.d0)
   IF (tr > rx.OR.ti > rx) nogo=1
 END DO
 IF (nogo /= 0) GO TO 13
@@ -2009,9 +2007,9 @@ SUBROUTINE saoa (t,ans)
 !     SAOA COMPUTES THE INTEGRAND FOR EACH OF THE 6
 !     SOMMERFELD INTEGRALS FOR SOURCE AND OBSERVER ABOVE GROUND
 !
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-REAL*8, INTENT(IN)                       :: t
+REAL(NEC2REAL), INTENT(IN)                       :: t
 COMPLEX*16, INTENT(OUT)                  :: ans(6)
 SAVE
 COMPLEX*16  xl,dxl,cgam1,cgam2,b0,b0p,com,ck1,ck1sq,cksm,ct1,  &
@@ -2027,21 +2025,21 @@ b0=2.*b0
 b0p=2.*b0p
 cgam1=SQRT(xl*xl-ck1sq)
 cgam2=SQRT(xl*xl-ck2sq)
-IF (dreal(cgam1) == 0.) cgam1=DCMPLX(0.d0,-ABS(DIMAG(cgam1)))
-IF (dreal(cgam2) == 0.) cgam2=DCMPLX(0.d0,-ABS(DIMAG(cgam2)))
+IF (dREAL(cgam1) == 0.) cgam1=DCMPLX(0.d0,-ABS(DIMAG(cgam1)))
+IF (dREAL(cgam2) == 0.) cgam2=DCMPLX(0.d0,-ABS(DIMAG(cgam2)))
 GO TO 2
 !     HANKEL FUNCTION FORM
 1     CALL hankel (xl*rho,b0,b0p)
 com=xl-ck1
 cgam1=SQRT(xl+ck1)*SQRT(com)
-IF (dreal(com) < 0..AND.DIMAG(com) >= 0.) cgam1=-cgam1
+IF (dREAL(com) < 0..AND.DIMAG(com) >= 0.) cgam1=-cgam1
 com=xl-ck2
 cgam2=SQRT(xl+ck2)*SQRT(com)
-IF (dreal(com) < 0..AND.DIMAG(com) >= 0.) cgam2=-cgam2
+IF (dREAL(com) < 0..AND.DIMAG(com) >= 0.) cgam2=-cgam2
 2     xlr=xl*DCONJG(xl)
 IF (xlr < tsmag) GO TO 3
 IF (DIMAG(xl) < 0.) GO TO 4
-xlr=dreal(xl)
+xlr=dREAL(xl)
 IF (xlr < ck2) GO TO 5
 IF (xlr > ck1r) GO TO 4
 3     dgam=cgam2-cgam1
@@ -2076,18 +2074,18 @@ SUBROUTINE arc (itg,ns,rada,ang1,ang2,rad)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
+USE nec2dpar
 
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: itg
 INTEGER, INTENT(IN)                      :: ns
-REAL*8, INTENT(IN)                       :: rada
-REAL*8, INTENT(IN)                       :: ang1
-REAL*8, INTENT(IN)                       :: ang2
-REAL*8, INTENT(IN)                       :: rad
+REAL(NEC2REAL), INTENT(IN)                       :: rada
+REAL(NEC2REAL), INTENT(IN)                       :: ang1
+REAL(NEC2REAL), INTENT(IN)                       :: ang2
+REAL(NEC2REAL), INTENT(IN)                       :: rad
 
-REAL*8                                   :: ta = 0.01745329252D+0
+REAL(NEC2REAL)                                   :: ta = 0.01745329252D+0
 ! ***
 !
 !     ARC GENERATES SEGMENT GEOMETRY DATA FOR AN ARC OF NS SEGMENTS
@@ -2135,11 +2133,11 @@ END SUBROUTINE arc
 !
 !     ATGN2 IS ARCTANGENT FUNCTION MODIFIED TO RETURN 0. WHEN X=Y=0.
 !
-REAL*8 FUNCTION atgn2 (x,y)
+REAL(NEC2REAL) FUNCTION atgn2 (x,y)
     IMPLICIT NONE
 
-    REAL*8, INTENT(IN)                     :: x
-    REAL*8, INTENT(IN)                     :: y
+    REAL(NEC2REAL), INTENT(IN)                     :: x
+    REAL(NEC2REAL), INTENT(IN)                     :: y
 
     IF (x == 0.0) THEN
         IF (y == 0.0) THEN
@@ -2157,8 +2155,8 @@ SUBROUTINE blckot (ar,nunit,ix1,ix2,nblks,neof)
     ! ***
     !     DOUBLE PRECISION 6/4/85
     !
-    ! FIXME eliminate unused parameters???
-    IMPLICIT REAL*8(a-h,o-z)
+    ! FIXME eliminate unUSEd PARAMETERs???
+    IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
     COMPLEX*16, INTENT(IN)                   :: ar(1)
     INTEGER, INTENT(IN)                      :: nunit
@@ -2180,7 +2178,7 @@ END SUBROUTINE blckot
 !----------------------------------------------------------------------------
 
 SUBROUTINE blckin(ar,nunit,ix1,ix2,nblks,neof)
-    IMPLICIT REAL*8(a-h,o-z)
+    IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
     COMPLEX*16, INTENT(IN OUT)               :: ar(1)
     INTEGER, INTENT(IN)                      :: nunit
@@ -2214,8 +2212,8 @@ SUBROUTINE cabc (curx)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
+USE nec2dpar
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 COMPLEX*16, INTENT(OUT)                  :: curx(1)
 ! ***
@@ -2253,7 +2251,7 @@ DO  i=1,n
   cii(i)=0.
 END DO
 DO  i=1,n
-  ar=dreal(curx(i))
+  ar=dREAL(curx(i))
   ai=DIMAG(curx(i))
   CALL tbf (i,1)
   DO  jx=1,jsno
@@ -2276,7 +2274,7 @@ DO  is=1,nqds
   sh=si(i)*.5
   curd=ccj*vqds(is)/((LOG(2.*sh/bi(i))-1.)*(bx(jsno)*COS(tp*sh)+cx(  &
       jsno)*SIN(tp*sh))*wlam)
-  ar=dreal(curd)
+  ar=dREAL(curd)
   ai=DIMAG(curd)
   DO  jx=1,jsno
     j=jco(jx)
@@ -2313,14 +2311,14 @@ FUNCTION cang (z)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 COMPLEX*16, INTENT(IN OUT)               :: z
 ! ***
 !
 !     CANG RETURNS THE PHASE ANGLE OF A COMPLEX NUMBER IN DEGREES.
 !
-cang=atgn2(DIMAG(z),dreal(z))*57.29577951D+0
+cang=atgn2(DIMAG(z),dREAL(z))*57.29577951D+0
 RETURN
 END FUNCTION cang
 !----------------------------------------------------------------------------
@@ -2329,8 +2327,8 @@ SUBROUTINE cmngf (cb,cc,cd,nb,nc,nd,rkhx,iexkx)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
+USE nec2dpar
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 COMPLEX*16, INTENT(OUT)                  :: cb(nb,1)
 COMPLEX*16, INTENT(OUT)                  :: cc(nc,1)
@@ -2338,7 +2336,7 @@ COMPLEX*16, INTENT(OUT)                  :: cd(nd,1)
 INTEGER, INTENT(IN)                      :: nb
 INTEGER, INTENT(IN)                      :: nc
 INTEGER, INTENT(IN)                      :: nd
-REAL*8, INTENT(IN)                         :: rkhx
+REAL(NEC2REAL), INTENT(IN)                         :: rkhx
 INTEGER, INTENT(IN)                      :: iexkx
 
 INTEGER                                  :: ix
@@ -2625,12 +2623,12 @@ SUBROUTINE cmset (nrow,cm,rkhx,iexkx)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
+USE nec2dpar
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: nrow
 COMPLEX*16, INTENT(OUT)                  :: cm(nrow,1)
-REAL*8, INTENT(IN)                         :: rkhx
+REAL(NEC2REAL), INTENT(IN)                         :: rkhx
 INTEGER, INTENT(IN)                      :: iexkx
 ! ***
 !
@@ -2756,8 +2754,8 @@ SUBROUTINE cmss (j1,j2,im1,im2,cm,nrow,itrp)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
+USE nec2dpar
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: j1
 INTEGER, INTENT(IN)                      :: j2
@@ -2851,8 +2849,8 @@ SUBROUTINE cmsw (j1,j2,i1,i2,cm,cw,ncw,nrow,itrp)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
+USE nec2dpar
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: j1
 INTEGER, INTENT(IN)                      :: j2
@@ -3012,8 +3010,8 @@ SUBROUTINE cmws (j,i1,i2,cm,nr,cw,nw,itrp)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
+USE nec2dpar
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN OUT)                  :: j
 INTEGER, INTENT(IN)                      :: i1
@@ -3114,8 +3112,8 @@ SUBROUTINE cmww (j,i1,i2,cm,nr,cw,nw,itrp)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
+USE nec2dpar
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: j
 INTEGER, INTENT(IN)                      :: i1
@@ -3264,8 +3262,8 @@ SUBROUTINE conect (ignd)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
+USE nec2dpar
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN OUT)                  :: ignd
 ! ***
@@ -3574,11 +3572,11 @@ RETURN
     'interpolated TO image in ground plane.',/)
 56    FORMAT (' geometry DATA error-- segment',i5,' extends below ground')
 57    FORMAT (' geometry DATA error--segment',i5,' lies in ground ','plane.')
-58    FORMAT (/,3X,'TOTAL segments used=',i5,5X,'NO. seg. in ', &
+58    FORMAT (/,3X,'TOTAL segments USEd=',i5,5X,'NO. seg. in ', &
     'A symmetric cell=',i5,5X,'SYMMETRY flag=',i3)
 59    FORMAT (' structure has',i4,' fold rotational symmetry',/)
 60    FORMAT (' structure has',i2,' planes of symmetry',/)
-61    FORMAT (3X,'TOTAL patches used=',i5,6X,'NO. patches in a symmetric cell=',i5)
+61    FORMAT (3X,'TOTAL patches USEd=',i5,6X,'NO. patches in a symmetric cell=',i5)
 62    FORMAT (' ERROR - NO. NEW SEGMENTS CONNECTED TO N.G.F. SEGMENTS ',  &
     'OR PATCHES EXCEEDS LIMIT OF',i5)
 END SUBROUTINE conect
@@ -3590,11 +3588,11 @@ SUBROUTINE couple (cur,wlam)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
+USE nec2dpar
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 COMPLEX*16, INTENT(IN)                   :: cur(1)
-REAL*8, INTENT(IN)                         :: wlam
+REAL(NEC2REAL), INTENT(IN)                         :: wlam
 ! ***
 !
 !     COUPLE COMPUTES THE MAXIMUM COUPLING BETWEEN PAIRS OF SEGMENTS.
@@ -3639,14 +3637,14 @@ DO  i=1,npm1
     y12=.5*(y12a(j1)+y12a(j2))
     yin=y12*y12
     dbc=ABS(yin)
-    c=dbc/(2.*dreal(y11)*dreal(y22)-dreal(yin))
+    c=dbc/(2.*dREAL(y11)*dREAL(y22)-dREAL(yin))
     IF (c < 0..OR.c > 1.) GO TO 4
     IF (c < .01) GO TO 2
     gmax=(1.-SQRT(1.-c*c))/c
     GO TO 3
     2     gmax=.5*(c+.25*c*c*c)
     3     rho=gmax*DCONJG(yin)/dbc
-    yl=((1.-rho)/(1.+rho)+1.)*dreal(y22)-y22
+    yl=((1.-rho)/(1.+rho)+1.)*dREAL(y22)-y22
     zl=1./yl
     yin=y11-yin/(y22+yl)
     zin=1./yin
@@ -3672,8 +3670,8 @@ SUBROUTINE datagn
 !
 !     DATAGN IS THE MAIN ROUTINE FOR INPUT OF GEOMETRY DATA.
 !
-        use nec2dpar
-        IMPLICIT REAL*8(a-h,o-z)
+        USE nec2dpar
+        IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
         CHARACTER (LEN=2)  :: gm
         CHARACTER (LEN=1), DIMENSION(4), PARAMETER :: ipt = (/'P','R','T','Q'/)
@@ -3695,8 +3693,8 @@ SUBROUTINE datagn
         EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), (t2y,icon2), &
             (t2z,itag), (x2,si), (y2,alp), (z2,bet), (cab,alp), (sab,bet)
 
-        REAL*8                  :: ta = 0.01745329252D+0
-        REAL*8                  :: td = 57.29577951D+0
+        REAL(NEC2REAL)                  :: ta = 0.01745329252D+0
+        REAL(NEC2REAL)                  :: td = 57.29577951D+0
 
         ipsym=0
         nwire=0
@@ -4013,7 +4011,7 @@ SUBROUTINE datagn
     i3,i5,7F10.5)
 48    FORMAT (' geometry DATA card error')
 49    FORMAT (1X,a2,i3,i5,7F10.5)
-50    FORMAT (' NUMBER of wire segments AND surface patches exceeds dimension limit.')
+50    FORMAT (' NUMBER of wire segments AND surface patches exceeds DIMENSION limit.')
 51    FORMAT (1X,i5,a1,f10.5,2F11.5,1X,3F11.5)
 52    FORMAT (' error - gf must be first geometry DATA card')
 53    FORMAT (////33X,'- - - - segmentation DATA - - - -',//,40X, &
@@ -4039,12 +4037,12 @@ END SUBROUTINE datagn
 ! FIXME fix comment
 !     FUNCTION DB-- RETURNS DB FOR MAGNITUDE (FIELD) OR MAG**2 (POWER) I
 !
-REAL*8 FUNCTION db10 (x)
+REAL(NEC2REAL) FUNCTION db10 (x)
     IMPLICIT NONE
 
-    REAL*8, INTENT(IN)               :: x
+    REAL(NEC2REAL), INTENT(IN)               :: x
 
-    REAL*8, PARAMETER                :: f = 10.0
+    REAL(NEC2REAL), PARAMETER                :: f = 10.0
 
     IF (x < 1.d-20) THEN
         db10=-999.99
@@ -4058,12 +4056,12 @@ END FUNCTION db10
 ! FIXME fix comment
 !     FUNCTION DB-- RETURNS DB FOR MAGNITUDE (FIELD) OR MAG**2 (POWER) I
 !
-REAL*8 FUNCTION db20 (x)
+REAL(NEC2REAL) FUNCTION db20 (x)
     IMPLICIT NONE
 
-    REAL*8, INTENT(IN)               :: x
+    REAL(NEC2REAL), INTENT(IN)               :: x
 
-    REAL*8, PARAMETER                :: f = 20.0
+    REAL(NEC2REAL), PARAMETER                :: f = 20.0
 
     IF (x < 1.d-20) THEN
         db20=-999.99
@@ -4078,14 +4076,14 @@ SUBROUTINE efld (xi,yi,zi,ai,ij)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar, only : pi
+USE nec2dpar, ONLY : pi
 
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-REAL*8, INTENT(IN)                       :: xi
-REAL*8, INTENT(IN)                       :: yi
-REAL*8, INTENT(IN)                       :: zi
-REAL*8, INTENT(IN)                       :: ai
+REAL(NEC2REAL), INTENT(IN)                       :: xi
+REAL(NEC2REAL), INTENT(IN)                       :: yi
+REAL(NEC2REAL), INTENT(IN)                       :: zi
+REAL(NEC2REAL), INTENT(IN)                       :: ai
 INTEGER, INTENT(IN)                      :: ij
 
 INTEGER                                  :: ip
@@ -4323,12 +4321,12 @@ SUBROUTINE eksc (s,z,rh,xk,ij,ezs,ers,ezc,erc,ezk,erk)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-REAL*8, INTENT(IN)                         :: s
-REAL*8, INTENT(IN)                         :: z
-REAL*8, INTENT(IN)                         :: rh
-REAL*8, INTENT(IN)                         :: xk
+REAL(NEC2REAL), INTENT(IN)                         :: s
+REAL(NEC2REAL), INTENT(IN)                         :: z
+REAL(NEC2REAL), INTENT(IN)                         :: rh
+REAL(NEC2REAL), INTENT(IN)                         :: xk
 INTEGER, INTENT(IN)                      :: ij
 COMPLEX*16, INTENT(OUT)                  :: ezs
 COMPLEX*16, INTENT(OUT)                  :: ers
@@ -4380,13 +4378,13 @@ SUBROUTINE ekscx (bx,s,z,rhx,xk,ij,inx1,inx2,ezs,ers,ezc,erc,ezk,erk)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-REAL*8, INTENT(IN)                         :: bx
-REAL*8, INTENT(IN)                         :: s
-REAL*8, INTENT(IN)                         :: z
-REAL*8, INTENT(IN)                         :: rhx
-REAL*8, INTENT(IN)                         :: xk
+REAL(NEC2REAL), INTENT(IN)                         :: bx
+REAL(NEC2REAL), INTENT(IN)                         :: s
+REAL(NEC2REAL), INTENT(IN)                         :: z
+REAL(NEC2REAL), INTENT(IN)                         :: rhx
+REAL(NEC2REAL), INTENT(IN)                         :: xk
 INTEGER, INTENT(IN)                      :: ij
 INTEGER, INTENT(IN OUT)                  :: inx1
 INTEGER, INTENT(IN OUT)                  :: inx2
@@ -4460,15 +4458,15 @@ SUBROUTINE etmns (p1,p2,p3,p4,p5,p6,ipr,e)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
+USE nec2dpar
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-REAL*8, INTENT(IN)                         :: p1
-REAL*8, INTENT(IN)                         :: p2
-REAL*8, INTENT(IN)                         :: p3
-REAL*8, INTENT(IN OUT)                     :: p4
-REAL*8, INTENT(IN OUT)                     :: p5
-REAL*8, INTENT(IN)                         :: p6
+REAL(NEC2REAL), INTENT(IN)                         :: p1
+REAL(NEC2REAL), INTENT(IN)                         :: p2
+REAL(NEC2REAL), INTENT(IN)                         :: p3
+REAL(NEC2REAL), INTENT(IN OUT)                     :: p4
+REAL(NEC2REAL), INTENT(IN OUT)                     :: p5
+REAL(NEC2REAL), INTENT(IN)                         :: p6
 INTEGER, INTENT(IN OUT)                  :: ipr
 COMPLEX*16, INTENT(OUT)                  :: e(2*maxseg)
 ! ***
@@ -4714,7 +4712,7 @@ SUBROUTINE facgf (a,b,c,d,bx,ip,ix,np,n1,mp,m1,n1c,n2c)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 COMPLEX*16, INTENT(IN OUT)               :: a(1)
 COMPLEX*16, INTENT(IN OUT)               :: b(n1c,1)
@@ -4831,7 +4829,7 @@ SUBROUTINE facio (a,nrow,nop,ip,iu1,iu2,iu3,iu4)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 COMPLEX*16, INTENT(IN OUT)               :: a(nrow,1)
 INTEGER, INTENT(IN)                      :: nrow
@@ -4902,8 +4900,8 @@ SUBROUTINE factr (n,a,ip,ndim)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
+USE nec2dpar
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: n
 COMPLEX*16, INTENT(IN OUT)               :: a(ndim,ndim)
@@ -4958,12 +4956,12 @@ DO  r=1,n
 !
 !     STEP 4
 !
-  dmax=dreal(d(r)*DCONJG(d(r)))
+  dmax=dREAL(d(r)*DCONJG(d(r)))
   ip(r)=r
   rp1=r+1
   IF (rp1 > n) GO TO 6
   DO  i=rp1,n
-    elmag=dreal(d(i)*DCONJG(d(i)))
+    elmag=dREAL(d(i)*DCONJG(d(i)))
     IF (elmag < dmax) CYCLE
     dmax=elmag
     ip(r)=i
@@ -4996,7 +4994,7 @@ SUBROUTINE factrs (np,nrow,a,ip,ix,iu1,iu2,iu3,iu4)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: np
 INTEGER, INTENT(IN)                      :: nrow
@@ -5101,7 +5099,7 @@ COMPLEX*16 FUNCTION fbar(p)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 COMPLEX*16, INTENT(IN OUT)               :: p
 ! ***
@@ -5125,8 +5123,8 @@ DO  i=1,100
   pow=-pow*zs/dfloat(i)
   term=pow/(2.*i+1.)
   sum=sum+term
-  tms=dreal(term*DCONJG(term))
-  sms=dreal(sum*DCONJG(sum))
+  tms=dREAL(term*DCONJG(term))
+  sms=dREAL(sum*DCONJG(sum))
   IF (tms/sms < accs) EXIT
 END DO
 2     fbar=1.-(1.-sum*tosp)*z*EXP(zs)*sp
@@ -5134,7 +5132,7 @@ RETURN
 !
 !     ASYMPTOTIC EXPANSION
 !
-3     IF (dreal(z) >= 0.) GO TO 4
+3     IF (dREAL(z) >= 0.) GO TO 4
 minus=1
 z=-z
 GO TO 5
@@ -5156,7 +5154,7 @@ SUBROUTINE fblock (nrow,ncol,imax,irngf,ipsym)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN OUT)                  :: nrow
 INTEGER, INTENT(IN OUT)                  :: ncol
@@ -5277,7 +5275,7 @@ SUBROUTINE fbngf (neq,neq2,iresrv,ib11,ic11,id11,ix11)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN OUT)                  :: neq
 INTEGER, INTENT(IN OUT)                  :: neq2
@@ -5362,11 +5360,11 @@ SUBROUTINE ffld (thet,phi,eth,eph)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
+USE nec2dpar
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-REAL*8, INTENT(IN OUT)                   :: thet
-REAL*8, INTENT(IN OUT)                   :: phi
+REAL(NEC2REAL), INTENT(IN OUT)                   :: thet
+REAL(NEC2REAL), INTENT(IN OUT)                   :: phi
 COMPLEX*16, INTENT(OUT)                  :: eth
 COMPLEX*16, INTENT(OUT)                  :: eph
 
@@ -5589,12 +5587,12 @@ END SUBROUTINE ffld
 !
 SUBROUTINE fflds (rox,roy,roz,scur,ex,ey,ez)
 
-    use nec2dpar
-    IMPLICIT REAL*8(a-h,o-z)
+    USE nec2dpar
+    IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-    REAL*8, INTENT(IN)                       :: rox
-    REAL*8, INTENT(IN)                       :: roy
-    REAL*8, INTENT(IN)                       :: roz
+    REAL(NEC2REAL), INTENT(IN)                       :: rox
+    REAL(NEC2REAL), INTENT(IN)                       :: roy
+    REAL(NEC2REAL), INTENT(IN)                       :: roz
     COMPLEX*16, INTENT(IN)                   :: scur(1)
     COMPLEX*16, INTENT(OUT)                  :: ex
     COMPLEX*16, INTENT(OUT)                  :: ey
@@ -5637,11 +5635,11 @@ SUBROUTINE gf (zk,co,si)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-REAL*8, INTENT(IN)                         :: zk
-REAL*8, INTENT(OUT)                        :: co
-REAL*8, INTENT(OUT)                        :: si
+REAL(NEC2REAL), INTENT(IN)                         :: zk
+REAL(NEC2REAL), INTENT(OUT)                        :: co
+REAL(NEC2REAL), INTENT(OUT)                        :: si
 ! ***
 !
 !     GF COMPUTES THE INTEGRAND EXP(JKR)/(KR) FOR NUMERICAL INTEGRATION.
@@ -5670,10 +5668,10 @@ SUBROUTINE gfil (iprt)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
-use somset
+USE nec2dpar
+USE somset
 
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN OUT)                  :: iprt
 INTEGER, PARAMETER :: iresrv=maxmat**2
@@ -5834,7 +5832,7 @@ RETURN
 21    FORMAT (5X,'**',19X,'MATRIX SIZE =',i7,' COMPLEX NUMBERS',25X,'**')
 22    FORMAT (5X,'** frequency =',1P,e12.5,' mhz.',51X,'**')
 23    FORMAT (5X,'** perfect ground',65X,'**')
-24    FORMAT (5X,'** ground parameters - dielectric constant =',1P,  &
+24    FORMAT (5X,'** ground PARAMETERs - dielectric constant =',1P,  &
     e12.5,26X,'**',/,5X,'**',21X,'CONDUCTIVITY =',e12.5,' mhos/m.', 25X,'**')
 25    FORMAT (39X,"NUMERICAL GREEN'S FUNCTION DATA",/,41X, &
     'COORDINATES OF SEGMENT ENDS',/,51X,'(METERS)',/,5X,'SEG.',11X, &
@@ -5850,12 +5848,12 @@ SUBROUTINE gfld (rho,phi,rz,eth,epi,erd,ux,ksymp)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
+USE nec2dpar
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-REAL*8, INTENT(IN)                       :: rho
-REAL*8, INTENT(IN OUT)                   :: phi
-REAL*8, INTENT(IN)                       :: rz
+REAL(NEC2REAL), INTENT(IN)                       :: rho
+REAL(NEC2REAL), INTENT(IN OUT)                   :: phi
+REAL(NEC2REAL), INTENT(IN)                       :: rz
 COMPLEX*16, INTENT(OUT)                  :: eth
 COMPLEX*16, INTENT(OUT)                  :: epi
 COMPLEX*16, INTENT(OUT)                  :: erd
@@ -6017,11 +6015,11 @@ SUBROUTINE gfout
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
-use somset
+USE nec2dpar
+USE somset
 
 PARAMETER (iresrv=maxmat**2)
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 ! ***
 !
 !     WRITE N.G.F. FILE
@@ -6135,11 +6133,11 @@ SUBROUTINE gh (zk,hr,hi)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-REAL*8, INTENT(IN)                         :: zk
-REAL*8, INTENT(OUT)                        :: hr
-REAL*8, INTENT(OUT)                        :: hi
+REAL(NEC2REAL), INTENT(IN)                         :: zk
+REAL(NEC2REAL), INTENT(OUT)                        :: hr
+REAL(NEC2REAL), INTENT(OUT)                        :: hi
 ! ***
 !     INTEGRAND FOR H FIELD OF A WIRE
 COMMON /tmh/ zpk,rhks
@@ -6162,7 +6160,7 @@ SUBROUTINE gwave (erv,ezv,erh,ezh,eph)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 COMPLEX*16, INTENT(OUT)                  :: erv
 COMPLEX*16, INTENT(OUT)                  :: ezv
@@ -6251,11 +6249,11 @@ SUBROUTINE gx (zz,rh,xk,gz,gzp)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-REAL*8, INTENT(IN)                         :: zz
-REAL*8, INTENT(IN)                         :: rh
-REAL*8, INTENT(IN)                         :: xk
+REAL(NEC2REAL), INTENT(IN)                         :: zz
+REAL(NEC2REAL), INTENT(IN)                         :: rh
+REAL(NEC2REAL), INTENT(IN)                         :: xk
 COMPLEX*16, INTENT(OUT)                  :: gz
 COMPLEX*16, INTENT(OUT)                  :: gzp
 ! ***
@@ -6275,13 +6273,13 @@ SUBROUTINE gxx (zz,rh,a,a2,xk,ira,g1,g1p,g2,g2p,g3,gzp)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-REAL*8, INTENT(IN)                         :: zz
-REAL*8, INTENT(IN)                         :: rh
-REAL*8, INTENT(IN)                         :: a
-REAL*8, INTENT(IN)                         :: a2
-REAL*8, INTENT(IN)                         :: xk
+REAL(NEC2REAL), INTENT(IN)                         :: zz
+REAL(NEC2REAL), INTENT(IN)                         :: rh
+REAL(NEC2REAL), INTENT(IN)                         :: a
+REAL(NEC2REAL), INTENT(IN)                         :: a2
+REAL(NEC2REAL), INTENT(IN)                         :: xk
 INTEGER, INTENT(IN OUT)                  :: ira
 COMPLEX*16, INTENT(OUT)                  :: g1
 COMPLEX*16, INTENT(OUT)                  :: g1p
@@ -6336,16 +6334,16 @@ SUBROUTINE helix(s,hl,a1,b1,a2,b2,rad,ns,itg)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
+USE nec2dpar
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-REAL*8, INTENT(IN OUT)                     :: s
-REAL*8, INTENT(IN OUT)                     :: hl
-REAL*8, INTENT(IN)                         :: a1
-REAL*8, INTENT(OUT)                        :: b1
-REAL*8, INTENT(IN)                         :: a2
-REAL*8, INTENT(OUT)                        :: b2
-REAL*8, INTENT(IN)                         :: rad
+REAL(NEC2REAL), INTENT(IN OUT)                     :: s
+REAL(NEC2REAL), INTENT(IN OUT)                     :: hl
+REAL(NEC2REAL), INTENT(IN)                         :: a1
+REAL(NEC2REAL), INTENT(OUT)                        :: b1
+REAL(NEC2REAL), INTENT(IN)                         :: a2
+REAL(NEC2REAL), INTENT(OUT)                        :: b2
+REAL(NEC2REAL), INTENT(IN)                         :: rad
 INTEGER, INTENT(IN)                      :: ns
 INTEGER, INTENT(IN)                      :: itg
 ! ***
@@ -6423,14 +6421,14 @@ SUBROUTINE hfk (el1,el2,rhk,zpkx,sgr,sgi)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-REAL*8, INTENT(IN)                         :: el1
-REAL*8, INTENT(IN)                         :: el2
-REAL*8, INTENT(IN)                         :: rhk
-REAL*8, INTENT(IN)                         :: zpkx
-REAL*8, INTENT(OUT)                        :: sgr
-REAL*8, INTENT(OUT)                        :: sgi
+REAL(NEC2REAL), INTENT(IN)                         :: el1
+REAL(NEC2REAL), INTENT(IN)                         :: el2
+REAL(NEC2REAL), INTENT(IN)                         :: rhk
+REAL(NEC2REAL), INTENT(IN)                         :: zpkx
+REAL(NEC2REAL), INTENT(OUT)                        :: sgr
+REAL(NEC2REAL), INTENT(OUT)                        :: sgi
 ! ***
 !     HFK COMPUTES THE H FIELD OF A UNIFORM CURRENT FILAMENT BY
 !     NUMERICAL INTEGRATION
@@ -6554,11 +6552,11 @@ SUBROUTINE hintg (xi,yi,zi)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-REAL*8, INTENT(IN)                         :: xi
-REAL*8, INTENT(IN)                         :: yi
-REAL*8, INTENT(IN)                         :: zi
+REAL(NEC2REAL), INTENT(IN)                         :: xi
+REAL(NEC2REAL), INTENT(IN)                         :: yi
+REAL(NEC2REAL), INTENT(IN)                         :: zi
 
 INTEGER                                    :: ip
 
@@ -6649,12 +6647,12 @@ SUBROUTINE hsfld (xi,yi,zi,ai)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-REAL*8, INTENT(IN)                         :: xi
-REAL*8, INTENT(IN)                         :: yi
-REAL*8, INTENT(IN)                         :: zi
-REAL*8, INTENT(IN)                         :: ai
+REAL(NEC2REAL), INTENT(IN)                         :: xi
+REAL(NEC2REAL), INTENT(IN)                         :: yi
+REAL(NEC2REAL), INTENT(IN)                         :: zi
+REAL(NEC2REAL), INTENT(IN)                         :: ai
 
 INTEGER                                    :: ip
 
@@ -6772,11 +6770,11 @@ SUBROUTINE hsflx (s,rh,zpx,hpk,hps,hpc)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-REAL*8, INTENT(IN)                         :: s
-REAL*8, INTENT(IN)                         :: rh
-REAL*8, INTENT(IN)                         :: zpx
+REAL(NEC2REAL), INTENT(IN)                         :: s
+REAL(NEC2REAL), INTENT(IN)                         :: rh
+REAL(NEC2REAL), INTENT(IN)                         :: zpx
 COMPLEX*16, INTENT(OUT)                  :: hpk
 COMPLEX*16, INTENT(OUT)                  :: hps
 COMPLEX*16, INTENT(OUT)                  :: hpc
@@ -6839,11 +6837,11 @@ SUBROUTINE intrp (x,y,f1,f2,f3,f4)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use somset
-IMPLICIT REAL*8(a-h,o-z)
+USE somset
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-REAL*8, INTENT(IN OUT)                     :: x
-REAL*8, INTENT(IN OUT)                     :: y
+REAL(NEC2REAL), INTENT(IN OUT)                     :: x
+REAL(NEC2REAL), INTENT(IN OUT)                     :: y
 COMPLEX*16, INTENT(OUT)                  :: f1
 COMPLEX*16, INTENT(OUT)                  :: f2
 COMPLEX*16, INTENT(OUT)                  :: f3
@@ -6885,10 +6883,10 @@ INTEGER                         :: ixs  = -10
 INTEGER                         :: iys  = -10
 INTEGER                         :: igrs = -10
 
-REAL*8                          :: dx   = 1.0
-REAL*8                          :: dy   = 1.0
-REAL*8                          :: xs   = 0.0
-REAL*8                          :: ys   = 0.0
+REAL(NEC2REAL)                          :: dx   = 1.0
+REAL(NEC2REAL)                          :: dy   = 1.0
+REAL(NEC2REAL)                          :: xs   = 0.0
+REAL(NEC2REAL)                          :: ys   = 0.0
 
 INTEGER, DIMENSION(3)           :: nda  = (/11,17,9/)
 INTEGER, DIMENSION(3)           :: ndpa = (/110,85,72/)
@@ -7026,14 +7024,14 @@ SUBROUTINE intx (el1,el2,b,ij,sgr,sgi)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-REAL*8, INTENT(IN)                         :: el1
-REAL*8, INTENT(IN)                         :: el2
-REAL*8, INTENT(IN)                         :: b
+REAL(NEC2REAL), INTENT(IN)                         :: el1
+REAL(NEC2REAL), INTENT(IN)                         :: el2
+REAL(NEC2REAL), INTENT(IN)                         :: b
 INTEGER, INTENT(IN)                        :: ij
-REAL*8, INTENT(OUT)                        :: sgr
-REAL*8, INTENT(OUT)                        :: sgi
+REAL(NEC2REAL), INTENT(OUT)                        :: sgr
+REAL(NEC2REAL), INTENT(OUT)                        :: sgi
 ! ***
 !
 !     INTX PERFORMS NUMERICAL INTEGRATION OF EXP(JKR)/R BY THE METHOD OF
@@ -7182,8 +7180,8 @@ FUNCTION isegno (itagi,mx)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
+USE nec2dpar
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: itagi
 INTEGER, INTENT(IN)                      :: mx
@@ -7223,8 +7221,8 @@ SUBROUTINE lfactr (a,nrow,ix1,ix2,ip)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
+USE nec2dpar
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 COMPLEX*16, INTENT(IN OUT)               :: a(nrow,1)
 INTEGER, INTENT(IN)                      :: nrow
@@ -7305,12 +7303,12 @@ DO  r=r1,r2
     a(i,r)=d(i)
   END DO
   CYCLE
-  11    dmax=dreal(d(j2p1)*DCONJG(d(j2p1)))
+  11    dmax=dREAL(d(j2p1)*DCONJG(d(j2p1)))
   ip(j2p1)=j2p1
   j2p2=j2+2
   IF (j2p2 > nrow) GO TO 13
   DO  i=j2p2,nrow
-    elmag=dreal(d(i)*DCONJG(d(i)))
+    elmag=dREAL(d(i)*DCONJG(d(i)))
     IF (elmag < dmax) CYCLE
     dmax=elmag
     ip(j2p1)=i
@@ -7344,16 +7342,16 @@ SUBROUTINE load (ldtyp,ldtag,ldtagf,ldtagt,zlr,zli,zlc)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
+USE nec2dpar
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: ldtyp(1)
 INTEGER, INTENT(IN)                      :: ldtag(1)
 INTEGER, INTENT(IN)                      :: ldtagf(1)
 INTEGER, INTENT(IN)                      :: ldtagt(1)
-REAL*8, INTENT(IN)                         :: zlr(1)
-REAL*8, INTENT(IN)                         :: zli(1)
-REAL*8, INTENT(IN)                         :: zlc(1)
+REAL(NEC2REAL), INTENT(IN)                         :: zlr(1)
+REAL(NEC2REAL), INTENT(IN)                         :: zli(1)
+REAL(NEC2REAL), INTENT(IN)                         :: zlc(1)
 ! ***
 !
 !     LOAD CALCULATES THE IMPEDANCE OF SPECIFIED SEGMENTS FOR VARIOUS
@@ -7461,7 +7459,7 @@ STOP
   14   zt=DCMPLX(zlr(istep),zli(istep))/si(i)
   GO TO 16
   15   zt=zint(zlr(istep)*wlam,bi(i))
-  16   IF ((ABS(dreal(zarray(i)))+ABS(DIMAG(zarray(i)))) > 1.d-20) iwarn=1
+  16   IF ((ABS(dREAL(zarray(i)))+ABS(DIMAG(zarray(i)))) > 1.d-20) iwarn=1
   zarray(i)=zarray(i)+zt
 END DO
 IF (ichk /= 0) GO TO 18
@@ -7518,8 +7516,8 @@ SUBROUTINE ltsolv (a,nrow,ix,b,neq,nrh,ifl1,ifl2)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-    use nec2dpar
-    IMPLICIT REAL*8(a-h,o-z)
+    USE nec2dpar
+    IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
     COMPLEX*16, INTENT(IN OUT)               :: a(nrow,nrow)
     INTEGER, INTENT(IN)                      :: nrow
@@ -7610,7 +7608,7 @@ SUBROUTINE lunscr (a,nrow,nop,ix,ip,iu2,iu3,iu4)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 COMPLEX*16, INTENT(IN OUT)               :: a(nrow,1)
 INTEGER, INTENT(IN)                      :: nrow
@@ -7687,15 +7685,15 @@ SUBROUTINE move (rox,roy,roz,xs,ys,zs,its,nrpt,itgi)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
+USE nec2dpar
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-REAL*8, INTENT(IN OUT)                     :: rox
-REAL*8, INTENT(IN OUT)                     :: roy
-REAL*8, INTENT(IN OUT)                     :: roz
-REAL*8, INTENT(IN)                         :: xs
-REAL*8, INTENT(IN)                         :: ys
-REAL*8, INTENT(IN)                         :: zs
+REAL(NEC2REAL), INTENT(IN OUT)                     :: rox
+REAL(NEC2REAL), INTENT(IN OUT)                     :: roy
+REAL(NEC2REAL), INTENT(IN OUT)                     :: roz
+REAL(NEC2REAL), INTENT(IN)                         :: xs
+REAL(NEC2REAL), INTENT(IN)                         :: ys
+REAL(NEC2REAL), INTENT(IN)                         :: zs
 INTEGER, INTENT(IN)                        :: its
 INTEGER, INTENT(IN)                        :: nrpt
 INTEGER, INTENT(IN)                        :: itgi
@@ -7808,12 +7806,12 @@ END SUBROUTINE move
 !     THE STRUCTURE CURRENTS HAVE BEEN COMPUTED.
 !
 SUBROUTINE nefld (xob,yob,zob,ex,ey,ez)
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
+USE nec2dpar
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-REAL*8, INTENT(IN)                       :: xob
-REAL*8, INTENT(IN)                       :: yob
-REAL*8, INTENT(IN)                       :: zob
+REAL(NEC2REAL), INTENT(IN)                       :: xob
+REAL(NEC2REAL), INTENT(IN)                       :: yob
+REAL(NEC2REAL), INTENT(IN)                       :: zob
 COMPLEX*16, INTENT(OUT)                  :: ex
 COMPLEX*16, INTENT(OUT)                  :: ey
 COMPLEX*16, INTENT(OUT)                  :: ez
@@ -7960,8 +7958,8 @@ SUBROUTINE netwk (cm,cmb,cmc,cmd,ip,einc)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
+USE nec2dpar
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 COMPLEX*16, INTENT(IN OUT)               :: cm(1)
 COMPLEX*16, INTENT(IN OUT)               :: cmb(1)
@@ -8239,7 +8237,7 @@ DO  i=1,nteq
   ymit=cux/vlt
   zped=vlt/cux
   irow2=itag(irow1)
-  pwr=.5*dreal(vlt*DCONJG(cux))
+  pwr=.5*dREAL(vlt*DCONJG(cux))
   pnls=pnls-pwr
   IF (nprint == 0) WRITE(3,62)  irow2,irow1,vlt,cux,zped,ymit,pwr
 END DO
@@ -8251,7 +8249,7 @@ DO  i=1,ntsc
   ymit=cux/vlt
   zped=vlt/cux
   irow2=itag(irow1)
-  pwr=.5*dreal(vlt*DCONJG(cux))
+  pwr=.5*dREAL(vlt*DCONJG(cux))
   pnls=pnls-pwr
   IF (nprint == 0) WRITE(3,62)  irow2,irow1,vlt,cux,zped,ymit,pwr
 END DO
@@ -8284,7 +8282,7 @@ DO  i=1,nsant
   cux=(einc(isc1)+cux)*wlam
   54    ymit=cux/vlt
   zped=vlt/cux
-  pwr=.5*dreal(vlt*DCONJG(cux))
+  pwr=.5*dREAL(vlt*DCONJG(cux))
   pin=pin+pwr
   IF (irow1 /= 0) pnls=pnls+pwr
   irow2=itag(isc1)
@@ -8301,7 +8299,7 @@ DO  i=1,nvqd
   cux=(cux-ymit*SIN(pwr)+zped*COS(pwr))*wlam
   ymit=cux/vlt
   zped=vlt/cux
-  pwr=.5*dreal(vlt*DCONJG(cux))
+  pwr=.5*dREAL(vlt*DCONJG(cux))
   pin=pin+pwr
   irow2=itag(isc1)
   WRITE(3,64)  irow2,isc1,vlt,cux,zped,ymit,pwr
@@ -8311,13 +8309,13 @@ RETURN
 58    FORMAT (///,3X,'MAXIMUM relative asymmetry of the driving point',  &
     ' admittance matrix is',1P,e10.3,' for segments',i5,' AND',i5,/,  &
     3X,'RMS relative asymmetry is',e10.3)
-59    FORMAT (1X,'ERROR - - network array dimensions too small')
+59    FORMAT (1X,'ERROR - - network array DIMENSIONs too small')
 60    FORMAT (/,3X,'TAG',3X,'SEG.',4X,'VOLTAGE (volts)',9X, &
     'CURRENT (amps)',9X,'IMPEDANCE (ohms)',8X,'ADMITTANCE (mhos)',6X,'POWER',/,  &
     3X,'NO.',3X,'NO.',4X,'REAL',8X,'IMAG.',3(7X,'REAL',8X,'IMAG.'),5X, '(watts)')
 61    FORMAT (///,27X,'- - - structure excitation DATA at network connection points - - -')
 62    FORMAT (2(1X,i5),1P,9E12.5)
-63    FORMAT (///,42X,'- - - antenna INPUT parameters - - -')
+63    FORMAT (///,42X,'- - - antenna INPUT PARAMETERs - - -')
 64    FORMAT (1X,i5,2H *,i4,1P,9E12.5)
 END SUBROUTINE netwk
 !----------------------------------------------------------------------------
@@ -8325,9 +8323,9 @@ END SUBROUTINE netwk
 !     COMPUTE NEAR E OR H FIELDS OVER A RANGE OF POINTS
 !
 SUBROUTINE nfpat
-use nec2dpar
+USE nec2dpar
 
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 COMPLEX*16 ex,ey,ez
 COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
     alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
@@ -8338,7 +8336,7 @@ COMMON/fpat/thets,phis,dth,dph,rfld,gnor,clt,cht,epsr2,sig2,  &
 
 COMMON /plot/ iplp1,iplp2,iplp3,iplp4
 
-REAL*8                   :: ta = 1.745329252D-02
+REAL(NEC2REAL)                   :: ta = 1.745329252D-02
 
 IF (nfeh == 1) GO TO 1
 WRITE(3,10)
@@ -8433,12 +8431,12 @@ SUBROUTINE nhfld (xob,yob,zob,hx,hy,hz)
 !     NHFLD COMPUTES THE NEAR FIELD AT SPECIFIED POINTS IN SPACE AFTER
 !     THE STRUCTURE CURRENTS HAVE BEEN COMPUTED.
 !
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
+USE nec2dpar
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-REAL*8, INTENT(IN)                         :: xob
-REAL*8, INTENT(IN)                         :: yob
-REAL*8, INTENT(IN)                         :: zob
+REAL(NEC2REAL), INTENT(IN)                         :: xob
+REAL(NEC2REAL), INTENT(IN)                         :: yob
+REAL(NEC2REAL), INTENT(IN)                         :: zob
 COMPLEX*16, INTENT(OUT)                  :: hx
 COMPLEX*16, INTENT(OUT)                  :: hy
 COMPLEX*16, INTENT(OUT)                  :: hz
@@ -8553,24 +8551,24 @@ END SUBROUTINE nhfld
 !     NX BY NY RECTANGULAR PATCHES.
 !
 SUBROUTINE patch (nx,ny,x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4)
-    use nec2dpar
+    USE nec2dpar
 
-    IMPLICIT REAL*8(a-h,o-z)
+    IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
     INTEGER, INTENT(IN)                      :: nx
     INTEGER, INTENT(IN)                      :: ny
-    REAL*8, INTENT(IN)                       :: x1
-    REAL*8, INTENT(IN)                       :: y1
-    REAL*8, INTENT(IN)                       :: z1
-    REAL*8, INTENT(IN)                       :: x2
-    REAL*8, INTENT(IN)                       :: y2
-    REAL*8, INTENT(IN)                       :: z2
-    REAL*8, INTENT(IN)                       :: x3
-    REAL*8, INTENT(IN)                       :: y3
-    REAL*8, INTENT(IN)                       :: z3
-    REAL*8, INTENT(IN)                       :: x4
-    REAL*8, INTENT(IN)                       :: y4
-    REAL*8, INTENT(IN)                       :: z4
+    REAL(NEC2REAL), INTENT(IN)                       :: x1
+    REAL(NEC2REAL), INTENT(IN)                       :: y1
+    REAL(NEC2REAL), INTENT(IN)                       :: z1
+    REAL(NEC2REAL), INTENT(IN)                       :: x2
+    REAL(NEC2REAL), INTENT(IN)                       :: y2
+    REAL(NEC2REAL), INTENT(IN)                       :: z2
+    REAL(NEC2REAL), INTENT(IN)                       :: x3
+    REAL(NEC2REAL), INTENT(IN)                       :: y3
+    REAL(NEC2REAL), INTENT(IN)                       :: z3
+    REAL(NEC2REAL), INTENT(IN)                       :: x4
+    REAL(NEC2REAL), INTENT(IN)                       :: y4
+    REAL(NEC2REAL), INTENT(IN)                       :: z4
 
     INTEGER                                  :: ix
 
@@ -8711,24 +8709,24 @@ END SUBROUTINE patch
 !     DIVIDE PATCH FOR WIRE CONNECTION
 !
 SUBROUTINE subph (nx,ny,x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4)
-    use nec2dpar
+    USE nec2dpar
 
-    IMPLICIT REAL*8(a-h,o-z)
+    IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
     INTEGER, INTENT(IN)                      :: nx
     INTEGER, INTENT(IN)                      :: ny
-    REAL*8, INTENT(IN)                       :: x1
-    REAL*8, INTENT(IN)                       :: y1
-    REAL*8, INTENT(IN)                       :: z1
-    REAL*8, INTENT(IN)                       :: x2
-    REAL*8, INTENT(IN)                       :: y2
-    REAL*8, INTENT(IN)                       :: z2
-    REAL*8, INTENT(IN)                       :: x3
-    REAL*8, INTENT(IN)                       :: y3
-    REAL*8, INTENT(IN)                       :: z3
-    REAL*8, INTENT(IN)                       :: x4
-    REAL*8, INTENT(IN)                       :: y4
-    REAL*8, INTENT(IN)                       :: z4
+    REAL(NEC2REAL), INTENT(IN)                       :: x1
+    REAL(NEC2REAL), INTENT(IN)                       :: y1
+    REAL(NEC2REAL), INTENT(IN)                       :: z1
+    REAL(NEC2REAL), INTENT(IN)                       :: x2
+    REAL(NEC2REAL), INTENT(IN)                       :: y2
+    REAL(NEC2REAL), INTENT(IN)                       :: z2
+    REAL(NEC2REAL), INTENT(IN)                       :: x3
+    REAL(NEC2REAL), INTENT(IN)                       :: y3
+    REAL(NEC2REAL), INTENT(IN)                       :: z3
+    REAL(NEC2REAL), INTENT(IN)                       :: x4
+    REAL(NEC2REAL), INTENT(IN)                       :: y4
+    REAL(NEC2REAL), INTENT(IN)                       :: z4
 
     INTEGER                                  :: ix
 
@@ -8810,14 +8808,14 @@ SUBROUTINE pcint (xi,yi,zi,cabi,sabi,salpi,e)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-REAL*8, INTENT(IN OUT)                     :: xi
-REAL*8, INTENT(IN OUT)                     :: yi
-REAL*8, INTENT(IN OUT)                     :: zi
-REAL*8, INTENT(IN)                         :: cabi
-REAL*8, INTENT(IN)                         :: sabi
-REAL*8, INTENT(IN)                         :: salpi
+REAL(NEC2REAL), INTENT(IN OUT)                     :: xi
+REAL(NEC2REAL), INTENT(IN OUT)                     :: yi
+REAL(NEC2REAL), INTENT(IN OUT)                     :: zi
+REAL(NEC2REAL), INTENT(IN)                         :: cabi
+REAL(NEC2REAL), INTENT(IN)                         :: sabi
+REAL(NEC2REAL), INTENT(IN)                         :: salpi
 COMPLEX*16, INTENT(OUT)                  :: e(9)
 ! ***
 !     INTEGRATE OVER PATCHES AT WIRE CONNECTION POINT
@@ -8922,12 +8920,12 @@ SUBROUTINE prnt(in1,in2,in3,fl1,fl2,fl3,fl4,fl5,fl6,ctype)
     INTEGER, INTENT(IN)                      :: in1
     INTEGER, INTENT(IN)                      :: in2
     INTEGER, INTENT(IN)                      :: in3
-    REAL*8, INTENT(IN)                       :: fl1
-    REAL*8, INTENT(IN)                       :: fl2
-    REAL*8, INTENT(IN)                       :: fl3
-    REAL*8, INTENT(IN)                       :: fl4
-    REAL*8, INTENT(IN)                       :: fl5
-    REAL*8, INTENT(IN)                       :: fl6
+    REAL(NEC2REAL), INTENT(IN)                       :: fl1
+    REAL(NEC2REAL), INTENT(IN)                       :: fl2
+    REAL(NEC2REAL), INTENT(IN)                       :: fl3
+    REAL(NEC2REAL), INTENT(IN)                       :: fl4
+    REAL(NEC2REAL), INTENT(IN)                       :: fl5
+    REAL(NEC2REAL), INTENT(IN)                       :: fl6
     CHARACTER (LEN=*), INTENT(IN)            :: ctype
 
     INTEGER                                  :: i
@@ -8967,8 +8965,8 @@ SUBROUTINE qdsrc (is,v,e)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
+USE nec2dpar
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: is
 COMPLEX*16, INTENT(IN)                   :: v
@@ -9121,9 +9119,9 @@ SUBROUTINE rdpat
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
+USE nec2dpar
 PARAMETER(normax=4*maxseg)
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 ! ***
 !     COMPUTE RADIATION PATTERN, GAIN, NORMALIZED GAIN
 
@@ -9137,8 +9135,8 @@ CHARACTER (LEN=6), DIMENSION(10), PARAMETER   :: igntp = (/' MAJOR',' AXIS ',' M
 CHARACTER (LEN=6)                             :: hclif
 CHARACTER (LEN=6)                             :: isens
 
-REAL*8                                        ::  ta = 1.745329252D-02
-REAL*8                                        ::  td = 57.29577951D+0
+REAL(NEC2REAL)                                        ::  ta = 1.745329252D-02
+REAL(NEC2REAL)                                        ::  td = 57.29577951D+0
 
 COMPLEX*16 eth,eph,erd,zrati,zrati2,t1,frati
 COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
@@ -9210,10 +9208,10 @@ DO  kph=1,nph
     9     CALL gfld (rfld/wlam,pha,thet/wlam,eth,eph,erd,zrati,ksymp)
     erdm=ABS(erd)
     erda=cang(erd)
-    10    ethm2=dreal(eth*DCONJG(eth))
+    10    ethm2=dREAL(eth*DCONJG(eth))
     ethm=SQRT(ethm2)
     etha=cang(eth)
-    ephm2=dreal(eph*DCONJG(eph))
+    ephm2=dREAL(eph*DCONJG(eph))
     ephm=SQRT(ephm2)
     epha=cang(eph)
     IF (ifar == 1) GO TO 28
@@ -9411,22 +9409,22 @@ SUBROUTINE readgm(inunit,code,i1,i2,r1,r2,r3,r4,r5,r6,r7)
 !
 !  *****  Passed variables
 !     CODE        two letter mnemonic code
-!     I1 - I2     integer values from record
-!     R1 - R7     real values from record
+!     I1 - I2     INTEGER values from record
+!     R1 - R7     REAL values from record
 !
-    IMPLICIT REAL*8(a-h,o-z)
+    IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
     INTEGER, INTENT(IN)                      :: inunit
     CHARACTER (LEN=*), INTENT(OUT)           :: code
     INTEGER, INTENT(OUT)                     :: i1
     INTEGER, INTENT(OUT)                     :: i2
-    REAL*8, INTENT(OUT)                      :: r1
-    REAL*8, INTENT(OUT)                      :: r2
-    REAL*8, INTENT(OUT)                      :: r3
-    REAL*8, INTENT(OUT)                      :: r4
-    REAL*8, INTENT(OUT)                      :: r5
-    REAL*8, INTENT(OUT)                      :: r6
-    REAL*8, INTENT(OUT)                      :: r7
+    REAL(NEC2REAL), INTENT(OUT)                      :: r1
+    REAL(NEC2REAL), INTENT(OUT)                      :: r2
+    REAL(NEC2REAL), INTENT(OUT)                      :: r3
+    REAL(NEC2REAL), INTENT(OUT)                      :: r4
+    REAL(NEC2REAL), INTENT(OUT)                      :: r5
+    REAL(NEC2REAL), INTENT(OUT)                      :: r6
+    REAL(NEC2REAL), INTENT(OUT)                      :: r7
 
     DIMENSION intval(2),reaval(7)
 !
@@ -9462,15 +9460,15 @@ SUBROUTINE readmn(inunit,code,i1,i2,i3,i4,f1,f2,f3,f4,f5,f6)
     INTEGER, INTENT(OUT)                     :: i2
     INTEGER, INTENT(OUT)                     :: i3
     INTEGER, INTENT(OUT)                     :: i4
-    REAL*8, INTENT(OUT)                      :: f1
-    REAL*8, INTENT(OUT)                      :: f2
-    REAL*8, INTENT(OUT)                      :: f3
-    REAL*8, INTENT(OUT)                      :: f4
-    REAL*8, INTENT(OUT)                      :: f5
-    REAL*8, INTENT(OUT)                      :: f6
+    REAL(NEC2REAL), INTENT(OUT)                      :: f1
+    REAL(NEC2REAL), INTENT(OUT)                      :: f2
+    REAL(NEC2REAL), INTENT(OUT)                      :: f3
+    REAL(NEC2REAL), INTENT(OUT)                      :: f4
+    REAL(NEC2REAL), INTENT(OUT)                      :: f5
+    REAL(NEC2REAL), INTENT(OUT)                      :: f6
 
     INTEGER, DIMENSION(4)                    :: intval
-    REAL*8, DIMENSION(6)                     :: reaval
+    REAL(NEC2REAL), DIMENSION(6)                     :: reaval
     INTEGER                                  :: ieof
     !
     !  Call the routine to read the record and parse it.
@@ -9503,11 +9501,11 @@ SUBROUTINE parsit(inunit,maxint,maxrea,cmnd,intfld,reafld,ieof)
 !  PARSIT reads an input record and parses it.
 
 !  *****  Passed variables
-!     MAXINT     total number of integers in record
-!     MAXREA     total number of real values in record
+!     MAXINT     total number of INTEGERs in record
+!     MAXREA     total number of REAL values in record
 !     CMND       two letter mnemonic code
-!     INTFLD     integer values from record
-!     REAFLD     real values from record
+!     INTFLD     INTEGER values from record
+!     REAFLD     REAL values from record
 
 !  *****  Internal Variables
 !     BGNFLD     list of starting indices
@@ -9517,16 +9515,16 @@ SUBROUTINE parsit(inunit,maxint,maxrea,cmnd,intfld,reafld,ieof)
 !     REC        input line as read
 !     TOTCOL     total number of columns in REC
 !     TOTFLD     number of numeric fields
-    use nec2dpar, only : debugging
+    USE nec2dpar, ONLY : debugging
 
-    IMPLICIT REAL*8(a-h,o-z)
+    IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
     INTEGER, INTENT(IN)                      :: inunit
     INTEGER, INTENT(IN)                      :: maxint
     INTEGER, INTENT(IN)                      :: maxrea
     CHARACTER (LEN=2), INTENT(OUT)           :: cmnd
     INTEGER, INTENT(OUT)                     :: intfld(maxint)
-    REAL*8, INTENT(OUT)                      :: reafld(maxrea)
+    REAL(NEC2REAL), INTENT(OUT)                      :: reafld(maxrea)
     INTEGER, INTENT(IN OUT)                  :: ieof
 
     !  *****  Global variables
@@ -9617,7 +9615,7 @@ if (debugging) THEN
     END IF
     j= MIN( totfld, maxint )
 
-    !  Parse out integer values and store into integer buffer array.
+    !  Parse out INTEGER values and store into INTEGER buffer array.
 
     DO  i=1,j
       length= endfld(i) - bgnfld(i) + 1
@@ -9635,7 +9633,7 @@ if (debugging) THEN
       READ( buffer(1:length), *, ERR=9000 ) intfld(i)
     END DO
 
-    !  Parse out real values and store into real buffer array.
+    !  Parse out REAL values and store into REAL buffer array.
 
     IF (totfld > maxint) THEN
       j= maxint + 1
@@ -9701,7 +9699,7 @@ SUBROUTINE reblk (b,bx,nb,nbx,n2c)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-    IMPLICIT REAL*8(a-h,o-z)
+    IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
     COMPLEX*16, INTENT(OUT)                  :: b(nb,1)
     COMPLEX*16, INTENT(IN OUT)               :: bx(nbx,1)
@@ -9748,8 +9746,8 @@ SUBROUTINE reflc (ix,iy,iz,itx,nop)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
+USE nec2dpar
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN OUT)                  :: ix
 INTEGER, INTENT(IN OUT)                  :: iy
@@ -9982,14 +9980,14 @@ END SUBROUTINE reflc
 !     SINE, AND COSINE CURRENT DISTRIBUTIONS.
 !
 SUBROUTINE rom2 (a,b,sum,dmin)
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-REAL*8, INTENT(IN)                         :: a
-REAL*8, INTENT(IN)                         :: b
+REAL(NEC2REAL), INTENT(IN)                         :: a
+REAL(NEC2REAL), INTENT(IN)                         :: b
 COMPLEX*16, INTENT(OUT)                    :: sum(9)
-REAL*8, INTENT(IN OUT)                     :: dmin
+REAL(NEC2REAL), INTENT(IN OUT)                     :: dmin
 
-REAL*8                                     :: rx  = 1.d-4
+REAL(NEC2REAL)                                     :: rx  = 1.d-4
 INTEGER                                    :: nm  = 65536
 INTEGER                                    :: nts = 4
 INTEGER                                    :: nx  = 1
@@ -10030,10 +10028,10 @@ DO  i=1,n
   t01(i)=(t00+dz*g3(i))*.5
   t10(i)=(4.*t01(i)-t00)/3.
   IF (i > 3) CYCLE
-  tr=dreal(t01(i))
+  tr=dREAL(t01(i))
   ti=DIMAG(t01(i))
   tmag1=tmag1+tr*tr+ti*ti
-  tr=dreal(t10(i))
+  tr=dREAL(t10(i))
   ti=DIMAG(t10(i))
   tmag2=tmag2+tr*tr+ti*ti
 END DO
@@ -10058,10 +10056,10 @@ DO  i=1,n
   t11=(4.*t02-t01(i))/3.
   t20(i)=(16.*t11-t10(i))/15.
   IF (i > 3) CYCLE
-  tr=dreal(t11)
+  tr=dREAL(t11)
   ti=DIMAG(t11)
   tmag1=tmag1+tr*tr+ti*ti
-  tr=dreal(t20(i))
+  tr=dREAL(t20(i))
   ti=DIMAG(t20(i))
   tmag2=tmag2+tr*tr+ti*ti
 END DO
@@ -10106,14 +10104,14 @@ SUBROUTINE sbf (i,is,aa,bb,cc)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
+USE nec2dpar
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: i
 INTEGER, INTENT(IN)                      :: is
-REAL*8, INTENT(OUT)                      :: aa
-REAL*8, INTENT(OUT)                      :: bb
-REAL*8, INTENT(OUT)                      :: cc
+REAL(NEC2REAL), INTENT(OUT)                      :: aa
+REAL(NEC2REAL), INTENT(OUT)                      :: bb
+REAL(NEC2REAL), INTENT(OUT)                      :: cc
 ! ***
 !     COMPUTE COMPONENT OF BASIS FUNCTION I ON SEGMENT IS.
 COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
@@ -10275,11 +10273,11 @@ SUBROUTINE sflds (t,e)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar, only : pi
+USE nec2dpar, ONLY : pi
 
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-REAL*8, INTENT(IN)                         :: t
+REAL(NEC2REAL), INTENT(IN)                         :: t
 COMPLEX*16, INTENT(OUT)                  :: e(9)
 ! ***
 !
@@ -10400,8 +10398,8 @@ SUBROUTINE solgf (a,b,c,d,xy,ip,np,n1,n,mp,m1,m,n1c,n2c,n2cz)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
+USE nec2dpar
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 COMPLEX*16, INTENT(IN OUT)               :: a(1)
 COMPLEX*16, INTENT(IN OUT)               :: b(n1c,1)
@@ -10556,9 +10554,9 @@ SUBROUTINE solve (n,a,ip,b,ndim)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-    use nec2dpar, only : maxseg
+    USE nec2dpar, ONLY : maxseg
 
-    IMPLICIT REAL*8(a-h,o-z)
+    IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
     INTEGER, INTENT(IN)                      :: n
     COMPLEX*16, INTENT(IN)                   :: a(ndim,ndim)
@@ -10612,8 +10610,8 @@ SUBROUTINE solves (a,ip,b,neq,nrh,np,n,mp,m,ifl1,ifl2)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
+USE nec2dpar
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 COMPLEX*16, INTENT(IN OUT)               :: a(1)
 INTEGER, INTENT(IN OUT)                  :: ip(1)
@@ -10767,8 +10765,8 @@ SUBROUTINE tbf (i,icap)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
+USE nec2dpar
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: i
 INTEGER, INTENT(IN)                      :: icap
@@ -10938,15 +10936,15 @@ SUBROUTINE test (f1r,f2r,tr,f1i,f2i,ti,dmin)
 !
     IMPLICIT NONE
 
-    REAL*8, INTENT(IN)                         :: f1r
-    REAL*8, INTENT(IN)                         :: f2r
-    REAL*8, INTENT(OUT)                        :: tr
-    REAL*8, INTENT(IN)                         :: f1i
-    REAL*8, INTENT(IN)                         :: f2i
-    REAL*8, INTENT(OUT)                        :: ti
-    REAL*8, INTENT(IN)                         :: dmin
+    REAL(NEC2REAL), INTENT(IN)                         :: f1r
+    REAL(NEC2REAL), INTENT(IN)                         :: f2r
+    REAL(NEC2REAL), INTENT(OUT)                        :: tr
+    REAL(NEC2REAL), INTENT(IN)                         :: f1i
+    REAL(NEC2REAL), INTENT(IN)                         :: f2i
+    REAL(NEC2REAL), INTENT(OUT)                        :: ti
+    REAL(NEC2REAL), INTENT(IN)                         :: dmin
 
-    REAL*8                                     :: den
+    REAL(NEC2REAL)                                     :: den
     ! ***
     !
     !     TEST FOR CONVERGENCE IN NUMERICAL INTEGRATION
@@ -10972,8 +10970,8 @@ SUBROUTINE trio (j)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
+USE nec2dpar
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: j
 ! ***
@@ -11043,11 +11041,11 @@ SUBROUTINE unere (xob,yob,zob)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-REAL*8, INTENT(IN)                         :: xob
-REAL*8, INTENT(IN)                         :: yob
-REAL*8, INTENT(IN)                         :: zob
+REAL(NEC2REAL), INTENT(IN)                         :: xob
+REAL(NEC2REAL), INTENT(IN)                         :: yob
+REAL(NEC2REAL), INTENT(IN)                         :: zob
 ! ***
 !     CALCULATES THE ELECTRIC FIELD DUE TO UNIT CURRENT IN THE T1 AND T2
 !     DIRECTIONS ON A PATCH
@@ -11134,18 +11132,18 @@ SUBROUTINE wire (xw1,yw1,zw1,xw2,yw2,zw2,rad,rdel,rrad,ns,itg)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
+USE nec2dpar
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-REAL*8, INTENT(IN)                         :: xw1
-REAL*8, INTENT(IN)                         :: yw1
-REAL*8, INTENT(IN)                         :: zw1
-REAL*8, INTENT(IN)                         :: xw2
-REAL*8, INTENT(IN)                         :: yw2
-REAL*8, INTENT(IN)                         :: zw2
-REAL*8, INTENT(IN)                         :: rad
-REAL*8, INTENT(IN)                         :: rdel
-REAL*8, INTENT(IN)                         :: rrad
+REAL(NEC2REAL), INTENT(IN)                         :: xw1
+REAL(NEC2REAL), INTENT(IN)                         :: yw1
+REAL(NEC2REAL), INTENT(IN)                         :: zw1
+REAL(NEC2REAL), INTENT(IN)                         :: xw2
+REAL(NEC2REAL), INTENT(IN)                         :: yw2
+REAL(NEC2REAL), INTENT(IN)                         :: zw2
+REAL(NEC2REAL), INTENT(IN)                         :: rad
+REAL(NEC2REAL), INTENT(IN)                         :: rdel
+REAL(NEC2REAL), INTENT(IN)                         :: rrad
 INTEGER, INTENT(IN)                      :: ns
 INTEGER, INTENT(IN)                      :: itg
 ! ***
@@ -11214,12 +11212,12 @@ COMPLEX*16 FUNCTION zint(sigl,rolam)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar, only : pi
+USE nec2dpar, ONLY : pi
 
-IMPLICIT REAL*8(a-h,o-z)
+IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-    REAL*8, INTENT(IN)                         :: sigl
-    REAL*8, INTENT(IN)                         :: rolam
+    REAL(NEC2REAL), INTENT(IN)                         :: sigl
+    REAL(NEC2REAL), INTENT(IN)                         :: rolam
     ! ***
     !
     !     ZINT COMPUTES THE INTERNAL IMPEDANCE OF A CIRCULAR WIRE
