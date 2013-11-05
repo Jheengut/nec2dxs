@@ -192,936 +192,910 @@ PROGRAM nec2dxs
 
 
         CALL show_program_info()
+        CALL get_filenames(infile, outfile)
 
-706     CONTINUE
-        WRITE(*,700)
-700     FORMAT(' ENTER NAME OF INPUT FILE >',$)
-        READ(*,701,ERR=706,END=708) infile
-701     FORMAT(a)
-        OPEN (UNIT=2,FILE=infile,STATUS='OLD',ERR=702)
+        CALL second(starttime)
 
-707     CONTINUE
-        WRITE(*,703)
-703     FORMAT(' ENTER NAME OF OUTPUT FILE >',$)
-        READ(*,701,ERR=707,END=706) outfile
-        OPEN (UNIT=3,FILE=outfile,STATUS='UNKNOWN',ERR=704)
-        GO TO 705
+        fj=(0.,1.)
+        ld=maxseg
 
-702     PRINT *, 'Error opening input-file:',infile
-        GO TO 706
+1       kcom=0
+        ifrtimw=0
+        ifrtimp=0
+2       kcom=kcom+1
+        IF (kcom > 5) kcom=5
+        READ(2,125) ain,(com(i,kcom),i=1,19)
 
-704     PRINT *, 'Error opening output-file:',outfile
-        GO TO 707
+        IF (debugging) THEN
+            WRITE (*,7193) ain, ain
+7193        FORMAT (' card read: ain=',a2,' com=',a)
+        END IF
 
-708     STOP
+        CALL upcase(ain,ain,lain)
+        IF (kcom <= 1) THEN
+            WRITE(3,126)
+            WRITE(3,127)
+            WRITE(3,128)
+        END IF
+        WRITE(3,129) (com(i,kcom),i=1,19)
+        IF (ain == atst(11)) GO TO 2        ! CM
+        IF (ain == atst(1)) GO TO 4         ! CE
+        WRITE(3,130)
+        STOP
 
-705     CONTINUE
+4       CONTINUE
+        DO  i=1,ld
+          zarray(i)=(0.,0.)
+        END DO
+        mpcnt=0
+        imat=0
+        !
+        !     SET UP GEOMETRY DATA IN SUBROUTINE DATAGN
+        !
+        if (debugging) print *, 'calling datagn'  
+        CALL datagn
+        if (debugging) print *, 'returned from datagn'
 
-PRINT *,''
-CALL second(starttime)
-fj=(0.,1.)
-ld=maxseg
-1     kcom=0
-!***
-ifrtimw=0
-ifrtimp=0
-!***
-2     kcom=kcom+1
-IF (kcom > 5) kcom=5
-READ(2,125) ain,(com(i,kcom),i=1,19)
+        iflow=1
+        IF(imat == 0)GO TO 326
+        !
+        !     CORE ALLOCATION FOR ARRAYS B, C, AND D FOR N.G.F. SOLUTION
+        !
+        neq=n1+2*m1
+        neq2=n-n1+2*(m-m1)+nscon+2*npcon
+        CALL fbngf(neq,neq2,iresrv,ib11,ic11,id11,ix11)
+        GO TO 6
 
-if (debugging) THEN
-    write (*,7193) ain, ain
-7193 format (' card read: ain=',a2,' com=',a)
-END IF
+326     neq=n+2*m
+        neq2=0
+        ib11=1
+        ic11=1
+        id11=1
+        ix11=1
+        icasx=0
+6       npeq=np+2*mp
+        WRITE(3,135)
+        !
+        !     DEFAULT VALUES FOR INPUT PARAMETERS AND FLAGS
+        !
+        iplp1=0
+        iplp2=0
+        iplp3=0
+        iplp4=0
+        igo=1
+        fmhzs=cvel
+        nfrq=1
+        rkh=1.
+        iexk=0
+        ixtyp=0
+        nload=0
+        nonet=0
+        near=-1
+        iptflg=-2
+        iptflq=-1
+        ifar=-1
+        zrati=(1.,0.)
+        iped=0
+        irngf=0
+        ncoup=0
+        icoup=0
+        ! Default = No freq-loop/Neg-sigma
+        llneg = 0
 
-CALL upcase(ain,ain,lain)
-IF(kcom > 1)GO TO 3
+        IF(icasx > 0)GO TO 14
+        fmhz=cvel
+        nlodf=0
+        ksymp=1
+        nradl=0
+        iperf=0
+        !
+        !     MAIN INPUT SECTION - STANDARD READ STATEMENT - JUMPS TO APPRO-
+        !     PRIATE SECTION FOR SPECIFIC PARAMETER SET UP
+        !
+14      CALL readmn(2,ain,itmp1,itmp2,itmp3,itmp4,tmp1,tmp2,tmp3,tmp4,tmp5,tmp6)
 
-WRITE(3,126)
-WRITE(3,127)
-WRITE(3,128)
+        mpcnt=mpcnt+1
 
-3   WRITE(3,129) (com(i,kcom),i=1,19)
-    IF (ain == atst(11)) GO TO 2
-    IF (ain == atst(1)) GO TO 4
+        WRITE(3,137) mpcnt,ain,itmp1,itmp2,itmp3,itmp4,tmp1,tmp2,tmp3, tmp4,tmp5,tmp6
 
-WRITE(3,130)
-STOP
+        IF (ain == atst(2)) GO TO 16   ! FR
+        IF (ain == atst(3)) GO TO 17   ! LD
+        IF (ain == atst(4)) GO TO 21   ! GN
+        IF (ain == atst(5)) GO TO 24   ! EX
+        IF (ain == atst(6)) GO TO 28   ! NT
+        IF (ain == atst(14)) GO TO 28  ! TL
+        IF (ain == atst(15)) GO TO 31  ! PT
+        IF (ain == atst(18)) GO TO 319 ! PQ
+        IF (ain == atst(7)) GO TO 37   ! XQ
+        IF (ain == atst(8)) GO TO 32   ! NE
+        IF (ain == atst(17)) GO TO 208 ! NH
+        IF (ain == atst(9)) GO TO 34   ! GD
+        IF (ain == atst(10)) GO TO 36  ! RP
+        IF (ain == atst(16)) GO TO 305 ! KH
+        IF (ain == atst(19)) GO TO 320 ! EK
+        IF (ain == atst(12)) GO TO 1   ! NX
+        IF (ain == atst(20)) GO TO 322 ! WG
+        IF (ain == atst(21)) GO TO 304 ! CP
+        !***
+        IF (ain == atst(22)) GO TO 330 ! PL ???
+        !***
+        IF (ain /= atst(13)) GO TO 15   ! EN
 
-4     CONTINUE
-DO  i=1,ld
-  zarray(i)=(0.,0.)
-END DO
-mpcnt=0
-imat=0
-!
-!     SET UP GEOMETRY DATA IN SUBROUTINE DATAGN
-!
-if (debugging) print *, 'calling datagn'  
-CALL datagn
-if (debugging) print *, 'returned from datagn'
+        CALL second(endtime)
+        elapsed=endtime-starttime
+        WRITE(3,201) elapsed
+        STOP
 
-iflow=1
-IF(imat == 0)GO TO 326
-!
-!     CORE ALLOCATION FOR ARRAYS B, C, AND D FOR N.G.F. SOLUTION
-!
-neq=n1+2*m1
-neq2=n-n1+2*(m-m1)+nscon+2*npcon
-CALL fbngf(neq,neq2,iresrv,ib11,ic11,id11,ix11)
-GO TO 6
+15      WRITE(3,138)
+        STOP
 
-326   neq=n+2*m
-neq2=0
-ib11=1
-ic11=1
-id11=1
-ix11=1
-icasx=0
-6     npeq=np+2*mp
-WRITE(3,135)
-!
-!     DEFAULT VALUES FOR INPUT PARAMETERS AND FLAGS
-!
-!***
-iplp1=0
-iplp2=0
-iplp3=0
-iplp4=0
-!***
-igo=1
-fmhzs=cvel
-nfrq=1
-rkh=1.
-iexk=0
-ixtyp=0
-nload=0
-nonet=0
-near=-1
-iptflg=-2
-iptflq=-1
-ifar=-1
-zrati=(1.,0.)
-iped=0
-irngf=0
-ncoup=0
-icoup=0
-! Default = No freq-loop/Neg-sigma
-llneg = 0
+        !
+        !     FREQUENCY PARAMETERS
+        !
+16      ifrq=itmp1
+        IF(icasx == 0)GO TO 8
+        WRITE(3,303) ain
+        STOP
 
-IF(icasx > 0)GO TO 14
-fmhz=cvel
-nlodf=0
-ksymp=1
-nradl=0
-iperf=0
-!
-!     MAIN INPUT SECTION - STANDARD READ STATEMENT - JUMPS TO APPRO-
-!     PRIATE SECTION FOR SPECIFIC PARAMETER SET UP
-!
-14    CALL readmn(2,ain,itmp1,itmp2,itmp3,itmp4,tmp1,tmp2,tmp3,tmp4,tmp5,tmp6)
+8       nfrq=itmp2
+        IF (nfrq == 0) nfrq=1
+        fmhz=tmp1
+        delfrq=tmp2
+        IF(iped == 1)zpnorm=0.
+        igo=1
+        iflow=1
+        GO TO 14
+        !
+        !     MATRIX INTEGRATION LIMIT
+        !
+305     rkh=tmp1
+        IF(igo > 2)igo=2
+        iflow=1
+        GO TO 14
+        !
+        !     EXTENDED THIN WIRE KERNEL OPTION
+        !
+320     iexk=1
+        IF(itmp1 == -1)iexk=0
+        IF(igo > 2)igo=2
+        iflow=1
+        GO TO 14
+        !
+        !     MAXIMUM COUPLING BETWEEN ANTENNAS
+        !
+304     IF(iflow /= 2)ncoup=0
+        icoup=0
+        iflow=2
+        IF(itmp2 == 0)GO TO 14
+        ncoup=ncoup+1
+        IF(ncoup > 5)GO TO 312
+        nctag(ncoup)=itmp1
+        ncseg(ncoup)=itmp2
+        IF(itmp4 == 0)GO TO 14
+        ncoup=ncoup+1
+        IF(ncoup > 5)GO TO 312
+        nctag(ncoup)=itmp3
+        ncseg(ncoup)=itmp4
+        GO TO 14
 
-mpcnt=mpcnt+1
+312     WRITE(3,313)
+        STOP
+        !
+        !     LOADING PARAMETERS
+        !
+17      IF (iflow == 3) GO TO 18
+        nload=0
+        iflow=3
+        IF (igo > 2) igo=2
+        IF (itmp1 == (-1)) GO TO 14
+18      nload=nload+1
+        IF (nload <= loadmx) GO TO 19
+        WRITE(3,139)
+        STOP
 
-WRITE(3,137) mpcnt,ain,itmp1,itmp2,itmp3,itmp4,tmp1,tmp2,tmp3, tmp4,tmp5,tmp6
+19      ldtyp(nload)=itmp1
+        ldtag(nload)=itmp2
+        IF (itmp4 == 0) itmp4=itmp3
+        ldtagf(nload)=itmp3
+        ldtagt(nload)=itmp4
+        IF (itmp4 >= itmp3) GO TO 20
+        WRITE(3,140)  nload,itmp3,itmp4
+        STOP
 
-IF (ain == atst(2)) GO TO 16   ! FR
-IF (ain == atst(3)) GO TO 17   ! LD
-IF (ain == atst(4)) GO TO 21   ! GN
-IF (ain == atst(5)) GO TO 24   ! EX
-IF (ain == atst(6)) GO TO 28   ! NT
-IF (ain == atst(14)) GO TO 28  ! TL
-IF (ain == atst(15)) GO TO 31  ! PT
-IF (ain == atst(18)) GO TO 319 ! PQ
-IF (ain == atst(7)) GO TO 37   ! XQ
-IF (ain == atst(8)) GO TO 32   ! NE
-IF (ain == atst(17)) GO TO 208 ! NH
-IF (ain == atst(9)) GO TO 34   ! GD
-IF (ain == atst(10)) GO TO 36  ! RP
-IF (ain == atst(16)) GO TO 305 ! KH
-IF (ain == atst(19)) GO TO 320 ! EK
-IF (ain == atst(12)) GO TO 1   ! NX
-IF (ain == atst(20)) GO TO 322 ! WG
-IF (ain == atst(21)) GO TO 304 ! CP
-!***
-IF (ain == atst(22)) GO TO 330 ! PL ???
-!***
-IF (ain /= atst(13)) GO TO 15   ! EN
+20      zlr(nload)=tmp1
+        zli(nload)=tmp2
+        zlc(nload)=tmp3
+        GO TO 14
+        !
+        !     GROUND PARAMETERS UNDER THE ANTENNA
+        !
+21      iflow=4
+        IF(icasx == 0)GO TO 10
+        WRITE(3,303) ain
+        STOP
 
-CALL second(endtime)
-elapsed=endtime-starttime
-WRITE(3,201) elapsed
-STOP
-15    WRITE(3,138)
-STOP
-!
-!     FREQUENCY PARAMETERS
-!
-16    ifrq=itmp1
-IF(icasx == 0)GO TO 8
-WRITE(3,303) ain
-STOP
+10      IF (igo > 2) igo=2
+        IF (itmp1 /= (-1)) GO TO 22
+        ksymp=1
+        nradl=0
+        iperf=0
+        GO TO 14
 
-8     nfrq=itmp2
-IF (nfrq == 0) nfrq=1
-fmhz=tmp1
-delfrq=tmp2
-IF(iped == 1)zpnorm=0.
-igo=1
-iflow=1
-GO TO 14
-!
-!     MATRIX INTEGRATION LIMIT
-!
-305   rkh=tmp1
-IF(igo > 2)igo=2
-iflow=1
-GO TO 14
-!
-!     EXTENDED THIN WIRE KERNEL OPTION
-!
-320   iexk=1
-IF(itmp1 == -1)iexk=0
-IF(igo > 2)igo=2
-iflow=1
-GO TO 14
-!
-!     MAXIMUM COUPLING BETWEEN ANTENNAS
-!
-304   IF(iflow /= 2)ncoup=0
-icoup=0
-iflow=2
-IF(itmp2 == 0)GO TO 14
-ncoup=ncoup+1
-IF(ncoup > 5)GO TO 312
-nctag(ncoup)=itmp1
-ncseg(ncoup)=itmp2
-IF(itmp4 == 0)GO TO 14
-ncoup=ncoup+1
-IF(ncoup > 5)GO TO 312
-nctag(ncoup)=itmp3
-ncseg(ncoup)=itmp4
-GO TO 14
-312   WRITE(3,313)
-STOP
-!
-!     LOADING PARAMETERS
-!
-17    IF (iflow == 3) GO TO 18
-nload=0
-iflow=3
-IF (igo > 2) igo=2
-IF (itmp1 == (-1)) GO TO 14
-18    nload=nload+1
-IF (nload <= loadmx) GO TO 19
-WRITE(3,139)
-STOP
+22      iperf=itmp1
+        nradl=itmp2
+        ksymp=2
+        epsr=tmp1
+        sig=tmp2
+        IF (nradl == 0) GO TO 23
+        IF(iperf /= 2)GO TO 314
+        WRITE(3,390)
+        STOP
 
-19    ldtyp(nload)=itmp1
-ldtag(nload)=itmp2
-IF (itmp4 == 0) itmp4=itmp3
-ldtagf(nload)=itmp3
-ldtagt(nload)=itmp4
-IF (itmp4 >= itmp3) GO TO 20
-WRITE(3,140)  nload,itmp3,itmp4
-STOP
+314     scrwlt=tmp3
+        scrwrt=tmp4
+        GO TO 14
 
-20    zlr(nload)=tmp1
-zli(nload)=tmp2
-zlc(nload)=tmp3
-GO TO 14
-!
-!     GROUND PARAMETERS UNDER THE ANTENNA
-!
-21    iflow=4
-IF(icasx == 0)GO TO 10
-WRITE(3,303) ain
-STOP
+23      epsr2=tmp3
+        sig2=tmp4
+        clt=tmp5
+        cht=tmp6
+        GO TO 14
+        !
+        !     EXCITATION PARAMETERS
+        !
+24      IF (iflow == 5) GO TO 25
+        nsant=0
+        nvqd=0
+        iped=0
+        iflow=5
+        IF (igo > 3) igo=3
+25      masym=itmp4/10
+        IF (itmp1 > 0.AND.itmp1 /= 5) GO TO 27
+        ixtyp=itmp1
+        ntsol=0
+        IF(ixtyp == 0)GO TO 205
+        nvqd=nvqd+1
+        IF(nvqd > nsmax)GO TO 206
+        ivqd(nvqd)=isegno(itmp2,itmp3)
+        vqd(nvqd)=DCMPLX(tmp1,tmp2)
+        IF(ABS(vqd(nvqd)) < 1.d-20)vqd(nvqd)=(1.,0.)
+        GO TO 207
 
-10    IF (igo > 2) igo=2
-IF (itmp1 /= (-1)) GO TO 22
-ksymp=1
-nradl=0
-iperf=0
-GO TO 14
+205     nsant=nsant+1
+        IF (nsant <= nsmax) GO TO 26
+206     WRITE(3,141)
+        STOP
 
-22    iperf=itmp1
-nradl=itmp2
-ksymp=2
-epsr=tmp1
-sig=tmp2
-IF (nradl == 0) GO TO 23
-IF(iperf /= 2)GO TO 314
-WRITE(3,390)
-STOP
+26      isant(nsant)=isegno(itmp2,itmp3)
+        vsant(nsant)=DCMPLX(tmp1,tmp2)
+        IF (ABS(vsant(nsant)) < 1.d-20) vsant(nsant)=(1.,0.)
+207     iped=itmp4-masym*10
+        zpnorm=tmp3
+        IF (iped == 1.AND.zpnorm > 0) iped=2
+        GO TO 14
 
-314   scrwlt=tmp3
-scrwrt=tmp4
-GO TO 14
+27      IF (ixtyp == 0.OR.ixtyp == 5) ntsol=0
+        ixtyp=itmp1
+        nthi=itmp2
+        nphi=itmp3
+        xpr1=tmp1
+        xpr2=tmp2
+        xpr3=tmp3
+        xpr4=tmp4
+        xpr5=tmp5
+        xpr6=tmp6
+        nsant=0
+        nvqd=0
+        thetis=xpr1
+        phiss=xpr2
+        GO TO 14
+        !
+        !     NETWORK PARAMETERS
+        !
+28      IF (iflow == 6) GO TO 29
+        nonet=0
+        ntsol=0
+        iflow=6
+        IF (igo > 3) igo=3
+        IF (itmp2 == (-1)) GO TO 14
 
-23    epsr2=tmp3
-sig2=tmp4
-clt=tmp5
-cht=tmp6
-GO TO 14
-!
-!     EXCITATION PARAMETERS
-!
-24    IF (iflow == 5) GO TO 25
-nsant=0
-nvqd=0
-iped=0
-iflow=5
-IF (igo > 3) igo=3
-25    masym=itmp4/10
-IF (itmp1 > 0.AND.itmp1 /= 5) GO TO 27
-ixtyp=itmp1
-ntsol=0
-IF(ixtyp == 0)GO TO 205
-nvqd=nvqd+1
-IF(nvqd > nsmax)GO TO 206
-ivqd(nvqd)=isegno(itmp2,itmp3)
-vqd(nvqd)=DCMPLX(tmp1,tmp2)
-IF(ABS(vqd(nvqd)) < 1.d-20)vqd(nvqd)=(1.,0.)
-GO TO 207
-205   nsant=nsant+1
-IF (nsant <= nsmax) GO TO 26
-206   WRITE(3,141)
-STOP
+29      nonet=nonet+1
+        IF (nonet <= netmx) GO TO 30
+        WRITE(3,142)
+        STOP
 
-26    isant(nsant)=isegno(itmp2,itmp3)
-vsant(nsant)=DCMPLX(tmp1,tmp2)
-IF (ABS(vsant(nsant)) < 1.d-20) vsant(nsant)=(1.,0.)
-207   iped=itmp4-masym*10
-zpnorm=tmp3
-IF (iped == 1.AND.zpnorm > 0) iped=2
-GO TO 14
+30      ntyp(nonet)=2
+        IF (ain == atst(6)) ntyp(nonet)=1
+        iseg1(nonet)=isegno(itmp1,itmp2)
+        iseg2(nonet)=isegno(itmp3,itmp4)
+        x11r(nonet)=tmp1
+        x11i(nonet)=tmp2
+        x12r(nonet)=tmp3
+        x12i(nonet)=tmp4
+        x22r(nonet)=tmp5
+        x22i(nonet)=tmp6
+        IF (ntyp(nonet) == 1.OR.tmp1 > 0.) GO TO 14
+        ntyp(nonet)=3
+        x11r(nonet)=-tmp1
+        GO TO 14
+        !
+        !     PLOT FLAGS
+        !
+330     iplp1=itmp1
+        iplp2=itmp2
+        iplp3=itmp3
+        iplp4=itmp4
+        OPEN (UNIT=8,FILE='PLTDAT.NEC',STATUS='UNKNOWN',ERR=14)
+        GO TO 14
+        !
+        !     PRINT CONTROL FOR CURRENT
+        !
+31      iptflg=itmp1
+        iptag=itmp2
+        iptagf=itmp3
+        iptagt=itmp4
+        IF(itmp3 == 0.AND.iptflg /= -1)iptflg=-2
+        IF (itmp4 == 0) iptagt=iptagf
+        GO TO 14
+        !
+        !     WRITE CONTROL FOR CHARGE
+        !
+319     iptflq=itmp1
+        iptaq=itmp2
+        iptaqf=itmp3
+        iptaqt=itmp4
+        IF(itmp3 == 0.AND.iptflq /= -1)iptflq=-2
+        IF(itmp4 == 0)iptaqt=iptaqf
+        GO TO 14
+        !
+        !     NEAR FIELD CALCULATION PARAMETERS
+        !
+208     nfeh=1
+        GO TO 209
 
-27    IF (ixtyp == 0.OR.ixtyp == 5) ntsol=0
-ixtyp=itmp1
-nthi=itmp2
-nphi=itmp3
-xpr1=tmp1
-xpr2=tmp2
-xpr3=tmp3
-xpr4=tmp4
-xpr5=tmp5
-xpr6=tmp6
-nsant=0
-nvqd=0
-thetis=xpr1
-phiss=xpr2
-GO TO 14
-!
-!     NETWORK PARAMETERS
-!
-28    IF (iflow == 6) GO TO 29
-nonet=0
-ntsol=0
-iflow=6
-IF (igo > 3) igo=3
-IF (itmp2 == (-1)) GO TO 14
+32      nfeh=0
+209     IF (.NOT.(iflow == 8.AND.nfrq /= 1)) GO TO 33
+        WRITE(3,143)
+33      near=itmp1
+        nrx=itmp2
+        nry=itmp3
+        nrz=itmp4
+        xnr=tmp1
+        ynr=tmp2
+        znr=tmp3
+        dxnr=tmp4
+        dynr=tmp5
+        dznr=tmp6
+        iflow=8
+        IF (nfrq /= 1) GO TO 14
+        SELECT CASE ( igo )
+          CASE (    1)
+            GO TO 41
+          CASE (    2)
+            GO TO 46
+          CASE (    3)
+            GO TO 53
+          CASE (    4)
+            GO TO 71
+          CASE (    5)
+            GO TO 72
+        END SELECT
+        !
+        !     GROUND REPRESENTATION
+        !
+34      epsr2=tmp1
+        sig2=tmp2
+        clt=tmp3
+        cht=tmp4
+        iflow=9
+        GO TO 14
+        !
+        !     STANDARD OBSERVATION ANGLE PARAMETERS
+        !
+36      ifar=itmp1
+        nth=itmp2
+        nph=itmp3
+        IF (nth == 0) nth=1
+        IF (nph == 0) nph=1
+        ipd=itmp4/10
+        iavp=itmp4-ipd*10
+        inor=ipd/10
+        ipd=ipd-inor*10
+        iax=inor/10
+        inor=inor-iax*10
+        IF (iax /= 0) iax=1
+        IF (ipd /= 0) ipd=1
+        IF (nth < 2.OR.nph < 2) iavp=0
+        IF (ifar == 1) iavp=0
+        thets=tmp1
+        phis=tmp2
+        dth=tmp3
+        dph=tmp4
+        rfld=tmp5
+        gnor=tmp6
+        iflow=10
+        SELECT CASE ( igo )
+          CASE (    1)
+            GO TO 41
+          CASE (    2)
+            GO TO 46
+          CASE (    3)
+            GO TO 53
+          CASE (    4)
+            GO TO 71
+          CASE (    5)
+            GO TO 78
+        END SELECT
+        !
+        !     WRITE NUMERICAL GREEN'S FUNCTION TAPE
+        !
+322     iflow=12
+        IF(icasx == 0)GO TO 301
+        WRITE(3,302)
+        STOP
+301     irngf=iresrv/2
+        SELECT CASE ( igo )
+          CASE (    1)
+            GO TO 41
+          CASE (    2)
+            GO TO 46
+          CASE (    3)
+            GO TO 52
+          CASE (    4)
+            GO TO 52
+          CASE (    5)
+            GO TO 52
+        END SELECT
+        !
+        !     EXECUTE CARD  -  CALC. INCLUDING RADIATED FIELDS
+        !
+37      IF (iflow == 10.AND.itmp1 == 0) GO TO 14
+        IF (nfrq == 1.AND.itmp1 == 0.AND.iflow > 7) GO TO 14
+        IF (itmp1 /= 0) GO TO 39
+        IF (iflow > 7) GO TO 38
+        iflow=7
+        GO TO 40
 
-29    nonet=nonet+1
-IF (nonet <= netmx) GO TO 30
-WRITE(3,142)
-STOP
+38      iflow=11
+        GO TO 40
 
-30    ntyp(nonet)=2
-IF (ain == atst(6)) ntyp(nonet)=1
-iseg1(nonet)=isegno(itmp1,itmp2)
-iseg2(nonet)=isegno(itmp3,itmp4)
-x11r(nonet)=tmp1
-x11i(nonet)=tmp2
-x12r(nonet)=tmp3
-x12i(nonet)=tmp4
-x22r(nonet)=tmp5
-x22i(nonet)=tmp6
-IF (ntyp(nonet) == 1.OR.tmp1 > 0.) GO TO 14
-ntyp(nonet)=3
-x11r(nonet)=-tmp1
-GO TO 14
-!***
-!
-!     PLOT FLAGS
-!
-330   iplp1=itmp1
-iplp2=itmp2
-iplp3=itmp3
-iplp4=itmp4
-OPEN (UNIT=8,FILE='PLTDAT.NEC',STATUS='UNKNOWN',ERR=14)
-!***
-GO TO 14
-!
-!     PRINT CONTROL FOR CURRENT
-!
-31    iptflg=itmp1
-iptag=itmp2
-iptagf=itmp3
-iptagt=itmp4
-IF(itmp3 == 0.AND.iptflg /= -1)iptflg=-2
-IF (itmp4 == 0) iptagt=iptagf
-GO TO 14
-!
-!     WRITE CONTROL FOR CHARGE
-!
-319   iptflq=itmp1
-iptaq=itmp2
-iptaqf=itmp3
-iptaqt=itmp4
-IF(itmp3 == 0.AND.iptflq /= -1)iptflq=-2
-IF(itmp4 == 0)iptaqt=iptaqf
-GO TO 14
-!
-!     NEAR FIELD CALCULATION PARAMETERS
-!
-208   nfeh=1
-GO TO 209
-32    nfeh=0
-209   IF (.NOT.(iflow == 8.AND.nfrq /= 1)) GO TO 33
-WRITE(3,143)
-33    near=itmp1
-nrx=itmp2
-nry=itmp3
-nrz=itmp4
-xnr=tmp1
-ynr=tmp2
-znr=tmp3
-dxnr=tmp4
-dynr=tmp5
-dznr=tmp6
-iflow=8
-IF (nfrq /= 1) GO TO 14
-SELECT CASE ( igo )
-  CASE (    1)
-    GO TO 41
-  CASE (    2)
-    GO TO 46
-  CASE (    3)
-    GO TO 53
-  CASE (    4)
-    GO TO 71
-  CASE (    5)
-    GO TO 72
-END SELECT
-!
-!     GROUND REPRESENTATION
-!
-34    epsr2=tmp1
-sig2=tmp2
-clt=tmp3
-cht=tmp4
-iflow=9
-GO TO 14
-!
-!     STANDARD OBSERVATION ANGLE PARAMETERS
-!
-36    ifar=itmp1
-nth=itmp2
-nph=itmp3
-IF (nth == 0) nth=1
-IF (nph == 0) nph=1
-ipd=itmp4/10
-iavp=itmp4-ipd*10
-inor=ipd/10
-ipd=ipd-inor*10
-iax=inor/10
-inor=inor-iax*10
-IF (iax /= 0) iax=1
-IF (ipd /= 0) ipd=1
-IF (nth < 2.OR.nph < 2) iavp=0
-IF (ifar == 1) iavp=0
-thets=tmp1
-phis=tmp2
-dth=tmp3
-dph=tmp4
-rfld=tmp5
-gnor=tmp6
-iflow=10
-SELECT CASE ( igo )
-  CASE (    1)
-    GO TO 41
-  CASE (    2)
-    GO TO 46
-  CASE (    3)
-    GO TO 53
-  CASE (    4)
-    GO TO 71
-  CASE (    5)
-    GO TO 78
-END SELECT
-!
-!     WRITE NUMERICAL GREEN'S FUNCTION TAPE
-!
-322   iflow=12
-IF(icasx == 0)GO TO 301
-WRITE(3,302)
-STOP
-301   irngf=iresrv/2
-SELECT CASE ( igo )
-  CASE (    1)
-    GO TO 41
-  CASE (    2)
-    GO TO 46
-  CASE (    3)
-    GO TO 52
-  CASE (    4)
-    GO TO 52
-  CASE (    5)
-    GO TO 52
-END SELECT
-!
-!     EXECUTE CARD  -  CALC. INCLUDING RADIATED FIELDS
-!
-37    IF (iflow == 10.AND.itmp1 == 0) GO TO 14
-IF (nfrq == 1.AND.itmp1 == 0.AND.iflow > 7) GO TO 14
-IF (itmp1 /= 0) GO TO 39
-IF (iflow > 7) GO TO 38
-iflow=7
-GO TO 40
+39      ifar=0
+        rfld=0.
+        ipd=0
+        iavp=0
+        inor=0
+        iax=0
+        nth=91
+        nph=1
+        thets=0.
+        phis=0.
+        dth=1.0
+        dph=0.
+        IF (itmp1 == 2) phis=90.
+        IF (itmp1 /= 3) GO TO 40
+        nph=2
+        dph=90.
+40      SELECT CASE ( igo )
+          CASE (    1)
+            GO TO 41
+          CASE (    2)
+            GO TO 46
+          CASE (    3)
+            GO TO 53
+          CASE (    4)
+            GO TO 71
+          CASE (    5)
+            GO TO 78
+        END SELECT
+        !
+        !     END OF THE MAIN INPUT SECTION
+        !
+        !     BEGINNING OF THE FREQUENCY DO LOOP
+        !
+41      mhz=1
+        !***
+        IF(n == 0 .OR. ifrtimw == 1)GO TO 406
+        ifrtimw=1
+        DO  i=1,n
+          xtemp(i)=x(i)
+          ytemp(i)=y(i)
+          ztemp(i)=z(i)
+          sitemp(i)=si(i)
+          bitemp(i)=bi(i)
+        END DO
 
-38    iflow=11
-GO TO 40
+406     IF(m == 0 .OR. ifrtimp == 1)GO TO 407
+        ifrtimp=1
+        j=ld+1
+        DO  i=1,m
+          j=j-1
+          xtemp(j)=x(j)
+          ytemp(j)=y(j)
+          ztemp(j)=z(j)
+          bitemp(j)=bi(j)
+        END DO
+407     CONTINUE
+        fmhz1=fmhz
+        !     CORE ALLOCATION FOR PRIMARY INTERACTON MATRIX.  (A)
+        IF(imat == 0)CALL fblock(npeq,neq,iresrv,irngf,ipsym)
+42      IF (mhz == 1) GO TO 44
+        IF (ifrq == 1) GO TO 43
+        !      FMHZ=FMHZ+DELFRQ
+        fmhz=fmhz1+(mhz-1)*delfrq
+        GO TO 44
 
-39    ifar=0
-rfld=0.
-ipd=0
-iavp=0
-inor=0
-iax=0
-nth=91
-nph=1
-thets=0.
-phis=0.
-dth=1.0
-dph=0.
-IF (itmp1 == 2) phis=90.
-IF (itmp1 /= 3) GO TO 40
-nph=2
-dph=90.
-40    SELECT CASE ( igo )
-  CASE (    1)
-    GO TO 41
-  CASE (    2)
-    GO TO 46
-  CASE (    3)
-    GO TO 53
-  CASE (    4)
-    GO TO 71
-  CASE (    5)
-    GO TO 78
-END SELECT
-!
-!     END OF THE MAIN INPUT SECTION
-!
-!     BEGINNING OF THE FREQUENCY DO LOOP
-!
-41    mhz=1
-!***
-IF(n == 0 .OR. ifrtimw == 1)GO TO 406
-ifrtimw=1
-DO  i=1,n
-  xtemp(i)=x(i)
-  ytemp(i)=y(i)
-  ztemp(i)=z(i)
-  sitemp(i)=si(i)
-  bitemp(i)=bi(i)
-END DO
+43      fmhz=fmhz*delfrq
+44      fr=fmhz/cvel
+        wlam=cvel/fmhz             ! wavl=299.8/freq
+        WRITE(3,145)  fmhz,wlam
+        WRITE(3,196) rkh
+        IF(iexk == 1)WRITE(3,321)
+        !     FREQUENCY SCALING OF GEOMETRIC PARAMETERS
+        !***      FMHZS=FMHZ
+        IF(n == 0)GO TO 306
+        DO  i=1,n
+        !***
+          x(i)=xtemp(i)*fr
+          y(i)=ytemp(i)*fr
+          z(i)=ztemp(i)*fr
+          si(i)=sitemp(i)*fr
+          bi(i)=bitemp(i)*fr
+        END DO
+        !***
+306     IF(m == 0)GO TO 307
+        fr2=fr*fr
+        j=ld+1
+        DO  i=1,m
+          j=j-1
+        !***
+          x(j)=xtemp(j)*fr
+          y(j)=ytemp(j)*fr
+          z(j)=ztemp(j)*fr
+          bi(j)=bitemp(j)*fr2
+        END DO
+        !***
+307     igo=2
 
-406   IF(m == 0 .OR. ifrtimp == 1)GO TO 407
-ifrtimp=1
-j=ld+1
-DO  i=1,m
-  j=j-1
-  xtemp(j)=x(j)
-  ytemp(j)=y(j)
-  ztemp(j)=z(j)
-  bitemp(j)=bi(j)
-END DO
-407   CONTINUE
-fmhz1=fmhz
-!***
-!     CORE ALLOCATION FOR PRIMARY INTERACTON MATRIX.  (A)
-IF(imat == 0)CALL fblock(npeq,neq,iresrv,irngf,ipsym)
-42    IF (mhz == 1) GO TO 44
-IF (ifrq == 1) GO TO 43
-!      FMHZ=FMHZ+DELFRQ
-!***
-fmhz=fmhz1+(mhz-1)*delfrq
-GO TO 44
-43    fmhz=fmhz*delfrq
-44    fr=fmhz/cvel
-!***
-wlam=cvel/fmhz             ! wavl=299.8/freq
-WRITE(3,145)  fmhz,wlam
-WRITE(3,196) rkh
-IF(iexk == 1)WRITE(3,321)
-!     FREQUENCY SCALING OF GEOMETRIC PARAMETERS
-!***      FMHZS=FMHZ
-IF(n == 0)GO TO 306
-DO  i=1,n
-!***
-  x(i)=xtemp(i)*fr
-  y(i)=ytemp(i)*fr
-  z(i)=ztemp(i)*fr
-  si(i)=sitemp(i)*fr
-  bi(i)=bitemp(i)*fr
-END DO
-!***
-306   IF(m == 0)GO TO 307
-fr2=fr*fr
-j=ld+1
-DO  i=1,m
-  j=j-1
-!***
-  x(j)=xtemp(j)*fr
-  y(j)=ytemp(j)*fr
-  z(j)=ztemp(j)*fr
-  bi(j)=bitemp(j)*fr2
-END DO
-!***
-307   igo=2
+        !     STRUCTURE SEGMENT LOADING
 
-!     STRUCTURE SEGMENT LOADING
+46      WRITE(3,146)
+        IF(nload /= 0) CALL load(ldtyp,ldtag,ldtagf,ldtagt,zlr,zli,zlc)
 
-46    WRITE(3,146)
-IF(nload /= 0) CALL load(ldtyp,ldtag,ldtagf,ldtagt,zlr,zli,zlc)
+        IF(nload == 0.AND.nlodf == 0)WRITE(3,147)
+        IF(nload == 0.AND.nlodf /= 0)WRITE(3,327)
 
-IF(nload == 0.AND.nlodf == 0)WRITE(3,147)
-IF(nload == 0.AND.nlodf /= 0)WRITE(3,327)
+        !     GROUND PARAMETER
 
-!     GROUND PARAMETER
+        WRITE(3,148)            ! Antenna environment
+        IF (ksymp == 1) GO TO 49
+        frati=(1.,0.)
+        IF (iperf == 1) GO TO 48
 
-WRITE(3,148)            ! Antenna environment
-IF (ksymp == 1) GO TO 49
-frati=(1.,0.)
-IF (iperf == 1) GO TO 48
+        IF (sig < 0.) THEN        ! Negative sigma ?
+          llneg = 1                 ! Set flag
+          sig=-sig/(59.96*wlam)   ! Make positive
+        END IF
 
-IF (sig < 0.) THEN        ! Negative sigma ?
-  llneg = 1                 ! Set flag
-  sig=-sig/(59.96*wlam)   ! Make positive
-END IF
+        epsc=DCMPLX(epsr,-sig*wlam*59.96)
+        zrati=1./SQRT(epsc)
+        u=zrati
+        u2=u*u
+        IF (nradl == 0) GO TO 47
+        scrwl=scrwlt/wlam
+        scrwr=scrwrt/wlam
+        t1=fj*2367.067D+0/dfloat(nradl)
+        t2=scrwr*dfloat(nradl)
+        WRITE(3,170)  nradl,scrwlt,scrwrt
+        WRITE(3,149)
+47      IF(iperf == 2)GO TO 328        ! Somnec ground ?
 
-epsc=DCMPLX(epsr,-sig*wlam*59.96)
-zrati=1./SQRT(epsc)
-u=zrati
-u2=u*u
-IF (nradl == 0) GO TO 47
-scrwl=scrwlt/wlam
-scrwr=scrwrt/wlam
-t1=fj*2367.067D+0/dfloat(nradl)
-t2=scrwr*dfloat(nradl)
-WRITE(3,170)  nradl,scrwlt,scrwrt
-WRITE(3,149)
-47    IF(iperf == 2)GO TO 328        ! Somnec ground ?
+        WRITE(3,391)                   ! Finite ground
+        GO TO 329
 
-WRITE(3,391)                   ! Finite ground
-GO TO 329
+        !******************************************************************************
+        !    Include SomNec calculations
+        !******************************************************************************
 
-!******************************************************************************
-!    Include SomNec calculations
-!******************************************************************************
+328     IF (llneg <= 1) THEN      ! Single or first step ?
+          IF (llneg == 1) llneg=2   ! If negative, only once
+          CALL som2d (fmhz,epsr,sig) ! Get SomNec data, av03
+        END IF
 
-328   IF (llneg <= 1) THEN      ! Single or first step ?
-  IF (llneg == 1) llneg=2   ! If negative, only once
-  CALL som2d (fmhz,epsr,sig) ! Get SomNec data, av03
-END IF
+        frati=(epsc-1.)/(epsc+1.)
+        IF(ABS((epscf-epsc)/epsc) < 1.d-3)GO TO 400
 
-frati=(epsc-1.)/(epsc+1.)
-IF(ABS((epscf-epsc)/epsc) < 1.d-3)GO TO 400
+        WRITE(3,393) epscf,epsc      ! Error in ground param's
+        STOP
 
-WRITE(3,393) epscf,epsc      ! Error in ground param's
-STOP
+400     WRITE(3,392)         ! Sommerfeld ground
+329     WRITE(3,150)  epsr,sig,epsc   ! Rel-diel-C, conduct, compl-diel-C
+        GO TO 50
 
-400   WRITE(3,392)         ! Sommerfeld ground
-329   WRITE(3,150)  epsr,sig,epsc   ! Rel-diel-C, conduct, compl-diel-C
-GO TO 50
+48      WRITE(3,151)   ! Perfect ground
+        GO TO 50
 
-48    WRITE(3,151)   ! Perfect ground
-GO TO 50
+49      WRITE(3,152)   ! Free space
+50      CONTINUE
+        ! * * *
+        !     FILL AND FACTOR PRIMARY INTERACTION MATRIX
+        !
+        CALL second (tim1)
+        IF(icasx /= 0)GO TO 324
+        CALL cmset(neq,cm,rkh,iexk)
+        CALL second (tim2)
+        tim=tim2-tim1
+        CALL factrs(npeq,neq,cm,ip,ix,11,12,13,14)
+        GO TO 323
+        !
+        !     N.G.F. - FILL B, C, AND D AND FACTOR D-C(INV(A)B)
+        !
+324     IF(neq2 == 0)GO TO 333
+        CALL cmngf(cm(ib11),cm(ic11),cm(id11),npbx,neq,neq2,rkh,iexk)
+        CALL second (tim2)
+        tim=tim2-tim1
+        CALL facgf(cm,cm(ib11),cm(ic11),cm(id11),cm(ix11),ip,ix,np,n1,mp, m1,neq,neq2)
+323     CALL second (tim1)
+        tim2=tim1-tim2
+        WRITE(3,153)  tim,tim2
+333     igo=3
+        ntsol=0
+        IF(iflow /= 12)GO TO 53
+        !     WRITE N.G.F. FILE
+52      CALL gfout
+        GO TO 14
+        !
+        !     EXCITATION SET UP (RIGHT HAND SIDE, -E INC.)
+        !
+53      nthic=1
+        nphic=1
+        inc=1
+        nprint=0
+54      IF (ixtyp == 0.OR.ixtyp == 5) GO TO 56
+        IF (iptflg <= 0.OR.ixtyp == 4) WRITE(3,154)
+        tmp5=ta*xpr5
+        tmp4=ta*xpr4
+        IF (ixtyp /= 4) GO TO 55
+        tmp1=xpr1/wlam
+        tmp2=xpr2/wlam
+        tmp3=xpr3/wlam
+        tmp6=xpr6/(wlam*wlam)
+        WRITE(3,156)  xpr1,xpr2,xpr3,xpr4,xpr5,xpr6
+        GO TO 56
 
-49    WRITE(3,152)   ! Free space
-50    CONTINUE
-! * * *
-!     FILL AND FACTOR PRIMARY INTERACTION MATRIX
-!
-CALL second (tim1)
-IF(icasx /= 0)GO TO 324
-CALL cmset(neq,cm,rkh,iexk)
-CALL second (tim2)
-tim=tim2-tim1
-CALL factrs(npeq,neq,cm,ip,ix,11,12,13,14)
-GO TO 323
-!
-!     N.G.F. - FILL B, C, AND D AND FACTOR D-C(INV(A)B)
-!
-! ****
-324   IF(neq2 == 0)GO TO 333
-! ****
-CALL cmngf(cm(ib11),cm(ic11),cm(id11),npbx,neq,neq2,rkh,iexk)
-CALL second (tim2)
-tim=tim2-tim1
-CALL facgf(cm,cm(ib11),cm(ic11),cm(id11),cm(ix11),ip,ix,np,n1,mp, m1,neq,neq2)
-323   CALL second (tim1)
-tim2=tim1-tim2
-WRITE(3,153)  tim,tim2
-333   igo=3
-ntsol=0
-IF(iflow /= 12)GO TO 53
-!     WRITE N.G.F. FILE
-52    CALL gfout
-GO TO 14
-!
-!     EXCITATION SET UP (RIGHT HAND SIDE, -E INC.)
-!
-53    nthic=1
-nphic=1
-inc=1
-nprint=0
-54    IF (ixtyp == 0.OR.ixtyp == 5) GO TO 56
-IF (iptflg <= 0.OR.ixtyp == 4) WRITE(3,154)
-tmp5=ta*xpr5
-tmp4=ta*xpr4
-IF (ixtyp /= 4) GO TO 55
-tmp1=xpr1/wlam
-tmp2=xpr2/wlam
-tmp3=xpr3/wlam
-tmp6=xpr6/(wlam*wlam)
-WRITE(3,156)  xpr1,xpr2,xpr3,xpr4,xpr5,xpr6
-GO TO 56
-55    tmp1=ta*xpr1
-tmp2=ta*xpr2
-tmp3=ta*xpr3
-tmp6=xpr6
-IF (iptflg <= 0) WRITE(3,155)  xpr1,xpr2,xpr3,trim(hpol(ixtyp)),xpr6
-56    CALL etmns (tmp1,tmp2,tmp3,tmp4,tmp5,tmp6,ixtyp,cur)
-!
-!     MATRIX SOLVING  (NETWK CALLS SOLVES)
-!
-IF (nonet == 0.OR.inc > 1) GO TO 60
-WRITE(3,158)
-itmp3=0
-itmp1=ntyp(1)
-DO  i=1,2
-  IF (itmp1 == 3) itmp1=2
-  IF (itmp1 == 2) WRITE(3,159)
-  IF (itmp1 == 1) WRITE(3,160)
-  DO  j=1,nonet
-    itmp2=ntyp(j)
-    IF ((itmp2/itmp1) == 1) GO TO 57
-    itmp3=itmp2
-    CYCLE
-    57    itmp4=iseg1(j)
-    itmp5=iseg2(j)
-    IF (itmp2 >= 2.AND.x11i(j) <= 0.) x11i(j)=wlam*SQRT((x(itmp5)-  &
-        x(itmp4))**2+(y(itmp5)-y(itmp4))**2+(z(itmp5)-z(itmp4))**2)
-    WRITE(3,157) itag(itmp4),itmp4,itag(itmp5),itmp5,x11r(j),x11i(j), &
-        x12r(j),x12i(j),x22r(j),x22i(j),trim(pnet(itmp2))
-  END DO
-  IF (itmp3 == 0) EXIT
-  itmp1=itmp3
-END DO
-60    CONTINUE
-IF (inc > 1.AND.iptflg > 0) nprint=1
-CALL netwk(cm,cm(ib11),cm(ic11),cm(id11),ip,cur)
-ntsol=1
-IF (iped == 0) GO TO 61
-itmp1=mhz+4*(mhz-1)
-IF (itmp1 > (normf-3)) GO TO 61
-fnorm(itmp1)=dREAL(zped)
-fnorm(itmp1+1)=DIMAG(zped)
-fnorm(itmp1+2)=ABS(zped)
-fnorm(itmp1+3)=cang(zped)
-IF (iped == 2) GO TO 61
-IF (fnorm(itmp1+2) > zpnorm) zpnorm=fnorm(itmp1+2)
-61    CONTINUE
-!
-!     PRINTING STRUCTURE CURRENTS
-!
-IF(n == 0)GO TO 308
-IF (iptflg == (-1)) GO TO 63
-IF (iptflg > 0) GO TO 62
-WRITE(3,161)
-WRITE(3,162)
-GO TO 63
+55      tmp1=ta*xpr1
+        tmp2=ta*xpr2
+        tmp3=ta*xpr3
+        tmp6=xpr6
+        IF (iptflg <= 0) WRITE(3,155)  xpr1,xpr2,xpr3,trim(hpol(ixtyp)),xpr6
+56      CALL etmns (tmp1,tmp2,tmp3,tmp4,tmp5,tmp6,ixtyp,cur)
+        !
+        !     MATRIX SOLVING  (NETWK CALLS SOLVES)
+        !
+        IF (nonet == 0.OR.inc > 1) GO TO 60
+        WRITE(3,158)
+        itmp3=0
+        itmp1=ntyp(1)
+        DO  i=1,2
+          IF (itmp1 == 3) itmp1=2
+          IF (itmp1 == 2) WRITE(3,159)
+          IF (itmp1 == 1) WRITE(3,160)
+          DO  j=1,nonet
+            itmp2=ntyp(j)
+            IF ((itmp2/itmp1) == 1) GO TO 57
+            itmp3=itmp2
+            CYCLE
+            57    itmp4=iseg1(j)
+            itmp5=iseg2(j)
+            IF (itmp2 >= 2.AND.x11i(j) <= 0.) x11i(j)=wlam*SQRT((x(itmp5)-  &
+                x(itmp4))**2+(y(itmp5)-y(itmp4))**2+(z(itmp5)-z(itmp4))**2)
+            WRITE(3,157) itag(itmp4),itmp4,itag(itmp5),itmp5,x11r(j),x11i(j), &
+                x12r(j),x12i(j),x22r(j),x22i(j),trim(pnet(itmp2))
+          END DO
+          IF (itmp3 == 0) EXIT
+          itmp1=itmp3
+        END DO
+60      CONTINUE
+        IF (inc > 1.AND.iptflg > 0) nprint=1
+        CALL netwk(cm,cm(ib11),cm(ic11),cm(id11),ip,cur)
+        ntsol=1
+        IF (iped == 0) GO TO 61
+        itmp1=mhz+4*(mhz-1)
+        IF (itmp1 > (normf-3)) GO TO 61
+        fnorm(itmp1)=dREAL(zped)
+        fnorm(itmp1+1)=DIMAG(zped)
+        fnorm(itmp1+2)=ABS(zped)
+        fnorm(itmp1+3)=cang(zped)
+        IF (iped == 2) GO TO 61
+        IF (fnorm(itmp1+2) > zpnorm) zpnorm=fnorm(itmp1+2)
+61      CONTINUE
+        !
+        !     PRINTING STRUCTURE CURRENTS
+        !
+        IF(n == 0)GO TO 308
+        IF (iptflg == (-1)) GO TO 63
+        IF (iptflg > 0) GO TO 62
+        WRITE(3,161)
+        WRITE(3,162)
+        GO TO 63
 
-62  IF (iptflg == 3.OR.inc > 1) GO TO 63
-    WRITE(3,163)  xpr3,hpol(ixtyp),xpr6
-63  ploss=0.
-    itmp1=0
-    jump=iptflg+1
+62      IF (iptflg == 3.OR.inc > 1) GO TO 63
+            WRITE(3,163)  xpr3,hpol(ixtyp),xpr6
+63      ploss=0.
+        itmp1=0
+        jump=iptflg+1
 
-    DO  i=1,n
-      curi=cur(i)*wlam
-      cmag=ABS(curi)
-      ph=cang(curi)
-      IF (nload == 0.AND.nlodf == 0) GO TO 64
-      IF (ABS(dREAL(zarray(i))) < 1.d-20) GO TO 64
-      ploss=ploss+.5*cmag*cmag*dREAL(zarray(i))*si(i)
-64    IF (jump < 0) THEN
-        GO TO    68
-      ELSE IF (jump == 0) THEN
-        CYCLE                 ! HWH was missing target of GO TO 69
-      END IF
-65    IF (iptag == 0) GO TO 66
-      IF (itag(i) /= iptag) CYCLE
-66    itmp1=itmp1+1
-      IF (itmp1 < iptagf.OR.itmp1 > iptagt) CYCLE
-      IF (iptflg == 0) GO TO 68
-      IF (iptflg < 2.OR.inc > normf) GO TO 67
-      fnorm(inc)=cmag
-      isave=i
-67    IF (iptflg /= 3) WRITE(3,164)  xpr1,xpr2,cmag,ph,i
-      CYCLE
+        DO  i=1,n
+          curi=cur(i)*wlam
+          cmag=ABS(curi)
+          ph=cang(curi)
+          IF (nload == 0.AND.nlodf == 0) GO TO 64
+          IF (ABS(dREAL(zarray(i))) < 1.d-20) GO TO 64
+          ploss=ploss+.5*cmag*cmag*dREAL(zarray(i))*si(i)
+64        IF (jump < 0) THEN
+            GO TO    68
+          ELSE IF (jump == 0) THEN
+            CYCLE                 ! HWH was missing target of GO TO 69
+          END IF
+65        IF (iptag == 0) GO TO 66
+          IF (itag(i) /= iptag) CYCLE
+66        itmp1=itmp1+1
+          IF (itmp1 < iptagf.OR.itmp1 > iptagt) CYCLE
+          IF (iptflg == 0) GO TO 68
+          IF (iptflg < 2.OR.inc > normf) GO TO 67
+          fnorm(inc)=cmag
+          isave=i
+67        IF (iptflg /= 3) WRITE(3,164)  xpr1,xpr2,cmag,ph,i
+          CYCLE
 
-68    WRITE(3,165)  i,itag(i),x(i),y(i),z(i),si(i),curi,cmag,ph
-      IF(iplp1 /= 1) CYCLE
-      IF(iplp2 == 1) WRITE(8,*) curi
-      IF(iplp2 == 2) WRITE(8,*) cmag,ph
-    END DO
+68        WRITE(3,165)  i,itag(i),x(i),y(i),z(i),si(i),curi,cmag,ph
+          IF(iplp1 /= 1) CYCLE
+          IF(iplp2 == 1) WRITE(8,*) curi
+          IF(iplp2 == 2) WRITE(8,*) cmag,ph
+        END DO
 
-IF(iptflq == (-1))GO TO 308
-WRITE(3,315)
-itmp1=0
-fr=1.d-6/fmhz
-DO  i=1,n
-  IF(iptflq == (-2))GO TO 318
-  IF(iptaq == 0)GO TO 317
-  IF(itag(i) /= iptaq)CYCLE
-  317   itmp1=itmp1+1
-  IF(itmp1 < iptaqf.OR.itmp1 > iptaqt)CYCLE
-  318   curi=fr*DCMPLX(-bii(i),bir(i))
-  cmag=ABS(curi)
-  ph=cang(curi)
-  WRITE(3,165) i,itag(i),x(i),y(i),z(i),si(i),curi,cmag,ph
-END DO
-308   IF(m == 0)GO TO 310
-WRITE(3,197)
-j=n-2
-itmp1=ld+1
-DO  i=1,m
-  j=j+3
-  itmp1=itmp1-1
-  ex=cur(j)
-  ey=cur(j+1)
-  ez=cur(j+2)
-  eth=ex*t1x(itmp1)+ey*t1y(itmp1)+ez*t1z(itmp1)
-  eph=ex*t2x(itmp1)+ey*t2y(itmp1)+ez*t2z(itmp1)
-  ethm=ABS(eth)
-  etha=cang(eth)
-  ephm=ABS(eph)
-  epha=cang(eph)
-!309   WRITE(3,198) I,X(ITMP1),Y(ITMP1),Z(ITMP1),ETHM,ETHA,EPHM,EPHA,E
-!     1X,EY, EZ
-!***
-  WRITE(3,198) i,x(itmp1),y(itmp1),z(itmp1),ethm,etha,ephm,epha,ex,ey,ez
-  IF(iplp1 /= 1) CYCLE
-  IF(iplp3 == 1) WRITE(8,*) ex
-  IF(iplp3 == 2) WRITE(8,*) ey
-  IF(iplp3 == 3) WRITE(8,*) ez
-  IF(iplp3 == 4) WRITE(8,*) ex,ey,ez
-END DO
-!***
-310   IF (ixtyp /= 0.AND.ixtyp /= 5) GO TO 70
-tmp1=pin-pnls-ploss
-tmp2=100.*tmp1/pin
-WRITE(3,166)  pin,tmp1,ploss,pnls,tmp2
-70    CONTINUE
-igo=4
-IF(ncoup > 0)CALL couple(cur,wlam)
-IF (iflow /= 7) GO TO 71
-IF (ixtyp > 0.AND.ixtyp < 4) GO TO 113
-IF (nfrq /= 1) GO TO 120
-WRITE(3,135)
-GO TO 14
-71    igo=5
-!
-!     NEAR FIELD CALCULATION
-!
-72    IF (near == (-1)) GO TO 78
-CALL nfpat
-IF (mhz == nfrq) near=-1
-IF (nfrq /= 1) GO TO 78
-WRITE(3,135)
-GO TO 14
-!
-!     STANDARD FAR FIELD CALCULATION
-!
-78    IF(ifar == -1)GO TO 113
-pinr=pin
-pnlr=pnls
-CALL rdpat
-113   IF (ixtyp == 0.OR.ixtyp >= 4) GO TO 119
-nthic=nthic+1
-inc=inc+1
-xpr1=xpr1+xpr4
-IF (nthic <= nthi) GO TO 54
-nthic=1
-xpr1=thetis
-xpr2=xpr2+xpr5
-nphic=nphic+1
-IF (nphic <= nphi) GO TO 54
-nphic=1
-xpr2=phiss
-IF (iptflg < 2) GO TO 119
-!     NORMALIZED RECEIVING PATTERN PRINTED
-itmp1=nthi*nphi
-IF (itmp1 <= normf) GO TO 114
-itmp1=normf
-WRITE(3,181)
-114   tmp1=fnorm(1)
-DO  j=2,itmp1
-  IF (fnorm(j) > tmp1) tmp1=fnorm(j)
-END DO
-WRITE(3,182)  tmp1,xpr3,hpol(ixtyp),xpr6,isave
-DO  j=1,nphi
-  itmp2=nthi*(j-1)
-  DO  i=1,nthi
-    itmp3=i+itmp2
-    IF (itmp3 > itmp1) EXIT
-    tmp2=fnorm(itmp3)/tmp1
-    tmp3=db20(tmp2)
-    WRITE(3,183)  xpr1,xpr2,tmp3,tmp2
-    xpr1=xpr1+xpr4
-  END DO
-  117   xpr1=thetis
-  xpr2=xpr2+xpr5
-END DO
-xpr2=phiss
-119   IF (mhz == nfrq) ifar=-1
-IF (nfrq /= 1) GO TO 120
-WRITE(3,135)
-GO TO 14
-120   mhz=mhz+1
-IF (mhz <= nfrq) GO TO 42
-IF (iped == 0) GO TO 123
-IF(nvqd < 1)GO TO 199
-WRITE(3,184) ivqd(nvqd),zpnorm
-GO TO 204
-199   WRITE(3,184)  isant(nsant),zpnorm
-204   itmp1=nfrq
-IF (itmp1 <= (normf/4)) GO TO 121
-itmp1=normf/4
-WRITE(3,185)
-121   IF (ifrq == 0) tmp1=fmhz-(nfrq-1)*delfrq
-IF (ifrq == 1) tmp1=fmhz/(delfrq**(nfrq-1))
-DO  i=1,itmp1
-  itmp2=i+4*(i-1)
-  tmp2=fnorm(itmp2)/zpnorm
-  tmp3=fnorm(itmp2+1)/zpnorm
-  tmp4=fnorm(itmp2+2)/zpnorm
-  tmp5=fnorm(itmp2+3)
-  WRITE(3,186)  tmp1,fnorm(itmp2),fnorm(itmp2+1),fnorm(itmp2+2),  &
-      fnorm(itmp2+3),tmp2,tmp3,tmp4,tmp5
-  IF (ifrq == 0) tmp1=tmp1+delfrq
-  IF (ifrq == 1) tmp1=tmp1*delfrq
-END DO
-WRITE(3,135)
-123   CONTINUE
-nfrq=1
-mhz=1
-GO TO 14
+        IF(iptflq == (-1))GO TO 308
+        WRITE(3,315)
+        itmp1=0
+        fr=1.d-6/fmhz
+        DO  i=1,n
+          IF(iptflq == (-2))GO TO 318
+          IF(iptaq == 0)GO TO 317
+          IF(itag(i) /= iptaq)CYCLE
+317       itmp1=itmp1+1
+          IF(itmp1 < iptaqf.OR.itmp1 > iptaqt)CYCLE
+318       curi=fr*DCMPLX(-bii(i),bir(i))
+          cmag=ABS(curi)
+          ph=cang(curi)
+          WRITE(3,165) i,itag(i),x(i),y(i),z(i),si(i),curi,cmag,ph
+        END DO
+308     IF(m == 0)GO TO 310
+        WRITE(3,197)
+        j=n-2
+        itmp1=ld+1
+        DO  i=1,m
+          j=j+3
+          itmp1=itmp1-1
+          ex=cur(j)
+          ey=cur(j+1)
+          ez=cur(j+2)
+          eth=ex*t1x(itmp1)+ey*t1y(itmp1)+ez*t1z(itmp1)
+          eph=ex*t2x(itmp1)+ey*t2y(itmp1)+ez*t2z(itmp1)
+          ethm=ABS(eth)
+          etha=cang(eth)
+          ephm=ABS(eph)
+          epha=cang(eph)
+          !309   WRITE(3,198) I,X(ITMP1),Y(ITMP1),Z(ITMP1),ETHM,ETHA,EPHM,EPHA,E
+          !     1X,EY, EZ
+          WRITE(3,198) i,x(itmp1),y(itmp1),z(itmp1),ethm,etha,ephm,epha,ex,ey,ez
+          IF(iplp1 /= 1) CYCLE
+          IF(iplp3 == 1) WRITE(8,*) ex
+          IF(iplp3 == 2) WRITE(8,*) ey
+          IF(iplp3 == 3) WRITE(8,*) ez
+          IF(iplp3 == 4) WRITE(8,*) ex,ey,ez
+        END DO
+310     IF (ixtyp /= 0.AND.ixtyp /= 5) GO TO 70
+        tmp1=pin-pnls-ploss
+        tmp2=100.*tmp1/pin
+        WRITE(3,166)  pin,tmp1,ploss,pnls,tmp2
+70      CONTINUE
+        igo=4
+        IF(ncoup > 0)CALL couple(cur,wlam)
+        IF (iflow /= 7) GO TO 71
+        IF (ixtyp > 0.AND.ixtyp < 4) GO TO 113
+        IF (nfrq /= 1) GO TO 120
+        WRITE(3,135)
+        GO TO 14
+71      igo=5
+        !
+        !     NEAR FIELD CALCULATION
+        !
+72      IF (near == (-1)) GO TO 78
+        CALL nfpat
+        IF (mhz == nfrq) near=-1
+        IF (nfrq /= 1) GO TO 78
+        WRITE(3,135)
+        GO TO 14
+        !
+        !     STANDARD FAR FIELD CALCULATION
+        !
+78      IF(ifar == -1)GO TO 113
+        pinr=pin
+        pnlr=pnls
+        CALL rdpat
+113     IF (ixtyp == 0.OR.ixtyp >= 4) GO TO 119
+        nthic=nthic+1
+        inc=inc+1
+        xpr1=xpr1+xpr4
+        IF (nthic <= nthi) GO TO 54
+        nthic=1
+        xpr1=thetis
+        xpr2=xpr2+xpr5
+        nphic=nphic+1
+        IF (nphic <= nphi) GO TO 54
+        nphic=1
+        xpr2=phiss
+        IF (iptflg < 2) GO TO 119
+        !     NORMALIZED RECEIVING PATTERN PRINTED
+        itmp1=nthi*nphi
+        IF (itmp1 <= normf) GO TO 114
+        itmp1=normf
+        WRITE(3,181)
+114     tmp1=fnorm(1)
+        DO  j=2,itmp1
+          IF (fnorm(j) > tmp1) tmp1=fnorm(j)
+        END DO
+        WRITE(3,182)  tmp1,xpr3,hpol(ixtyp),xpr6,isave
+        DO  j=1,nphi
+          itmp2=nthi*(j-1)
+          DO  i=1,nthi
+            itmp3=i+itmp2
+            IF (itmp3 > itmp1) EXIT
+            tmp2=fnorm(itmp3)/tmp1
+            tmp3=db20(tmp2)
+            WRITE(3,183)  xpr1,xpr2,tmp3,tmp2
+            xpr1=xpr1+xpr4
+          END DO
+117       xpr1=thetis
+          xpr2=xpr2+xpr5
+        END DO
+        xpr2=phiss
+119     IF (mhz == nfrq) ifar=-1
+        IF (nfrq /= 1) GO TO 120
+        WRITE(3,135)
+        GO TO 14
+
+120     mhz=mhz+1
+        IF (mhz <= nfrq) GO TO 42
+        IF (iped == 0) GO TO 123
+        IF(nvqd < 1)GO TO 199
+        WRITE(3,184) ivqd(nvqd),zpnorm
+        GO TO 204
+
+199     WRITE(3,184)  isant(nsant),zpnorm
+204     itmp1=nfrq
+        IF (itmp1 <= (normf/4)) GO TO 121
+        itmp1=normf/4
+        WRITE(3,185)
+121     IF (ifrq == 0) tmp1=fmhz-(nfrq-1)*delfrq
+        IF (ifrq == 1) tmp1=fmhz/(delfrq**(nfrq-1))
+        DO  i=1,itmp1
+          itmp2=i+4*(i-1)
+          tmp2=fnorm(itmp2)/zpnorm
+          tmp3=fnorm(itmp2+1)/zpnorm
+          tmp4=fnorm(itmp2+2)/zpnorm
+          tmp5=fnorm(itmp2+3)
+          WRITE(3,186)  tmp1,fnorm(itmp2),fnorm(itmp2+1),fnorm(itmp2+2),  &
+              fnorm(itmp2+3),tmp2,tmp3,tmp4,tmp5
+          IF (ifrq == 0) tmp1=tmp1+delfrq
+          IF (ifrq == 1) tmp1=tmp1*delfrq
+        END DO
+        WRITE(3,135)
+123     CONTINUE
+        nfrq=1
+        mhz=1
+        GO TO 14
+
+
 125   FORMAT (a2,19A4)
 126   FORMAT  ('1')
 127   FORMAT (///,33X,'*********************************************',  &
@@ -1233,7 +1207,7 @@ GO TO 14
 393   FORMAT(/,' error in ground PARAMETERs -',/, &
     ' COMPLEX dielectric constant from FILE is',1P,2E12.5,/,32X,'REQUESTED',2E12.5)
 900   FORMAT(' ERROR OPENING SOMMERFELD GROUND FILE - SOM2D.NEC')
-!END
+
 !--------------------------------------------------------------------------------
 
 CONTAINS
@@ -1265,183 +1239,216 @@ SUBROUTINE show_program_info()
     PRINT *, ''
 
 END SUBROUTINE show_program_info
+!----------------------------------------------------------------------------
+
+SUBROUTINE get_filenames(infile, outfile)
+        CHARACTER(LEN=*), INTENT(OUT)          :: infile
+        CHARACTER(LEN=*), INTENT(OUT)          :: outfile
+
+706     CONTINUE
+        WRITE(*,700)
+        READ(*,701,ERR=706,END=708) infile
+        OPEN (UNIT=2,FILE=infile,STATUS='OLD',ERR=702)
+
+707     CONTINUE
+        WRITE(*,703)
+        READ(*,701,ERR=707,END=706) outfile
+        OPEN (UNIT=3,FILE=outfile,STATUS='UNKNOWN',ERR=704)
+        GO TO 705
+
+702     PRINT *, 'Error opening input-file:',infile
+        GO TO 706
+
+704     PRINT *, 'Error opening output-file:',outfile
+        GO TO 707
+
+708     STOP
+
+705     CONTINUE
+        PRINT *,''
+
+700     FORMAT(' ENTER NAME OF INPUT FILE >',$)
+701     FORMAT(a)
+703     FORMAT(' ENTER NAME OF OUTPUT FILE >',$)
+END SUBROUTINE get_filenames
 
 ! ################## START OF SOM2D INCLUDE ########################
 
-!***********************************************************************
 !----------------------------------------------------------------------------
 
 SUBROUTINE som2d (rmhz, repr, rsig)
-!***********************************************************************
-USE somset
+        USE somset
 
-IMPLICIT REAL(NEC2REAL)(a-h,o-z)
+        IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-REAL(NEC2REAL), INTENT(IN)                         :: rmhz
-REAL(NEC2REAL), INTENT(IN)                         :: repr
-REAL(NEC2REAL), INTENT(IN)                         :: rsig
-!***
-COMPLEX*16 ck1,ck1sq,erv,ezv,erh,eph,cksm,ct1,ct2,ct3,cl1,cl2,con
-!    ar1,ar2,ar3,epscf
-COMMON /evlcom/ cksm,ct1,ct2,ct3,ck1,ck1sq,ck2,ck2sq,tkmag,tsmag,ck1r,zph,rho,jh
-!COMMON /ggrid/ ar1(11,10,4),ar2(17,5,4),ar3(9,8,4),epscf,dxa(3),dya(3),xsa(3),ysa(3),nxa(3),nya(3)
+        REAL(NEC2REAL), INTENT(IN)                         :: rmhz
+        REAL(NEC2REAL), INTENT(IN)                         :: repr
+        REAL(NEC2REAL), INTENT(IN)                         :: rsig
+        !***
+        COMPLEX*16 ck1,ck1sq,erv,ezv,erh,eph,cksm,ct1,ct2,ct3,cl1,cl2,con
+        COMMON /evlcom/ cksm,ct1,ct2,ct3,ck1,ck1sq,ck2,ck2sq,tkmag,tsmag,ck1r,zph,rho,jh
 
-CHARACTER (LEN=3), DIMENSION(4)  :: lcomp = (/'ERV','EZV','ERH','EPH'/)
+        CHARACTER (LEN=3), DIMENSION(4)  :: lcomp = (/'ERV','EZV','ERH','EPH'/)
 
-epr = repr
-sig = rsig
-fmhz = rmhz
-ipt=0            ! No printing
+        epr = repr
+        sig = rsig
+        fmhz = rmhz
+        ipt=0            ! No printing
 
-!deb  write (*,100) fmhz,epr,sig
-!deb  100 format (' Som2d: Freq=',d10.5,' Diel=',d10.5,' Cond=',d10.5)
+        !deb  write (*,100) fmhz,epr,sig
+        !deb  100 format (' Som2d: Freq=',d10.5,' Diel=',d10.5,' Cond=',d10.5)
 
-!***
-IF (sig < 0.) GO TO 1
-wlam=299.8/fmhz
-epscf=DCMPLX(epr,-sig*wlam*59.96)
-GO TO 2
-1     epscf=DCMPLX(epr,sig)
-2     CONTINUE
-ck2=6.283185308
-ck2sq=ck2*ck2
-!
-!     SOMMERFELD INTEGRAL EVALUATION USES EXP(-JWT), NEC USES EXP(+JWT),
-!     HENCE NEED CONJG(EPSCF).  CONJUGATE OF FIELDS OCCURS IN SUBROUTINE
-!     EVLUA.
-!
-ck1sq=ck2sq*DCONJG(epscf)
-ck1=SQRT(ck1sq)
-ck1r=dREAL(ck1)
-tkmag=100.*ABS(ck1)
-tsmag=100.*ck1*DCONJG(ck1)
-cksm=ck2sq/(ck1sq+ck2sq)
-ct1=.5*(ck1sq-ck2sq)
-erv=ck1sq*ck1sq
-ezv=ck2sq*ck2sq
-ct2=.125*(erv-ezv)
-erv=erv*ck1sq
-ezv=ezv*ck2sq
-ct3=.0625*(erv-ezv)
-!
-!     LOOP OVER 3 GRID REGIONS
-!
-DO  k=1,3
-  nr=nxa(k)
-  nth=nya(k)
-  dr=dxa(k)
-  dth=dya(k)
-  r=xsa(k)-dr
-  irs=1
-  IF (k == 1) r=xsa(k)
-  IF (k == 1) irs=2
-!
-!     LOOP OVER R.  (R=SQRT(RHO**2 + (Z+H)**2))
-!
-  DO  ir=irs,nr
-    r=r+dr
-    thet=ysa(k)-dth
-!
-!     LOOP OVER THETA.  (THETA=ATAN((Z+H)/RHO))
-!
-    DO  ith=1,nth
-      thet=thet+dth
-      rho=r*COS(thet)
-      zph=r*SIN(thet)
-      IF (rho < 1.e-7) rho=1.e-8
-      IF (zph < 1.e-7) zph=0.
-      CALL evlua (erv,ezv,erh,eph)
-      rk=ck2*r
-      con=-(0.,4.77147)*r/DCMPLX(COS(rk),-SIN(rk))
-      SELECT CASE ( k )
-        CASE (    1)
-          GO TO 3
-        CASE (    2)
-          GO TO 4
-        CASE (    3)
-          GO TO 5
-      END SELECT
-      3     ar1(ir,ith,1)=erv*con
-      ar1(ir,ith,2)=ezv*con
-      ar1(ir,ith,3)=erh*con
-      ar1(ir,ith,4)=eph*con
-      CYCLE
-      4     ar2(ir,ith,1)=erv*con
-      ar2(ir,ith,2)=ezv*con
-      ar2(ir,ith,3)=erh*con
-      ar2(ir,ith,4)=eph*con
-      CYCLE
-      5     ar3(ir,ith,1)=erv*con
-      ar3(ir,ith,2)=ezv*con
-      ar3(ir,ith,3)=erh*con
-      ar3(ir,ith,4)=eph*con
-    END DO
-  END DO
-END DO
-!
-!     FILL GRID 1 FOR R EQUAL TO ZERO.
-!
-cl2=-(0.,188.370)*(epscf-1.)/(epscf+1.)
-cl1=cl2/(epscf+1.)
-ezv=epscf*cl1
-thet=-dth
-nth=nya(1)
-DO  ith=1,nth
-  thet=thet+dth
-  IF (ith == nth) GO TO 7
-  tfac2=COS(thet)
-  tfac1=(1.-SIN(thet))/tfac2
-  tfac2=tfac1/tfac2
-  erv=epscf*cl1*tfac1
-  erh=cl1*(tfac2-1.)+cl2
-  eph=cl1*tfac2-cl2
-  GO TO 8
-  7     erv=0.
-  erh=cl2-.5*cl1
-  eph=-erh
-  8     ar1(1,ith,1)=erv
-  ar1(1,ith,2)=ezv
-  ar1(1,ith,3)=erh
-  ar1(1,ith,4)=eph
-END DO
-!
-!     WRITE GRID ON TAPE21
-!
-IF (ipt == 0) RETURN
-!
-!     PRINT GRID
-!
-OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='UNKNOWN',ERR=14)
-WRITE(3,17) epscf
-DO  k=1,3
-  nr=nxa(k)
-  nth=nya(k)
-  WRITE(9,18) k,xsa(k),dxa(k),nr,ysa(k),dya(k),nth
-  DO  l=1,4
-    WRITE(9,19) lcomp(l)
-    DO  ir=1,nr
-      SELECT CASE ( k )
-        CASE (    1)
-          GO TO 10
-        CASE (    2)
-          GO TO 11
-        CASE (    3)
-          GO TO 12
-      END SELECT
-      10    WRITE(9,20) ir,(ar1(ir,ith,l),ith=1,nth)
-      CYCLE
-      11    WRITE(9,20) ir,(ar2(ir,ith,l),ith=1,nth)
-      CYCLE
-      12    WRITE(9,20) ir,(ar3(ir,ith,l),ith=1,nth)
-    END DO
-  END DO
-END DO
-14    RETURN
-!
+        !***
+        IF (sig < 0.) GO TO 1
+        wlam=299.8/fmhz
+        epscf=DCMPLX(epr,-sig*wlam*59.96)
+        GO TO 2
+
+1       epscf=DCMPLX(epr,sig)
+2       CONTINUE
+        ck2=6.283185308
+        ck2sq=ck2*ck2
+        !
+        !     SOMMERFELD INTEGRAL EVALUATION USES EXP(-JWT), NEC USES EXP(+JWT),
+        !     HENCE NEED CONJG(EPSCF).  CONJUGATE OF FIELDS OCCURS IN SUBROUTINE
+        !     EVLUA.
+        !
+        ck1sq=ck2sq*DCONJG(epscf)
+        ck1=SQRT(ck1sq)
+        ck1r=dREAL(ck1)
+        tkmag=100.*ABS(ck1)
+        tsmag=100.*ck1*DCONJG(ck1)
+        cksm=ck2sq/(ck1sq+ck2sq)
+        ct1=.5*(ck1sq-ck2sq)
+        erv=ck1sq*ck1sq
+        ezv=ck2sq*ck2sq
+        ct2=.125*(erv-ezv)
+        erv=erv*ck1sq
+        ezv=ezv*ck2sq
+        ct3=.0625*(erv-ezv)
+        !
+        !     LOOP OVER 3 GRID REGIONS
+        !
+        DO  k=1,3
+          nr=nxa(k)
+          nth=nya(k)
+          dr=dxa(k)
+          dth=dya(k)
+          r=xsa(k)-dr
+          irs=1
+          IF (k == 1) r=xsa(k)
+          IF (k == 1) irs=2
+          !
+          !     LOOP OVER R.  (R=SQRT(RHO**2 + (Z+H)**2))
+          !
+          DO  ir=irs,nr
+            r=r+dr
+            thet=ysa(k)-dth
+            !
+            !     LOOP OVER THETA.  (THETA=ATAN((Z+H)/RHO))
+            !
+            DO  ith=1,nth
+              thet=thet+dth
+              rho=r*COS(thet)
+              zph=r*SIN(thet)
+              IF (rho < 1.e-7) rho=1.e-8
+              IF (zph < 1.e-7) zph=0.
+              CALL evlua (erv,ezv,erh,eph)
+              rk=ck2*r
+              con=-(0.,4.77147)*r/DCMPLX(COS(rk),-SIN(rk))
+              SELECT CASE ( k )
+                CASE (    1)
+                  GO TO 3
+                CASE (    2)
+                  GO TO 4
+                CASE (    3)
+                  GO TO 5
+              END SELECT
+
+3             ar1(ir,ith,1)=erv*con
+              ar1(ir,ith,2)=ezv*con
+              ar1(ir,ith,3)=erh*con
+              ar1(ir,ith,4)=eph*con
+              CYCLE
+
+4             ar2(ir,ith,1)=erv*con
+              ar2(ir,ith,2)=ezv*con
+              ar2(ir,ith,3)=erh*con
+              ar2(ir,ith,4)=eph*con
+              CYCLE
+
+5             ar3(ir,ith,1)=erv*con
+              ar3(ir,ith,2)=ezv*con
+              ar3(ir,ith,3)=erh*con
+              ar3(ir,ith,4)=eph*con
+            END DO
+          END DO
+        END DO
+        !
+        !     FILL GRID 1 FOR R EQUAL TO ZERO.
+        !
+        cl2=-(0.,188.370)*(epscf-1.)/(epscf+1.)
+        cl1=cl2/(epscf+1.)
+        ezv=epscf*cl1
+        thet=-dth
+        nth=nya(1)
+        DO  ith=1,nth
+          thet=thet+dth
+          IF (ith == nth) GO TO 7
+          tfac2=COS(thet)
+          tfac1=(1.-SIN(thet))/tfac2
+          tfac2=tfac1/tfac2
+          erv=epscf*cl1*tfac1
+          erh=cl1*(tfac2-1.)+cl2
+          eph=cl1*tfac2-cl2
+          GO TO 8
+
+7         erv=0.
+          erh=cl2-.5*cl1
+          eph=-erh
+8         ar1(1,ith,1)=erv
+          ar1(1,ith,2)=ezv
+          ar1(1,ith,3)=erh
+          ar1(1,ith,4)=eph
+        END DO
+        !
+        !     WRITE GRID ON TAPE21
+        !
+        IF (ipt == 0) RETURN
+        !
+        !     PRINT GRID
+        !
+        OPEN (UNIT=9,FILE='SOM2D.OUT',STATUS='UNKNOWN',ERR=14)
+        WRITE(3,17) epscf
+        DO  k=1,3
+          nr=nxa(k)
+          nth=nya(k)
+          WRITE(9,18) k,xsa(k),dxa(k),nr,ysa(k),dya(k),nth
+          DO  l=1,4
+            WRITE(9,19) lcomp(l)
+            DO  ir=1,nr
+              SELECT CASE ( k )
+                CASE (    1)
+                  GO TO 10
+                CASE (    2)
+                  GO TO 11
+                CASE (    3)
+                  GO TO 12
+              END SELECT
+10      WRITE(9,20) ir,(ar1(ir,ith,l),ith=1,nth)
+              CYCLE
+11      WRITE(9,20) ir,(ar2(ir,ith,l),ith=1,nth)
+              CYCLE
+12      WRITE(9,20) ir,(ar3(ir,ith,l),ith=1,nth)
+            END DO
+          END DO
+        END DO
+14      RETURN
+
 16    FORMAT (' time=',1PE12.5)
 17    FORMAT ('1NEC ground interpolation grid',/,' dielectric constant=',1P2E12.5)
 18    FORMAT (///,5H grid,i2,/,4X,5HR(1)=,f7.4,4X,3HDR=,f7.4,4X,3HNR=,i3,  &
-    /,9H thet(1)=,f7.4,3X,4HDTH=,f7.4,3X,4HNTH=,i3,//)
+              /,9H thet(1)=,f7.4,3X,4HDTH=,f7.4,3X,4HNTH=,i3,//)
 19    FORMAT (///,1X,a3)
 20    FORMAT (4H ir=,i3,/,1X,(1P10E12.5))
 22    FORMAT(' STARTING COMPUTATION OF SOMMERFELD INTEGRAL TABLES')
