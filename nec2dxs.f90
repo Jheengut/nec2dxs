@@ -6859,8 +6859,9 @@ COMPLEX*16  a,b,c,d,fx1,fx2,fx3,fx4,p1,p2,p3,p4,a11,a12  &
     ,c13,c14,c21,c22,c23,c24,c31,c32,c33,c34,c41,c42,c43,c44,d11,d12  &
     ,d13,d14,d21,d22,d23,d24,d31,d32,d33,d34,d41,d42,d43,d44
 COMPLEX*16 arl1,arl2,arl3
-DIMENSION nda(3), ndpa(3)
+
 DIMENSION a(4,4), b(4,4), c(4,4), d(4,4), arl1(1), arl2(1), arl3(1 )
+
 EQUIVALENCE (a(1,1),a11), (a(1,2),a12), (a(1,3),a13), (a(1,4),a14)
 EQUIVALENCE (a(2,1),a21), (a(2,2),a22), (a(2,3),a23), (a(2,4),a24)
 EQUIVALENCE (a(3,1),a31), (a(3,2),a32), (a(3,3),a33), (a(3,4),a34)
@@ -6877,9 +6878,23 @@ EQUIVALENCE (d(1,1),d11), (d(1,2),d12), (d(1,3),d13), (d(1,4),d14)
 EQUIVALENCE (d(2,1),d21), (d(2,2),d22), (d(2,3),d23), (d(2,4),d24)
 EQUIVALENCE (d(3,1),d31), (d(3,2),d32), (d(3,3),d33), (d(3,4),d34)
 EQUIVALENCE (d(4,1),d41), (d(4,2),d42), (d(4,3),d43), (d(4,4),d44)
+
 EQUIVALENCE (arl1,ar1), (arl2,ar2), (arl3,ar3), (xs2,xsa(2)), (ys3 ,ysa(3))
-DATA ixs,iys,igrs/-10,-10,-10/,dx,dy,xs,ys/1.,1.,0.,0./
-DATA nda/11,17,9/,ndpa/110,85,72/,ixeg,iyeg/0,0/
+
+INTEGER                         :: ixs  = -10
+INTEGER                         :: iys  = -10
+INTEGER                         :: igrs = -10
+
+REAL*8                          :: dx   = 1.0
+REAL*8                          :: dy   = 1.0
+REAL*8                          :: xs   = 0.0
+REAL*8                          :: ys   = 0.0
+
+INTEGER, DIMENSION(3)           :: nda  = (/11,17,9/)
+INTEGER, DIMENSION(3)           :: ndpa = (/110,85,72/)
+INTEGER                         :: ixeg = 0
+INTEGER                         :: iyeg = 0
+
 
 IF (x < xs.OR.y < ys) GO TO 1
 ix=INT((x-xs)/dx)+1
@@ -7788,25 +7803,23 @@ RETURN
 END SUBROUTINE move
 
 !----------------------------------------------------------------------------
-
-SUBROUTINE nefld (xob,yob,zob,ex,ey,ez)
-! ***
-!     DOUBLE PRECISION 6/4/85
-!
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
-
-REAL*8, INTENT(IN)                         :: xob
-REAL*8, INTENT(IN)                         :: yob
-REAL*8, INTENT(IN)                         :: zob
-COMPLEX*16, INTENT(OUT)                  :: ex
-COMPLEX*16, INTENT(OUT)                  :: ey
-COMPLEX*16, INTENT(OUT)                  :: ez
-! ***
 !
 !     NEFLD COMPUTES THE NEAR FIELD AT SPECIFIED POINTS IN SPACE AFTER
 !     THE STRUCTURE CURRENTS HAVE BEEN COMPUTED.
 !
+SUBROUTINE nefld (xob,yob,zob,ex,ey,ez)
+use nec2dpar
+IMPLICIT REAL*8(a-h,o-z)
+
+REAL*8, INTENT(IN)                       :: xob
+REAL*8, INTENT(IN)                       :: yob
+REAL*8, INTENT(IN)                       :: zob
+COMPLEX*16, INTENT(OUT)                  :: ex
+COMPLEX*16, INTENT(OUT)                  :: ey
+COMPLEX*16, INTENT(OUT)                  :: ez
+
+INTEGER                                  :: ip
+
 COMPLEX*16  cur,acx,bcx,ccx,exk,eyk,ezk,exs,eys,ezs,exc  &
     ,eyc,ezc,zrati,zrati2,t1,frati
 COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
@@ -8308,15 +8321,13 @@ RETURN
 64    FORMAT (1X,i5,2H *,i4,1P,9E12.5)
 END SUBROUTINE netwk
 !----------------------------------------------------------------------------
-
-SUBROUTINE nfpat
-! ***
-!     DOUBLE PRECISION 6/4/85
-!
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
-! ***
+! 
 !     COMPUTE NEAR E OR H FIELDS OVER A RANGE OF POINTS
+!
+SUBROUTINE nfpat
+use nec2dpar
+
+IMPLICIT REAL*8(a-h,o-z)
 COMPLEX*16 ex,ey,ez
 COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
     alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
@@ -8324,10 +8335,11 @@ COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
 COMMON/fpat/thets,phis,dth,dph,rfld,gnor,clt,cht,epsr2,sig2,  &
     xpr6,pinr,pnlr,ploss,xnr,ynr,znr,dxnr,dynr,dznr,nth,nph,ipd,iavp,  &
     inor,iax,ixtyp,near,nfeh,nrx,nry,nrz
-!***
+
 COMMON /plot/ iplp1,iplp2,iplp3,iplp4
-!***
-DATA ta/1.745329252D-02/
+
+REAL*8                   :: ta = 1.745329252D-02
+
 IF (nfeh == 1) GO TO 1
 WRITE(3,10)
 GO TO 2
@@ -8533,223 +8545,265 @@ hz=con*(eypx-eymx-expy+exmy)/(2.*delt)
 RETURN
 END SUBROUTINE nhfld
 !----------------------------------------------------------------------------
-
-SUBROUTINE patch (nx,ny,x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4)
-! ***
-!     DOUBLE PRECISION 6/4/85
 !
-use nec2dpar
-IMPLICIT REAL*8(a-h,o-z)
-
-INTEGER, INTENT(IN)                      :: nx
-INTEGER, INTENT(IN)                      :: ny
-REAL*8, INTENT(IN)                         :: x1
-REAL*8, INTENT(IN)                         :: y1
-REAL*8, INTENT(IN)                         :: z1
-REAL*8, INTENT(IN)                         :: x2
-REAL*8, INTENT(IN)                         :: y2
-REAL*8, INTENT(IN)                         :: z2
-REAL*8, INTENT(IN)                         :: x3
-REAL*8, INTENT(IN)                         :: y3
-REAL*8, INTENT(IN)                         :: z3
-REAL*8, INTENT(IN)                         :: x4
-REAL*8, INTENT(IN)                         :: y4
-REAL*8, INTENT(IN)                         :: z4
-! ***
 !     PATCH GENERATES AND MODIFIES PATCH GEOMETRY DATA
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
-COMMON /angl/ salp(maxseg)
-DIMENSION t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1)
-EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), (t2y,icon2), (t2z,itag)
 !     NEW PATCHES.  FOR NX=0, NY=1,2,3,4 PATCH IS (RESPECTIVELY)
 !     ARBITRARY, RECTAGULAR, TRIANGULAR, OR QUADRILATERAL.
 !     FOR NX AND NY .GT. 0 A RECTANGULAR SURFACE IS PRODUCED WITH
 !     NX BY NY RECTANGULAR PATCHES.
-m=m+1
-mi=ld+1-m
-ntp=ny
-IF (nx > 0) ntp=2
-IF (ntp > 1) GO TO 2
-x(mi)=x1
-y(mi)=y1
-z(mi)=z1
-bi(mi)=z2
-znv=COS(x2)
-xnv=znv*COS(y2)
-ynv=znv*SIN(y2)
-znv=SIN(x2)
-xa=SQRT(xnv*xnv+ynv*ynv)
-IF (xa < 1.d-6) GO TO 1
-t1x(mi)=-ynv/xa
-t1y(mi)=xnv/xa
-t1z(mi)=0.
-GO TO 6
-1     t1x(mi)=1.
-t1y(mi)=0.
-t1z(mi)=0.
-GO TO 6
-2     s1x=x2-x1
-s1y=y2-y1
-s1z=z2-z1
-s2x=x3-x2
-s2y=y3-y2
-s2z=z3-z2
-IF (nx == 0) GO TO 3
-s1x=s1x/nx
-s1y=s1y/nx
-s1z=s1z/nx
-s2x=s2x/ny
-s2y=s2y/ny
-s2z=s2z/ny
-3     xnv=s1y*s2z-s1z*s2y
-ynv=s1z*s2x-s1x*s2z
-znv=s1x*s2y-s1y*s2x
-xa=SQRT(xnv*xnv+ynv*ynv+znv*znv)
-xnv=xnv/xa
-ynv=ynv/xa
-znv=znv/xa
-xst=SQRT(s1x*s1x+s1y*s1y+s1z*s1z)
-t1x(mi)=s1x/xst
-t1y(mi)=s1y/xst
-t1z(mi)=s1z/xst
-IF (ntp > 2) GO TO 4
-x(mi)=x1+.5*(s1x+s2x)
-y(mi)=y1+.5*(s1y+s2y)
-z(mi)=z1+.5*(s1z+s2z)
-bi(mi)=xa
-GO TO 6
-4     IF (ntp == 4) GO TO 5
-x(mi)=(x1+x2+x3)/3.
-y(mi)=(y1+y2+y3)/3.
-z(mi)=(z1+z2+z3)/3.
-bi(mi)=.5*xa
-GO TO 6
-5     s1x=x3-x1
-s1y=y3-y1
-s1z=z3-z1
-s2x=x4-x1
-s2y=y4-y1
-s2z=z4-z1
-xn2=s1y*s2z-s1z*s2y
-yn2=s1z*s2x-s1x*s2z
-zn2=s1x*s2y-s1y*s2x
-xst=SQRT(xn2*xn2+yn2*yn2+zn2*zn2)
-salpn=1./(3.*(xa+xst))
-x(mi)=(xa*(x1+x2+x3)+xst*(x1+x3+x4))*salpn
-y(mi)=(xa*(y1+y2+y3)+xst*(y1+y3+y4))*salpn
-z(mi)=(xa*(z1+z2+z3)+xst*(z1+z3+z4))*salpn
-bi(mi)=.5*(xa+xst)
-s1x=(xnv*xn2+ynv*yn2+znv*zn2)/xst
-IF (s1x > 0.9998) GO TO 6
-WRITE(3,14)
-STOP
-6     t2x(mi)=ynv*t1z(mi)-znv*t1y(mi)
-t2y(mi)=znv*t1x(mi)-xnv*t1z(mi)
-t2z(mi)=xnv*t1y(mi)-ynv*t1x(mi)
-salp(mi)=1.
-IF (nx == 0) GO TO 8
-m=m+nx*ny-1
-xn2=x(mi)-s1x-s2x
-yn2=y(mi)-s1y-s2y
-zn2=z(mi)-s1z-s2z
-xs=t1x(mi)
-ys=t1y(mi)
-zs=t1z(mi)
-xt=t2x(mi)
-yt=t2y(mi)
-zt=t2z(mi)
-mi=mi+1
-DO  iy=1,ny
-  xn2=xn2+s2x
-  yn2=yn2+s2y
-  zn2=zn2+s2z
-  DO  ix=1,nx
-    xst=ix
-    mi=mi-1
-    x(mi)=xn2+xst*s1x
-    y(mi)=yn2+xst*s1y
-    z(mi)=zn2+xst*s1z
-    bi(mi)=xa
-    salp(mi)=1.
-    t1x(mi)=xs
-    t1y(mi)=ys
-    t1z(mi)=zs
-    t2x(mi)=xt
-    t2y(mi)=yt
-    t2z(mi)=zt
-  END DO
-END DO
-8     ipsym=0
-np=n
-mp=m
-RETURN
-!     DIVIDE PATCH FOR WIRE CONNECTION
-ENTRY subph (nx,ny,x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4)
-IF (ny > 0) GO TO 10
-IF (nx == m) GO TO 10
-nxp=nx+1
-ix=ld-m
-DO  iy=nxp,m
-  ix=ix+1
-  nyp=ix-3
-  x(nyp)=x(ix)
-  y(nyp)=y(ix)
-  z(nyp)=z(ix)
-  bi(nyp)=bi(ix)
-  salp(nyp)=salp(ix)
-  t1x(nyp)=t1x(ix)
-  t1y(nyp)=t1y(ix)
-  t1z(nyp)=t1z(ix)
-  t2x(nyp)=t2x(ix)
-  t2y(nyp)=t2y(ix)
-  t2z(nyp)=t2z(ix)
-END DO
-10    mi=ld+1-nx
-xs=x(mi)
-ys=y(mi)
-zs=z(mi)
-xa=bi(mi)*.25
-xst=SQRT(xa)*.5
-s1x=t1x(mi)
-s1y=t1y(mi)
-s1z=t1z(mi)
-s2x=t2x(mi)
-s2y=t2y(mi)
-s2z=t2z(mi)
-saln=salp(mi)
-xt=xst
-yt=xst
-IF (ny > 0) GO TO 11
-mia=mi
-GO TO 12
-11    m=m+1
-mp=mp+1
-mia=ld+1-m
-12    DO  ix=1,4
-  x(mia)=xs+xt*s1x+yt*s2x
-  y(mia)=ys+xt*s1y+yt*s2y
-  z(mia)=zs+xt*s1z+yt*s2z
-  bi(mia)=xa
-  t1x(mia)=s1x
-  t1y(mia)=s1y
-  t1z(mia)=s1z
-  t2x(mia)=s2x
-  t2y(mia)=s2y
-  t2z(mia)=s2z
-  salp(mia)=saln
-  IF (ix == 2) yt=-yt
-  IF (ix == 1.OR.ix == 3) xt=-xt
-  mia=mia-1
-END DO
-m=m+3
-IF (nx <= mp) mp=mp+3
-IF (ny > 0) z(mi)=10000.
-RETURN
 !
+SUBROUTINE patch (nx,ny,x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4)
+    use nec2dpar
+
+    IMPLICIT REAL*8(a-h,o-z)
+
+    INTEGER, INTENT(IN)                      :: nx
+    INTEGER, INTENT(IN)                      :: ny
+    REAL*8, INTENT(IN)                       :: x1
+    REAL*8, INTENT(IN)                       :: y1
+    REAL*8, INTENT(IN)                       :: z1
+    REAL*8, INTENT(IN)                       :: x2
+    REAL*8, INTENT(IN)                       :: y2
+    REAL*8, INTENT(IN)                       :: z2
+    REAL*8, INTENT(IN)                       :: x3
+    REAL*8, INTENT(IN)                       :: y3
+    REAL*8, INTENT(IN)                       :: z3
+    REAL*8, INTENT(IN)                       :: x4
+    REAL*8, INTENT(IN)                       :: y4
+    REAL*8, INTENT(IN)                       :: z4
+
+    INTEGER                                  :: ix
+
+    COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
+        alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
+        itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
+    COMMON /angl/ salp(maxseg)
+    DIMENSION t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1)
+    EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), (t2y,icon2), (t2z,itag)
+
+    m=m+1
+    mi=ld+1-m
+    ntp=ny
+    IF (nx > 0) ntp=2
+    IF (ntp > 1) GO TO 2
+    x(mi)=x1
+    y(mi)=y1
+    z(mi)=z1
+    bi(mi)=z2
+    znv=COS(x2)
+    xnv=znv*COS(y2)
+    ynv=znv*SIN(y2)
+    znv=SIN(x2)
+    xa=SQRT(xnv*xnv+ynv*ynv)
+    IF (xa < 1.d-6) GO TO 1
+    t1x(mi)=-ynv/xa
+    t1y(mi)=xnv/xa
+    t1z(mi)=0.
+    GO TO 6
+1     t1x(mi)=1.
+    t1y(mi)=0.
+    t1z(mi)=0.
+    GO TO 6
+2     s1x=x2-x1
+    s1y=y2-y1
+    s1z=z2-z1
+    s2x=x3-x2
+    s2y=y3-y2
+    s2z=z3-z2
+    IF (nx == 0) GO TO 3
+    s1x=s1x/nx
+    s1y=s1y/nx
+    s1z=s1z/nx
+    s2x=s2x/ny
+    s2y=s2y/ny
+    s2z=s2z/ny
+3     xnv=s1y*s2z-s1z*s2y
+    ynv=s1z*s2x-s1x*s2z
+    znv=s1x*s2y-s1y*s2x
+    xa=SQRT(xnv*xnv+ynv*ynv+znv*znv)
+    xnv=xnv/xa
+    ynv=ynv/xa
+    znv=znv/xa
+    xst=SQRT(s1x*s1x+s1y*s1y+s1z*s1z)
+    t1x(mi)=s1x/xst
+    t1y(mi)=s1y/xst
+    t1z(mi)=s1z/xst
+    IF (ntp > 2) GO TO 4
+    x(mi)=x1+.5*(s1x+s2x)
+    y(mi)=y1+.5*(s1y+s2y)
+    z(mi)=z1+.5*(s1z+s2z)
+    bi(mi)=xa
+    GO TO 6
+
+4     IF (ntp == 4) GO TO 5
+    x(mi)=(x1+x2+x3)/3.
+    y(mi)=(y1+y2+y3)/3.
+    z(mi)=(z1+z2+z3)/3.
+    bi(mi)=.5*xa
+    GO TO 6
+
+5     s1x=x3-x1
+    s1y=y3-y1
+    s1z=z3-z1
+    s2x=x4-x1
+    s2y=y4-y1
+    s2z=z4-z1
+    xn2=s1y*s2z-s1z*s2y
+    yn2=s1z*s2x-s1x*s2z
+    zn2=s1x*s2y-s1y*s2x
+    xst=SQRT(xn2*xn2+yn2*yn2+zn2*zn2)
+    salpn=1./(3.*(xa+xst))
+    x(mi)=(xa*(x1+x2+x3)+xst*(x1+x3+x4))*salpn
+    y(mi)=(xa*(y1+y2+y3)+xst*(y1+y3+y4))*salpn
+    z(mi)=(xa*(z1+z2+z3)+xst*(z1+z3+z4))*salpn
+    bi(mi)=.5*(xa+xst)
+    s1x=(xnv*xn2+ynv*yn2+znv*zn2)/xst
+    IF (s1x > 0.9998) GO TO 6
+    WRITE(3,14)
+    STOP
+
+6     t2x(mi)=ynv*t1z(mi)-znv*t1y(mi)
+    t2y(mi)=znv*t1x(mi)-xnv*t1z(mi)
+    t2z(mi)=xnv*t1y(mi)-ynv*t1x(mi)
+    salp(mi)=1.
+    IF (nx == 0) GO TO 8
+    m=m+nx*ny-1
+    xn2=x(mi)-s1x-s2x
+    yn2=y(mi)-s1y-s2y
+    zn2=z(mi)-s1z-s2z
+    xs=t1x(mi)
+    ys=t1y(mi)
+    zs=t1z(mi)
+    xt=t2x(mi)
+    yt=t2y(mi)
+    zt=t2z(mi)
+    mi=mi+1
+    DO  iy=1,ny
+      xn2=xn2+s2x
+      yn2=yn2+s2y
+      zn2=zn2+s2z
+      DO  ix=1,nx
+        xst=ix
+        mi=mi-1
+        x(mi)=xn2+xst*s1x
+        y(mi)=yn2+xst*s1y
+        z(mi)=zn2+xst*s1z
+        bi(mi)=xa
+        salp(mi)=1.
+        t1x(mi)=xs
+        t1y(mi)=ys
+        t1z(mi)=zs
+        t2x(mi)=xt
+        t2y(mi)=yt
+        t2z(mi)=zt
+      END DO
+    END DO
+8     ipsym=0
+    np=n
+    mp=m
+    RETURN
+
 14    FORMAT (' error -- corners of quadrilateral patch DO NOT lie in a plane')
+
 END SUBROUTINE patch
+!----------------------------------------------------------------------------
+!
+!     DIVIDE PATCH FOR WIRE CONNECTION
+!
+SUBROUTINE subph (nx,ny,x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4)
+    use nec2dpar
+
+    IMPLICIT REAL*8(a-h,o-z)
+
+    INTEGER, INTENT(IN)                      :: nx
+    INTEGER, INTENT(IN)                      :: ny
+    REAL*8, INTENT(IN)                       :: x1
+    REAL*8, INTENT(IN)                       :: y1
+    REAL*8, INTENT(IN)                       :: z1
+    REAL*8, INTENT(IN)                       :: x2
+    REAL*8, INTENT(IN)                       :: y2
+    REAL*8, INTENT(IN)                       :: z2
+    REAL*8, INTENT(IN)                       :: x3
+    REAL*8, INTENT(IN)                       :: y3
+    REAL*8, INTENT(IN)                       :: z3
+    REAL*8, INTENT(IN)                       :: x4
+    REAL*8, INTENT(IN)                       :: y4
+    REAL*8, INTENT(IN)                       :: z4
+
+    INTEGER                                  :: ix
+
+    COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
+        alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
+        itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
+
+    COMMON /angl/ salp(maxseg)
+
+    DIMENSION t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1)
+
+    EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), (t2y,icon2), (t2z,itag)
+
+    IF (ny > 0) GO TO 10
+    IF (nx == m) GO TO 10
+    nxp=nx+1
+    ix=ld-m
+    DO  iy=nxp,m
+      ix=ix+1
+      nyp=ix-3
+      x(nyp)=x(ix)
+      y(nyp)=y(ix)
+      z(nyp)=z(ix)
+      bi(nyp)=bi(ix)
+      salp(nyp)=salp(ix)
+      t1x(nyp)=t1x(ix)
+      t1y(nyp)=t1y(ix)
+      t1z(nyp)=t1z(ix)
+      t2x(nyp)=t2x(ix)
+      t2y(nyp)=t2y(ix)
+      t2z(nyp)=t2z(ix)
+    END DO
+10    mi=ld+1-nx
+    xs=x(mi)
+    ys=y(mi)
+    zs=z(mi)
+    xa=bi(mi)*.25
+    xst=SQRT(xa)*.5
+    s1x=t1x(mi)
+    s1y=t1y(mi)
+    s1z=t1z(mi)
+    s2x=t2x(mi)
+    s2y=t2y(mi)
+    s2z=t2z(mi)
+    saln=salp(mi)
+    xt=xst
+    yt=xst
+    IF (ny > 0) GO TO 11
+    mia=mi
+    GO TO 12
+11    m=m+1
+    mp=mp+1
+    mia=ld+1-m
+12    DO  ix=1,4
+      x(mia)=xs+xt*s1x+yt*s2x
+      y(mia)=ys+xt*s1y+yt*s2y
+      z(mia)=zs+xt*s1z+yt*s2z
+      bi(mia)=xa
+      t1x(mia)=s1x
+      t1y(mia)=s1y
+      t1z(mia)=s1z
+      t2x(mia)=s2x
+      t2y(mia)=s2y
+      t2z(mia)=s2z
+      salp(mia)=saln
+      IF (ix == 2) yt=-yt
+      IF (ix == 1.OR.ix == 3) xt=-xt
+      mia=mia-1
+    END DO
+    m=m+3
+    IF (nx <= mp) mp=mp+3
+    IF (ny > 0) z(mi)=10000.
+    RETURN
+    !
+END SUBROUTINE subph
 !----------------------------------------------------------------------------
 
 SUBROUTINE pcint (xi,yi,zi,cabi,sabi,salpi,e)
@@ -9920,18 +9974,6 @@ END DO
 25    FORMAT (' GEOMETRY DATA ERROR--PATCH',i4,' LIES IN PLANE OF SYMMETRY')
 END SUBROUTINE reflc
 !----------------------------------------------------------------------------
-
-SUBROUTINE rom2 (a,b,sum,dmin)
-! ***
-!     DOUBLE PRECISION 6/4/85
-!
-IMPLICIT REAL*8(a-h,o-z)
-
-REAL*8, INTENT(IN)                         :: a
-REAL*8, INTENT(IN)                         :: b
-COMPLEX*16, INTENT(OUT)                  :: sum(9)
-REAL*8, INTENT(IN OUT)                     :: dmin
-! ***
 !
 !     FOR THE SOMMERFELD GROUND OPTION, ROM2 INTEGRATES OVER THE SOURCE
 !     SEGMENT TO OBTAIN THE TOTAL FIELD DUE TO GROUND.  THE METHOD OF
@@ -9939,9 +9981,23 @@ REAL*8, INTENT(IN OUT)                     :: dmin
 !     FIELD COMPONENTS - THE X, Y, AND Z COMPONENTS DUE TO CONSTANT,
 !     SINE, AND COSINE CURRENT DISTRIBUTIONS.
 !
+SUBROUTINE rom2 (a,b,sum,dmin)
+IMPLICIT REAL*8(a-h,o-z)
+
+REAL*8, INTENT(IN)                         :: a
+REAL*8, INTENT(IN)                         :: b
+COMPLEX*16, INTENT(OUT)                    :: sum(9)
+REAL*8, INTENT(IN OUT)                     :: dmin
+
+REAL*8                                     :: rx  = 1.d-4
+INTEGER                                    :: nm  = 65536
+INTEGER                                    :: nts = 4
+INTEGER                                    :: nx  = 1
+INTEGER                                    :: n   = 9
+
 COMPLEX*16  g1,g2,g3,g4,g5,t00,t01,t10,t02,t11,t20
 DIMENSION  g1(9), g2(9), g3(9), g4(9), g5(9), t01(9), t10(9 ), t20(9)
-DATA nm,nts,nx,n/65536,4,1,9/,rx/1.d-4/
+
 
 z=a
 ze=b
