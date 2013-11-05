@@ -1462,199 +1462,207 @@ SUBROUTINE bessel (z,j0,j0p)
 !     BESSEL EVALUATES THE ZERO-ORDER BESSEL FUNCTION AND ITS DERIVATIVE
 !     FOR COMPLEX ARGUMENT Z.
 !
-    IMPLICIT REAL(NEC2REAL)(a-h,o-z)
+        IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-    COMPLEX*16, INTENT(IN)                   :: z
-    COMPLEX*16, INTENT(OUT)                  :: j0
-    COMPLEX*16, INTENT(OUT)                  :: j0p
-    SAVE
-    COMPLEX*16  p0z,p1z,q0z,q1z, zi,zi2,zk,fj,cz,sz,j0x,j0px
-    DIMENSION m(101), a1(25), a2(25), fjx(2)
-    EQUIVALENCE (fj,fjx)
+        COMPLEX*16, INTENT(IN)                   :: z
+        COMPLEX*16, INTENT(OUT)                  :: j0
+        COMPLEX*16, INTENT(OUT)                  :: j0p
+        SAVE
+        COMPLEX*16  p0z,p1z,q0z,q1z, zi,zi2,zk,fj,cz,sz,j0x,j0px
+        DIMENSION m(101), a1(25), a2(25)
 
-    DATA c3,p10,p20,q10,q20/.7978845608,.0703125,.1121520996,.125,.0732421875/
-    DATA p11,p21,q11,q21/.1171875,.1441955566,.375,.1025390625/
-    DATA pof,init/.7853981635,0/,fjx/0.,1./
+        REAL(NEC2REAL)                           :: c3  = 0.7978845608
+        REAL(NEC2REAL)                           :: p10 = 0.0703125
+        REAL(NEC2REAL)                           :: p20 = 0.1121520996
+        REAL(NEC2REAL)                           :: q10 = 0.125
+        REAL(NEC2REAL)                           :: q20 = 0.0732421875
 
-    IF (init == 0) GO TO 5
+        REAL(NEC2REAL)                           :: p11 = 0.1171875
+        REAL(NEC2REAL)                           :: p21 = 0.1441955566
+        REAL(NEC2REAL)                           :: q11 = 0.375
+        REAL(NEC2REAL)                           :: q21 = 0.1025390625
 
-1   zms=z*DCONJG(z)
-    IF (zms > 1.e-12) GO TO 2
-    j0=(1.,0.)
-    j0p=-.5*z
-    RETURN
+        REAL(NEC2REAL)                           :: pof = 0.7853981635
+        INTEGER                                  :: init = 0
 
-2     ib=0
-    IF (zms > 37.21) GO TO 4
-    IF (zms > 36.) ib=1
-    !     SERIES EXPANSION
-    iz=1.+zms
-    miz=m(iz)
-    j0=(1.,0.)
-    j0p=j0
-    zk=j0
-    zi=z*z
-    DO  k=1,miz
-      zk=zk*a1(k)*zi
-      j0=j0+zk
-      j0p=j0p+a2(k)*zk
-    END DO
-    j0p=-.5*z*j0p
-    IF (ib == 0) RETURN
-    j0x=j0
-    j0px=j0p
-    !     ASYMPTOTIC EXPANSION
-4     zi=1./z
-    zi2=zi*zi
-    p0z=1.+(p20*zi2-p10)*zi2
-    p1z=1.+(p11-p21*zi2)*zi2
-    q0z=(q20*zi2-q10)*zi
-    q1z=(q11-q21*zi2)*zi
-    zk=EXP(fj*(z-pof))
-    zi2=1./zk
-    cz=.5*(zk+zi2)
-    sz=fj*.5*(zi2-zk)
-    zk=c3*SQRT(zi)
-    j0=zk*(p0z*cz-q0z*sz)
-    j0p=-zk*(p1z*sz+q1z*cz)
-    IF (ib == 0) RETURN
-    zms=COS((SQRT(zms)-6.)*31.41592654)
-    j0=.5*(j0x*(1.+zms)+j0*(1.-zms))
-    j0p=.5*(j0px*(1.+zms)+j0p*(1.-zms))
-    RETURN
+        REAL(NEC2REAL), DIMENSION(2)             :: fjx = (/0.0, 1.0/)
+        EQUIVALENCE (fj,fjx)
 
-!     INITIALIZATION OF CONSTANTS
-5     DO  k=1,25
-      a1(k)=-.25D0/(k*k)
-      a2(k)=1.d0/(k+1.d0)
-    END DO
-loop8:  DO  i=1,101
-      test=1.d0
-      DO  k=1,24
-        init=k
-        test=-test*i*a1(k)
-        IF (test < 1.d-6) EXIT
-      END DO
-      m(i)=init
-    END DO loop8
-    GO TO 1
+
+        IF (init == 0) THEN
+          !     INITIALIZATION OF CONSTANTS
+          DO  k=1,25
+            a1(k)=-.25D0/(k*k)
+            a2(k)=1.d0/(k+1.d0)
+          END DO
+loop8:    DO  i=1,101
+            test=1.d0
+            DO  k=1,24
+              init=k
+              test=-test*i*a1(k)
+              IF (test < 1.d-6) EXIT
+            END DO
+            m(i)=init
+          END DO loop8
+        END IF
+
+        zms=z*DCONJG(z)
+        IF (zms > 1.e-12) GO TO 2
+        j0=(1.,0.)
+        j0p=-.5*z
+        RETURN
+
+2       ib=0
+        IF (zms > 37.21) GO TO 4
+        IF (zms > 36.) ib=1
+        !     SERIES EXPANSION
+        iz=1.+zms
+        miz=m(iz)
+        j0=(1.,0.)
+        j0p=j0
+        zk=j0
+        zi=z*z
+        DO  k=1,miz
+        zk=zk*a1(k)*zi
+        j0=j0+zk
+        j0p=j0p+a2(k)*zk
+        END DO
+        j0p=-.5*z*j0p
+        IF (ib == 0) RETURN
+        j0x=j0
+        j0px=j0p
+        !     ASYMPTOTIC EXPANSION
+4       zi=1./z
+        zi2=zi*zi
+        p0z=1.+(p20*zi2-p10)*zi2
+        p1z=1.+(p11-p21*zi2)*zi2
+        q0z=(q20*zi2-q10)*zi
+        q1z=(q11-q21*zi2)*zi
+        zk=EXP(fj*(z-pof))
+        zi2=1./zk
+        cz=.5*(zk+zi2)
+        sz=fj*.5*(zi2-zk)
+        zk=c3*SQRT(zi)
+        j0=zk*(p0z*cz-q0z*sz)
+        j0p=-zk*(p1z*sz+q1z*cz)
+        IF (ib == 0) RETURN
+        zms=COS((SQRT(zms)-6.)*31.41592654)
+        j0=.5*(j0x*(1.+zms)+j0*(1.-zms))
+        j0p=.5*(j0px*(1.+zms)+j0p*(1.-zms))
+        RETURN
+
 END SUBROUTINE bessel
-
-!***********************************************************************
 !----------------------------------------------------------------------------
-
-SUBROUTINE evlua (erv,ezv,erh,eph)
-!***********************************************************************
 !
 !     EVALUA CONTROLS THE INTEGRATION CONTOUR IN THE COMPLEX LAMBDA
 !     PLANE FOR EVALUATION OF THE SOMMERFELD INTEGRALS.
 !
-IMPLICIT REAL(NEC2REAL)(a-h,o-z)
+SUBROUTINE evlua (erv,ezv,erh,eph)
+        IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-COMPLEX*16, INTENT(OUT)                  :: erv
-COMPLEX*16, INTENT(OUT)                  :: ezv
-COMPLEX*16, INTENT(OUT)                  :: erh
-COMPLEX*16, INTENT(OUT)                  :: eph
-SAVE
-COMPLEX*16  a,b,ck1,ck1sq,bk,sum,delta,ans,delta2,  &
-    cp1,cp2,cp3,cksm,ct1,ct2,ct3
-COMMON /cntour/ a,b
-COMMON /evlcom/ cksm,ct1,ct2,ct3,ck1,ck1sq,ck2,ck2sq,tkmag,tsmag,ck1r,zph,rho,jh
-DIMENSION sum(6), ans(6)
-DATA ptp/.6283185308/
+        COMPLEX*16, INTENT(OUT)                  :: erv
+        COMPLEX*16, INTENT(OUT)                  :: ezv
+        COMPLEX*16, INTENT(OUT)                  :: erh
+        COMPLEX*16, INTENT(OUT)                  :: eph
+        SAVE
+        COMPLEX*16  a,b,ck1,ck1sq,bk,delta,delta2,cp1,cp2,cp3,cksm,ct1,ct2,ct3
+        COMPLEX*16, DIMENSION(6)                 :: sum
+        COMPLEX*16, DIMENSION(6)                 :: ans
+        COMMON /cntour/ a,b
+        COMMON /evlcom/ cksm,ct1,ct2,ct3,ck1,ck1sq,ck2,ck2sq,tkmag,tsmag,ck1r,zph,rho,jh
 
-del=zph
-IF (rho > del) del=rho
-IF (zph < 2.*rho) GO TO 4
-!
-!     BESSEL FUNCTION FORM OF SOMMERFELD INTEGRALS
-!
-jh=0
-a=(0.,0.)
-del=1./del
-IF (del <= tkmag) GO TO 2
-b=DCMPLX(.1*tkmag,-.1*tkmag)
-CALL rom1 (6,sum,2)
-a=b
-b=DCMPLX(del,-del)
-CALL rom1 (6,ans,2)
-DO  i=1,6
-  sum(i)=sum(i)+ans(i)
-END DO
-GO TO 3
-2     b=DCMPLX(del,-del)
-CALL rom1 (6,sum,2)
-3     delta=ptp*del
-CALL gshank (b,delta,ans,6,sum,0,b,b)
-GO TO 10
-!
-!     HANKEL FUNCTION FORM OF SOMMERFELD INTEGRALS
-!
-4     jh=1
-cp1=DCMPLX(0.d0,.4*ck2)
-cp2=DCMPLX(.6*ck2,-.2*ck2)
-cp3=DCMPLX(1.02*ck2,-.2*ck2)
-a=cp1
-b=cp2
-CALL rom1 (6,sum,2)
-a=cp2
-b=cp3
-CALL rom1 (6,ans,2)
-DO  i=1,6
-  sum(i)=-(sum(i)+ans(i))
-END DO
-!     PATH FROM IMAGINARY AXIS TO -INFINITY
-slope=1000.
-IF (zph > .001*rho) slope=rho/zph
-del=ptp/del
-delta=DCMPLX(-1.d0,slope)*del/SQRT(1.+slope*slope)
-delta2=-DCONJG(delta)
-CALL gshank (cp1,delta,ans,6,sum,0,bk,bk)
-rmis=rho*(dREAL(ck1)-ck2)
-IF (rmis < 2.*ck2) GO TO 8
-IF (rho < 1.e-10) GO TO 8
-IF (zph < 1.e-10) GO TO 6
-bk=DCMPLX(-zph,rho)*(ck1-cp3)
-rmis=-dREAL(bk)/ABS(DIMAG(bk))
-IF(rmis > 4.*rho/zph)GO TO 8
-!     INTEGRATE UP BETWEEN BRANCH CUTS, THEN TO + INFINITY
-6     cp1=ck1-(.1,.2)
-cp2=cp1+.2
-bk=DCMPLX(0.d0,del)
-CALL gshank (cp1,bk,sum,6,ans,0,bk,bk)
-a=cp1
-b=cp2
-CALL rom1 (6,ans,1)
-DO  i=1,6
-  ans(i)=ans(i)-sum(i)
-END DO
-CALL gshank (cp3,bk,sum,6,ans,0,bk,bk)
-CALL gshank (cp2,delta2,ans,6,sum,0,bk,bk)
-GO TO 10
-!     INTEGRATE BELOW BRANCH POINTS, THEN TO + INFINITY
-8     DO  i=1,6
-  sum(i)=-ans(i)
-END DO
-rmis=dREAL(ck1)*1.01
-IF (ck2+1. > rmis) rmis=ck2+1.
-bk=DCMPLX(rmis,.99*DIMAG(ck1))
-delta=bk-cp3
-delta=delta*del/ABS(delta)
-CALL gshank (cp3,delta,ans,6,sum,1,bk,delta2)
-10    ans(6)=ans(6)*ck1
-!     CONJUGATE SINCE NEC USES EXP(+JWT)
-erv=DCONJG(ck1sq*ans(3))
-ezv=DCONJG(ck1sq*(ans(2)+ck2sq*ans(5)))
-erh=DCONJG(ck2sq*(ans(1)+ans(6)))
-eph=-DCONJG(ck2sq*(ans(4)+ans(6)))
-RETURN
+        REAL(NEC2REAL)                           :: ptp = 0.6283185308
+
+        del=zph
+        IF (rho > del) del=rho
+        IF (zph < 2.*rho) GO TO 4
+        !
+        !     BESSEL FUNCTION FORM OF SOMMERFELD INTEGRALS
+        !
+        jh=0
+        a=(0.,0.)
+        del=1./del
+        IF (del <= tkmag) GO TO 2
+        b=DCMPLX(.1*tkmag,-.1*tkmag)
+        CALL rom1 (6,sum,2)
+        a=b
+        b=DCMPLX(del,-del)
+        CALL rom1 (6,ans,2)
+        DO  i=1,6
+          sum(i)=sum(i)+ans(i)
+        END DO
+        GO TO 3
+
+2       b=DCMPLX(del,-del)
+        CALL rom1 (6,sum,2)
+3       delta=ptp*del
+        CALL gshank (b,delta,ans,6,sum,0,b,b)
+        GO TO 10
+        !
+        !     HANKEL FUNCTION FORM OF SOMMERFELD INTEGRALS
+        !
+4       jh=1
+        cp1=DCMPLX(0.d0,.4*ck2)
+        cp2=DCMPLX(.6*ck2,-.2*ck2)
+        cp3=DCMPLX(1.02*ck2,-.2*ck2)
+        a=cp1
+        b=cp2
+        CALL rom1 (6,sum,2)
+        a=cp2
+        b=cp3
+        CALL rom1 (6,ans,2)
+        DO  i=1,6
+          sum(i)=-(sum(i)+ans(i))
+        END DO
+        !     PATH FROM IMAGINARY AXIS TO -INFINITY
+        slope=1000.
+        IF (zph > .001*rho) slope=rho/zph
+        del=ptp/del
+        delta=DCMPLX(-1.d0,slope)*del/SQRT(1.+slope*slope)
+        delta2=-DCONJG(delta)
+        CALL gshank (cp1,delta,ans,6,sum,0,bk,bk)
+        rmis=rho*(dREAL(ck1)-ck2)
+        IF (rmis < 2.*ck2) GO TO 8
+        IF (rho < 1.e-10) GO TO 8
+        IF (zph < 1.e-10) GO TO 6
+        bk=DCMPLX(-zph,rho)*(ck1-cp3)
+        rmis=-dREAL(bk)/ABS(DIMAG(bk))
+        IF(rmis > 4.*rho/zph)GO TO 8
+        !     INTEGRATE UP BETWEEN BRANCH CUTS, THEN TO + INFINITY
+6       cp1=ck1-(.1,.2)
+        cp2=cp1+.2
+        bk=DCMPLX(0.d0,del)
+        CALL gshank (cp1,bk,sum,6,ans,0,bk,bk)
+        a=cp1
+        b=cp2
+        CALL rom1 (6,ans,1)
+        DO  i=1,6
+          ans(i)=ans(i)-sum(i)
+        END DO
+        CALL gshank (cp3,bk,sum,6,ans,0,bk,bk)
+        CALL gshank (cp2,delta2,ans,6,sum,0,bk,bk)
+        GO TO 10
+        
+        !     INTEGRATE BELOW BRANCH POINTS, THEN TO + INFINITY
+8       DO  i=1,6
+          sum(i)=-ans(i)
+        END DO
+        rmis=dREAL(ck1)*1.01
+        IF (ck2+1. > rmis) rmis=ck2+1.
+        bk=DCMPLX(rmis,.99*DIMAG(ck1))
+        delta=bk-cp3
+        delta=delta*del/ABS(delta)
+        CALL gshank (cp3,delta,ans,6,sum,1,bk,delta2)
+10      ans(6)=ans(6)*ck1
+        !     CONJUGATE SINCE NEC USES EXP(+JWT)
+        erv=DCONJG(ck1sq*ans(3))
+        ezv=DCONJG(ck1sq*(ans(2)+ck2sq*ans(5)))
+        erh=DCONJG(ck2sq*(ans(1)+ans(6)))
+        eph=-DCONJG(ck2sq*(ans(4)+ans(6)))
+        RETURN
+
 END SUBROUTINE evlua
-
-!***********************************************************************
 !----------------------------------------------------------------------------
-
-SUBROUTINE gshank (start,dela,sum,nans,seed,ibk,bk,delb)
-!***********************************************************************
 !
 !     GSHANK INTEGRATES THE 6 SOMMERFELD INTEGRALS FROM START TO
 !     INFINITY (UNTIL CONVERGENCE) IN LAMBDA.  AT THE BREAK POINT, BK,
@@ -1662,6 +1670,7 @@ SUBROUTINE gshank (start,dela,sum,nans,seed,ibk,bk,delb)
 !     ALGORITHM TO ACCELERATE CONVERGENCE OF A SLOWLY CONVERGING SERIES
 !     IS USED
 !
+SUBROUTINE gshank (start,dela,sum,nans,seed,ibk,bk,delb)
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 COMPLEX*16, INTENT(IN)                   :: start
