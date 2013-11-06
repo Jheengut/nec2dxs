@@ -11223,68 +11223,74 @@ y2(n)=yw2
 z2(n)=zw2
 RETURN
 END SUBROUTINE wire
-
-COMPLEX*16 FUNCTION zint(sigl,rolam)
-! ***
-!     DOUBLE PRECISION 6/4/85
+!--------------------------------------------------------------------
 !
-USE nec2dpar, ONLY : pi
+!     ZINT COMPUTES THE INTERNAL IMPEDANCE OF A CIRCULAR WIRE
+!
+!
+COMPLEX*16 FUNCTION zint(sigl,rolam)
+        USE nec2dpar, ONLY : pi
 
-IMPLICIT REAL(NEC2REAL)(a-h,o-z)
+        IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-    REAL(NEC2REAL), INTENT(IN)                         :: sigl
-    REAL(NEC2REAL), INTENT(IN)                         :: rolam
-    ! ***
-    !
-    !     ZINT COMPUTES THE INTERNAL IMPEDANCE OF A CIRCULAR WIRE
-    !
-    !
-    COMPLEX*16 th,ph,f,g,fj,cn,br1,br2
-    COMPLEX*16 cc1,cc2,cc3,cc4,cc5,cc6,cc7,cc8,cc9,cc10,cc11,cc12 ,cc13,cc14
-    DIMENSION fjx(2), cnx(2), ccn(28)
-    EQUIVALENCE (fj,fjx), (cn,cnx), (cc1,ccn(1)), (cc2,ccn(3)), &
-        (cc3,ccn(5)), (cc4,ccn(7)), (cc5,ccn(9)), (cc6,ccn(11)), (cc7,ccn(13)),  &
-        (cc8,ccn(15)), (cc9,ccn(17)), (cc10,ccn(19)), (cc11,ccn(21)), &
-        (cc12,ccn(23)), (cc13,ccn(25)), (cc14,ccn(27))
-    DATA pot,tp,tpcmu/1.5707963D+0,6.2831853D+0, 2.368705D+3/
-    DATA cmotp/60.00/,fjx/0.,1./,cnx/.70710678D+0,.70710678D+0/
-    DATA ccn/6.d-7,1.9D-6,-3.4D-6,5.1D-6,-2.52D-5,0.,-9.06D-5,-9.01D-5,  &
-        0.,-9.765D-4,.0110486D+0,-.0110485D+0,0.,-.3926991D+0,1.6D-6,  &
-        -3.2D-6,1.17D-5,-2.4D-6,3.46D-5,3.38D-5,5.d-7,2.452D-4,-1.3813D-3,  &
-        1.3811D-3,-6.25001D-2,-1.d-7,.7071068D+0,.7071068D+0/
+        REAL(NEC2REAL), INTENT(IN)                         :: sigl
+        REAL(NEC2REAL), INTENT(IN)                         :: rolam
 
-    th(d)=(((((cc1*d+cc2)*d+cc3)*d+cc4)*d+cc5)*d+cc6)*d+cc7
-    ph(d)=(((((cc8*d+cc9)*d+cc10)*d+cc11)*d+cc12)*d+cc13)*d+cc14
-    f(d)=SQRT(pot/d)*EXP(-cn*d+th(-8./x))
-    g(d)=EXP(cn*d+th(8./x))/SQRT(tp*d)
-    x=SQRT(tpcmu*sigl)*rolam
-    IF (x > 110.) GO TO 2
-    IF (x > 8.) GO TO 1
-    y=x/8.
-    y=y*y
-    s=y*y
-    ber=((((((-9.01D-6*s+1.22552D-3)*s-.08349609D+0)*s+2.6419140D+0)  &
-        *s-32.363456D+0)*s+113.77778D+0)*s-64.)*s+1.
-    bei=((((((1.1346D-4*s-.01103667D+0)*s+.52185615D+0)*s-  &
-        10.567658D+0)*s+72.817777D+0)*s-113.77778D+0)*s+16.)*y
-    br1=DCMPLX(ber,bei)
-    ber=(((((((-3.94D-6*s+4.5957D-4)*s-.02609253D+0)*s+.66047849D+0)  &
-        *s-6.0681481D+0)*s+14.222222D+0)*s-4.)*y)*x
-    bei=((((((4.609D-5*s-3.79386D-3)*s+.14677204D+0)*s-2.3116751D+0)  &
-        *s+11.377778D+0)*s-10.666667D+0)*s+.5)*x
-    br2=DCMPLX(ber,bei)
-    br1=br1/br2
-    GO TO 3
+        REAL(NEC2REAL), PARAMETER                          :: pot   = 1.5707963D+0
+        REAL(NEC2REAL), PARAMETER                          :: tp    = 6.2831853D+0
+        REAL(NEC2REAL), PARAMETER                          :: tpcmu = 2.368705D+3
 
-1   br2=fj*f(x)/pi
-    br1=g(x)+br2
-    br2=g(x)*ph(8./x)-br2*ph(-8./x)
-    br1=br1/br2
-    GO TO 3
+        REAL(NEC2REAL), PARAMETER                          :: cmotp = 60.00
+        REAL(NEC2REAL), PARAMETER, DIMENSION(2)            :: fjx   = (/0.0, 1.0/)
+        REAL(NEC2REAL), PARAMETER, DIMENSION(2)            :: cnx   = (/0.70710678D+0, 0.70710678D+0/)
 
-2   br1=DCMPLX(.70710678D+0,-.70710678D+0)
-3   zint=fj*SQRT(cmotp/sigl)*br1/rolam
-    RETURN
+        REAL(NEC2REAL), PARAMETER, DIMENSION(28)           :: ccn   = &
+            (/6.d-7,1.9D-6,-3.4D-6,5.1D-6,-2.52D-5,0.,-9.06D-5,-9.01D-5,  &
+            0.,-9.765D-4,.0110486D+0,-.0110485D+0,0.,-.3926991D+0,1.6D-6,  &
+            -3.2D-6,1.17D-5,-2.4D-6,3.46D-5,3.38D-5,5.d-7,2.452D-4,-1.3813D-3,  &
+            1.3811D-3,-6.25001D-2,-1.d-7,.7071068D+0,.7071068D+0/)
+
+        COMPLEX*16 th,ph,f,g,fj,cn,br1,br2
+        COMPLEX*16 cc1,cc2,cc3,cc4,cc5,cc6,cc7,cc8,cc9,cc10,cc11,cc12 ,cc13,cc14
+
+        EQUIVALENCE (fj,fjx), (cn,cnx), (cc1,ccn(1)), (cc2,ccn(3)), &
+            (cc3,ccn(5)), (cc4,ccn(7)), (cc5,ccn(9)), (cc6,ccn(11)), (cc7,ccn(13)),  &
+            (cc8,ccn(15)), (cc9,ccn(17)), (cc10,ccn(19)), (cc11,ccn(21)), &
+            (cc12,ccn(23)), (cc13,ccn(25)), (cc14,ccn(27))
+
+
+        th(d)=(((((cc1*d+cc2)*d+cc3)*d+cc4)*d+cc5)*d+cc6)*d+cc7
+        ph(d)=(((((cc8*d+cc9)*d+cc10)*d+cc11)*d+cc12)*d+cc13)*d+cc14
+        f(d)=SQRT(pot/d)*EXP(-cn*d+th(-8./x))
+        g(d)=EXP(cn*d+th(8./x))/SQRT(tp*d)
+        x=SQRT(tpcmu*sigl)*rolam
+        IF (x > 110.) GO TO 2
+        IF (x > 8.) GO TO 1
+        y=x/8.
+        y=y*y
+        s=y*y
+        ber=((((((-9.01D-6*s+1.22552D-3)*s-.08349609D+0)*s+2.6419140D+0)  &
+            *s-32.363456D+0)*s+113.77778D+0)*s-64.)*s+1.
+        bei=((((((1.1346D-4*s-.01103667D+0)*s+.52185615D+0)*s-  &
+            10.567658D+0)*s+72.817777D+0)*s-113.77778D+0)*s+16.)*y
+        br1=DCMPLX(ber,bei)
+        ber=(((((((-3.94D-6*s+4.5957D-4)*s-.02609253D+0)*s+.66047849D+0)  &
+            *s-6.0681481D+0)*s+14.222222D+0)*s-4.)*y)*x
+        bei=((((((4.609D-5*s-3.79386D-3)*s+.14677204D+0)*s-2.3116751D+0)  &
+            *s+11.377778D+0)*s-10.666667D+0)*s+.5)*x
+        br2=DCMPLX(ber,bei)
+        br1=br1/br2
+        GO TO 3
+
+1       br2=fj*f(x)/pi
+        br1=g(x)+br2
+        br2=g(x)*ph(8./x)-br2*ph(-8./x)
+        br1=br1/br2
+        GO TO 3
+
+2       br1=DCMPLX(.70710678D+0,-.70710678D+0)
+3       zint=fj*SQRT(cmotp/sigl)*br1/rolam
+        RETURN
 END FUNCTION zint
 
 END PROGRAM nec2dxs
