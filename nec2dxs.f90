@@ -48,6 +48,20 @@ MODULE somset
 END MODULE
 
 !***********************************************************************
+!
+! formerly common /plot/
+!
+MODULE plot
+    IMPLICIT NONE
+
+    INTEGER                               :: iplp1
+    INTEGER                               :: iplp2
+    INTEGER                               :: iplp3
+    INTEGER                               :: iplp4
+
+END MODULE
+
+!***********************************************************************
 PROGRAM nec2dxs
 !    av00    01-mar-02    First compile with Gnu77 compiler for windows
 
@@ -106,6 +120,7 @@ PROGRAM nec2dxs
 !
     USE nec2dpar
     USE somset
+    USE plot
 
     PARAMETER (iresrv=maxmat**2)
 
@@ -173,7 +188,6 @@ PROGRAM nec2dxs
 
     COMMON/gwav/u,u2,xx1,xx2,r1,r2,zmh,zph
 
-    COMMON /plot/ iplp1,iplp2,iplp3,iplp4
 
     DIMENSION cab(1),sab(1),x2(1),y2(1),z2(1)
 
@@ -3687,6 +3701,8 @@ SUBROUTINE datagn
 !     DATAGN IS THE MAIN ROUTINE FOR INPUT OF GEOMETRY DATA.
 !
         USE nec2dpar
+        USE plot
+
         IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
         CHARACTER (LEN=2)  :: gm
@@ -3700,8 +3716,6 @@ SUBROUTINE datagn
             alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
             itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
         COMMON /angl/ salp(maxseg)
-
-        COMMON /plot/ iplp1,iplp2,iplp3,iplp4
 
         DIMENSION x2(1), y2(1), z2(1), t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), &
             t2z(1), cab(1), sab(1)
@@ -8340,6 +8354,7 @@ END SUBROUTINE netwk
 !
 SUBROUTINE nfpat
 USE nec2dpar
+USE plot
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 COMPLEX*16 ex,ey,ez
@@ -8349,8 +8364,6 @@ COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
 COMMON/fpat/thets,phis,dth,dph,rfld,gnor,clt,cht,epsr2,sig2,  &
     xpr6,pinr,pnlr,ploss,xnr,ynr,znr,dxnr,dynr,dznr,nth,nph,ipd,iavp,  &
     inor,iax,ixtyp,near,nfeh,nrx,nry,nrz
-
-COMMON /plot/ iplp1,iplp2,iplp3,iplp4
 
 REAL(NEC2REAL)                   :: ta = 1.745329252D-02
 
@@ -9136,6 +9149,8 @@ SUBROUTINE rdpat
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
+USE plot
+
 PARAMETER(normax=4*maxseg)
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 ! ***
@@ -9164,9 +9179,6 @@ COMMON/fpat/thets,phis,dth,dph,rfld,gnor,clt,cht,epsr2,sig2,  &
     xpr6,pinr,pnlr,ploss,xnr,ynr,znr,dxnr,dynr,dznr,nth,nph,ipd,iavp,  &
     inor,iax,ixtyp,near,nfeh,nrx,nry,nrz
 COMMON /scratm/ gain(normax)
-!***
-COMMON /plot/ iplp1,iplp2,iplp3,iplp4
-!***
 
 IF (ifar < 2) GO TO 2
 WRITE(3,35)
