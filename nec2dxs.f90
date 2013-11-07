@@ -87,6 +87,56 @@ MODULE matpar
 END MODULE
 
 !***********************************************************************
+!
+! formerly common /cmb/
+!
+MODULE cmb
+    USE nec2dpar
+
+    IMPLICIT NONE
+
+    INTEGER, PARAMETER                    :: iresrv = maxmat**2
+
+    COMPLEX*16, DIMENSION(iresrv)         :: cm
+
+END MODULE
+
+!***********************************************************************
+!
+! formerly common /DATA/
+!
+MODULE DATA
+    USE nec2dpar
+
+    IMPLICIT NONE
+
+    REAL(NEC2REAL), DIMENSION(maxseg)     :: x
+    REAL(NEC2REAL), DIMENSION(maxseg)     :: y
+    REAL(NEC2REAL), DIMENSION(maxseg)     :: z
+    REAL(NEC2REAL), DIMENSION(maxseg)     :: si
+    REAL(NEC2REAL), DIMENSION(maxseg)     :: bi
+    REAL(NEC2REAL), DIMENSION(maxseg)     :: alp
+    REAL(NEC2REAL), DIMENSION(maxseg)     :: bet
+    REAL(NEC2REAL)                        :: wlam
+
+    INTEGER, DIMENSION(2*maxseg)          :: icon1
+    INTEGER, DIMENSION(2*maxseg)          :: icon2
+    INTEGER, DIMENSION(2*maxseg)          :: itag
+    INTEGER, DIMENSION(maxseg)            :: iconx
+    INTEGER                               :: ld
+    INTEGER                               :: n1
+    INTEGER                               :: n2
+    INTEGER                               :: n
+    INTEGER                               :: np
+    INTEGER                               :: m1
+    INTEGER                               :: m2
+    INTEGER                               :: m
+    INTEGER                               :: mp
+    INTEGER                               :: ipsym
+
+END MODULE
+
+!***********************************************************************
 PROGRAM nec2dxs
 !    av00    01-mar-02    First compile with Gnu77 compiler for windows
 
@@ -147,8 +197,8 @@ PROGRAM nec2dxs
     USE somset
     USE plot
     USE matpar
-
-    PARAMETER (iresrv=maxmat**2)
+    USE cmb
+    USE DATA
 
     IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -172,15 +222,9 @@ PROGRAM nec2dxs
 
     INTEGER*2                           :: llneg
 
-    COMPLEX*16  cm,fj,vsant,eth,eph,zrati,cur,curi,zarray,zrati2
+    COMPLEX*16 fj,vsant,eth,eph,zrati,cur,curi,zarray,zrati2
     COMPLEX*16  ex,ey,ez,zped,vqd,vqds,t1,y11a,y12a,epsc,u,u2,xx1,xx2
     COMPLEX*16  frati
-
-    COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-        alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-        itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
-
-    COMMON /cmb/cm(iresrv)
 
     COMMON/SAVE/epsr,sig,scrwlt,scrwrt,fmhz,ip(2*maxseg),kcom
 
@@ -2126,6 +2170,7 @@ SUBROUTINE arc (itg,ns,rada,ang1,ang2,rad)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
+USE DATA
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -2141,9 +2186,6 @@ REAL(NEC2REAL)                                   :: ta = 0.01745329252D+0
 !
 !     ARC GENERATES SEGMENT GEOMETRY DATA FOR AN ARC OF NS SEGMENTS
 !
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 DIMENSION x2(1), y2(1), z2(1)
 EQUIVALENCE (x2,si), (y2,alp), (z2,bet)
 
@@ -2264,6 +2306,7 @@ SUBROUTINE cabc (curx)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
+USE DATA
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 COMPLEX*16, INTENT(OUT)                  :: curx(1)
@@ -2274,9 +2317,6 @@ COMPLEX*16, INTENT(OUT)                  :: curx(1)
 !     CURRENT VECTOR CUR.
 !
 COMPLEX*16 cur, vqds,curd,ccj,vsant,vqd,cs1,cs2
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 COMMON /crnt/ air(maxseg),aii(maxseg),bir(maxseg),bii(maxseg),  &
     cir(maxseg),cii(maxseg),cur(3*maxseg)
 COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
@@ -2380,6 +2420,7 @@ SUBROUTINE cmngf (cb,cc,cd,nb,nc,nd,rkhx,iexkx)
 !
 USE nec2dpar
 USE matpar
+USE DATA
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -2397,9 +2438,6 @@ INTEGER                                  :: ix
 ! ***
 !     CMNGF FILLS INTERACTION MATRICIES B, C, AND D FOR N.G.F. SOLUTION
 COMPLEX*16  zarray,exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 COMMON /zload/ zarray(maxseg),nload,nlodf
 COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
     jsno,iscon(50),nscon,ipcon(10),npcon
@@ -2676,6 +2714,7 @@ SUBROUTINE cmset (nrow,cm,rkhx,iexkx)
 !
 USE nec2dpar
 USE matpar
+USE DATA
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -2688,9 +2727,6 @@ INTEGER, INTENT(IN)                      :: iexkx
 !     CMSET SETS UP THE COMPLEX STRUCTURE MATRIX IN THE ARRAY CM
 !
 COMPLEX*16  zarray,zaj,exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc,ssx, d,deter
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 COMMON /smat/ ssx(16,16)
 COMMON /scratm/ d(2*maxseg)
 COMMON /zload/ zarray(maxseg),nload,nlodf
@@ -2806,6 +2842,8 @@ SUBROUTINE cmss (j1,j2,im1,im2,cm,nrow,itrp)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
+USE DATA
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: j1
@@ -2818,9 +2856,6 @@ INTEGER, INTENT(IN)                      :: itrp
 ! ***
 !     CMSS COMPUTES MATRIX ELEMENTS FOR SURFACE-SURFACE INTERACTIONS.
 COMPLEX*16 g11,g12,g21,g22, exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 COMMON /angl/ salp(maxseg)
 COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
     ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
@@ -2901,6 +2936,8 @@ SUBROUTINE cmsw (j1,j2,i1,i2,cm,cw,ncw,nrow,itrp)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
+USE DATA
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: j1
@@ -2918,9 +2955,6 @@ INTEGER                                  :: ip
 ! ***
 !     COMPUTES MATRIX ELEMENTS FOR E ALONG WIRES DUE TO PATCH CURRENT
 COMPLEX*16  zrati,zrati2,t1,exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc ,emel, frati
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 COMMON /angl/ salp(maxseg)
 COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
 COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
@@ -3062,6 +3096,8 @@ SUBROUTINE cmws (j,i1,i2,cm,nr,cw,nw,itrp)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
+USE DATA
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN OUT)                  :: j
@@ -3077,9 +3113,6 @@ INTEGER, INTENT(IN)                      :: itrp
 !     CMWS COMPUTES MATRIX ELEMENTS FOR WIRE-SURFACE INTERACTIONS
 !
 COMPLEX*16  etk,ets,etc,exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 COMMON /angl/ salp(maxseg)
 
 COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
@@ -3164,6 +3197,8 @@ SUBROUTINE cmww (j,i1,i2,cm,nr,cw,nw,itrp)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
+USE DATA
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: j
@@ -3179,9 +3214,6 @@ INTEGER, INTENT(IN)                      :: itrp
 !     CMWW COMPUTES MATRIX ELEMENTS FOR WIRE-WIRE INTERACTIONS
 !
 COMPLEX*16  etk,ets,etc,exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 COMMON /angl/ salp(maxseg)
 
 COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
@@ -3314,6 +3346,8 @@ SUBROUTINE conect (ignd)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
+USE DATA
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN OUT)                  :: ignd
@@ -3322,10 +3356,6 @@ INTEGER, INTENT(IN OUT)                  :: ignd
 !     CONNECT SETS UP SEGMENT CONNECTION DATA IN ARRAYS ICON1 AND ICON2
 !     BY SEARCHING FOR SEGMENT ENDS THAT ARE IN CONTACT.
 !
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
-
 COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
     jsno,iscon(50),nscon,ipcon(10),npcon
 
@@ -3723,6 +3753,7 @@ SUBROUTINE datagn
 !
         USE nec2dpar
         USE plot
+        USE DATA
 
         IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -3733,9 +3764,6 @@ SUBROUTINE datagn
         CHARACTER (LEN=1), DIMENSION(2), PARAMETER :: ify = (/' ','Y'/)
         CHARACTER (LEN=1), DIMENSION(2), PARAMETER :: ifz = (/' ','Z'/)
 
-        COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-            alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-            itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
         COMMON /angl/ salp(maxseg)
 
         DIMENSION x2(1), y2(1), z2(1), t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), &
@@ -4510,6 +4538,8 @@ SUBROUTINE etmns (p1,p2,p3,p4,p5,p6,ipr,e)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
+USE DATA
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 REAL(NEC2REAL), INTENT(IN)                         :: p1
@@ -4528,9 +4558,6 @@ COMPLEX*16, INTENT(OUT)                  :: e(2*maxseg)
 !
 COMPLEX*16  cx,cy,cz,vsant,er,et,ezh,erh,vqd,vqds,zrati  &
     ,zrati2,rrv,rrh,t1,tt1,tt2,frati
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 COMMON /angl/ salp(maxseg)
 
 COMMON /vsorc/ vqd(nsmax),vsant(nsmax),vqds(nsmax),ivqd(nsmax),  &
@@ -5408,6 +5435,8 @@ SUBROUTINE ffld (thet,phi,eth,eph)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
+USE DATA
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 REAL(NEC2REAL), INTENT(IN OUT)                   :: thet
@@ -5425,9 +5454,6 @@ INTEGER                                  :: ip
 COMPLEX*16 cix,ciy,ciz,exa, const,ccx,ccy,ccz,cdp,cur
 COMPLEX*16 zrati,zrsin,rrv,rrh,rrv1,rrh1,rrv2,rrh2,zrati2,tix,tiy  &
     ,tiz,t1,zscrn,ex,ey,ez,gx,gy,gz,frati
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 COMMON /angl/ salp(maxseg)
 COMMON /crnt/ air(maxseg),aii(maxseg),bir(maxseg),bii(maxseg),  &
     cir(maxseg),cii(maxseg),cur(3*maxseg)
@@ -5635,6 +5661,8 @@ END SUBROUTINE ffld
 SUBROUTINE fflds (rox,roy,roz,scur,ex,ey,ez)
 
     USE nec2dpar
+    USE DATA
+
     IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
     REAL(NEC2REAL), INTENT(IN)                       :: rox
@@ -5646,10 +5674,6 @@ SUBROUTINE fflds (rox,roy,roz,scur,ex,ey,ez)
     COMPLEX*16, INTENT(OUT)                  :: ez
 
     COMPLEX*16 ct,cons
-
-    COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-        alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-        itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 
     DIMENSION xs(1), ys(1), zs(1), s(1), consx(2)
 
@@ -5718,21 +5742,19 @@ SUBROUTINE gfil (iprt)
 USE nec2dpar
 USE somset
 USE matpar
+USE cmb
+USE DATA
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN OUT)                  :: iprt
-INTEGER, PARAMETER :: iresrv=maxmat**2
+!INTEGER, PARAMETER :: iresrv=maxmat**2
 ! ***
 !
 !     GFIL READS THE N.G.F. FILE
 !
-COMPLEX*16 cm,ssx,zrati,zrati2,t1,zarray,frati
+COMPLEX*16 ssx,zrati,zrati2,t1,zarray,frati
 
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
-COMMON /cmb/ cm(iresrv)
 COMMON /angl/ salp(maxseg)
 COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
 !COMMON /ggrid/ ar1(11,10,4),ar2(17,5,4),ar3(9,8,4),epscf,dxa(3), &
@@ -5895,6 +5917,8 @@ SUBROUTINE gfld (rho,phi,rz,eth,epi,erd,ux,ksymp)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
+USE DATA
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 REAL(NEC2REAL), INTENT(IN)                       :: rho
@@ -5911,9 +5935,6 @@ INTEGER, INTENT(IN OUT)                  :: ksymp
 !
 COMPLEX*16 cur, cix,ciy,ciz,exa,xx1,xx2,u,u2,erv,ezv,erh,eph
 COMPLEX*16 ezh,ex,ey
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 COMMON /angl/ salp(maxseg)
 COMMON /crnt/ air(maxseg),aii(maxseg),bir(maxseg),bii(maxseg),  &
     cir(maxseg),cii(maxseg),cur(3*maxseg)
@@ -6064,19 +6085,17 @@ SUBROUTINE gfout
 USE nec2dpar
 USE somset
 USE matpar
+USE cmb
+USE DATA
 
-PARAMETER (iresrv=maxmat**2)
+!PARAMETER (iresrv=maxmat**2)
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 ! ***
 !
 !     WRITE N.G.F. FILE
 !
-COMPLEX*16 cm,ssx,zrati,zrati2,t1,zarray,frati
+COMPLEX*16 ssx,zrati,zrati2,t1,zarray,frati
 
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
-COMMON /cmb/ cm(iresrv)
 COMMON /angl/ salp(maxseg)
 COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
 !COMMON /ggrid/ ar1(11,10,4),ar2(17,5,4),ar3(9,8,4),epscf,dxa(3), &
@@ -6380,6 +6399,8 @@ SUBROUTINE helix(s,hl,a1,b1,a2,b2,rad,ns,itg)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
+USE DATA
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 REAL(NEC2REAL), INTENT(IN OUT)                     :: s
@@ -6394,9 +6415,6 @@ INTEGER, INTENT(IN)                      :: itg
 ! ***
 !     SUBROUTINE HELIX GENERATES SEGMENT GEOMETRY DATA FOR A HELIX OF NS
 !     SEGMENTS
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 DIMENSION x2(1),y2(1),z2(1)
 EQUIVALENCE (x2(1),si(1)), (y2(1),alp(1)), (z2(1),bet(1))
 
@@ -7226,6 +7244,8 @@ FUNCTION isegno (itagi,mx)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
+USE DATA
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: itagi
@@ -7235,10 +7255,6 @@ INTEGER, INTENT(IN)                      :: mx
 !     ISEGNO RETURNS THE SEGMENT NUMBER OF THE MTH SEGMENT HAVING THE
 !     TAG NUMBER ITAGI.  IF ITAGI=0 SEGMENT NUMBER M IS RETURNED.
 !
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
-
 IF (mx > 0) GO TO 1
 WRITE(3,6)
 STOP
@@ -7388,6 +7404,8 @@ SUBROUTINE load (ldtyp,ldtag,ldtagf,ldtagt,zlr,zli,zlc)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
+USE DATA
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: ldtyp(1)
@@ -7403,9 +7421,6 @@ REAL(NEC2REAL), INTENT(IN)                         :: zlc(1)
 !     TYPES OF LOADING
 !
 COMPLEX*16 zarray,zt,tpcj,zint
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 COMMON /zload/ zarray(maxseg),nload,nlodf
 DIMENSION  tpcjx(2)
 EQUIVALENCE (tpcj,tpcjx)
@@ -7730,6 +7745,8 @@ SUBROUTINE move (rox,roy,roz,xs,ys,zs,its,nrpt,itgi)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
+USE DATA
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 REAL(NEC2REAL), INTENT(IN OUT)                     :: rox
@@ -7748,9 +7765,6 @@ INTEGER, INTENT(IN)                        :: itgi
 !     STRUCTURE IS ROTATED ABOUT X,Y,Z AXES BY ROX,ROY,ROZ
 !     RESPECTIVELY, THEN SHIFTED BY XS,YS,ZS
 !
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 COMMON /angl/ salp(maxseg)
 DIMENSION t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1), x2(1), y2(1), z2(1)
 EQUIVALENCE (x2(1),si(1)), (y2(1),alp(1)), (z2(1),bet(1))
@@ -7851,6 +7865,8 @@ END SUBROUTINE move
 !
 SUBROUTINE nefld (xob,yob,zob,ex,ey,ez)
 USE nec2dpar
+USE DATA
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 REAL(NEC2REAL), INTENT(IN)                       :: xob
@@ -7864,9 +7880,6 @@ INTEGER                                  :: ip
 
 COMPLEX*16  cur,acx,bcx,ccx,exk,eyk,ezk,exs,eys,ezs,exc  &
     ,eyc,ezc,zrati,zrati2,t1,frati
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 COMMON /angl/ salp(maxseg)
 COMMON /crnt/ air(maxseg),aii(maxseg),bir(maxseg),bii(maxseg),  &
     cir(maxseg),cii(maxseg),cur(3*maxseg)
@@ -8003,6 +8016,8 @@ SUBROUTINE netwk (cm,cmb,cmc,cmd,ip,einc)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
+USE DATA
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 COMPLEX*16, INTENT(IN OUT)               :: cm(1)
@@ -8018,10 +8033,6 @@ COMPLEX*16, INTENT(IN OUT)               :: einc(1)
 !     PRESENT.
 !
 COMPLEX*16 cmn,rhnt,ymit,rhs,zped, vsant,vlt,cur,vsrc,rhnx ,vqd,vqds,cux
-
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 
 COMMON /crnt/ air(maxseg),aii(maxseg),bir(maxseg),bii(maxseg),  &
     cir(maxseg),cii(maxseg),cur(3*maxseg)
@@ -8369,12 +8380,10 @@ END SUBROUTINE netwk
 SUBROUTINE nfpat
 USE nec2dpar
 USE plot
+USE DATA
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 COMPLEX*16 ex,ey,ez
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 COMMON/fpat/thets,phis,dth,dph,rfld,gnor,clt,cht,epsr2,sig2,  &
     xpr6,pinr,pnlr,ploss,xnr,ynr,znr,dxnr,dynr,dznr,nth,nph,ipd,iavp,  &
     inor,iax,ixtyp,near,nfeh,nrx,nry,nrz
@@ -8475,6 +8484,8 @@ SUBROUTINE nhfld (xob,yob,zob,hx,hy,hz)
 !     THE STRUCTURE CURRENTS HAVE BEEN COMPUTED.
 !
 USE nec2dpar
+USE DATA
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 REAL(NEC2REAL), INTENT(IN)                         :: xob
@@ -8484,16 +8495,11 @@ COMPLEX*16, INTENT(OUT)                  :: hx
 COMPLEX*16, INTENT(OUT)                  :: hy
 COMPLEX*16, INTENT(OUT)                  :: hz
 COMPLEX*16  cur,acx,bcx,ccx,exk,eyk,ezk,exs,eys,ezs,exc, eyc,ezc
-!***************************************
 COMPLEX*16 zrati,zrati2,frati,t1,con
 COMPLEX*16 expx,exmx,expy,exmy,expz,exmz
 COMPLEX*16 eypx,eymx,eypy,eymy,eypz,eymz
 COMPLEX*16 ezpx,ezmx,ezpy,ezmy,ezpz,ezmz
 COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
-!***************************************
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 COMMON /angl/ salp(maxseg)
 COMMON /crnt/ air(maxseg),aii(maxseg),bir(maxseg),bii(maxseg),  &
     cir(maxseg),cii(maxseg),cur(3*maxseg)
@@ -8506,9 +8512,9 @@ EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), (t2y,icon2), &
 EQUIVALENCE (t1xj,cabj), (t1yj,sabj), (t1zj,salpj), (t2xj,b), &
     (t2yj,ind1), (t2zj,ind2)
 EQUIVALENCE (cab,alp), (sab,bet)
-!***************************************
+
 IF (iperf == 2) GO TO 6
-!***************************************
+
 hx=(0.,0.)
 hy=(0.,0.)
 hz=(0.,0.)
@@ -8595,6 +8601,7 @@ END SUBROUTINE nhfld
 !
 SUBROUTINE patch (nx,ny,x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4)
     USE nec2dpar
+    USE DATA
 
     IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -8615,9 +8622,6 @@ SUBROUTINE patch (nx,ny,x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4)
 
     INTEGER                                  :: ix
 
-    COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-        alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-        itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
     COMMON /angl/ salp(maxseg)
     DIMENSION t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1)
     EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), (t2y,icon2), (t2z,itag)
@@ -8753,6 +8757,7 @@ END SUBROUTINE patch
 !
 SUBROUTINE subph (nx,ny,x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4)
     USE nec2dpar
+    USE DATA
 
     IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -8772,10 +8777,6 @@ SUBROUTINE subph (nx,ny,x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4)
     REAL(NEC2REAL), INTENT(IN)                       :: z4
 
     INTEGER                                  :: ix
-
-    COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-        alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-        itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 
     COMMON /angl/ salp(maxseg)
 
@@ -9009,6 +9010,8 @@ SUBROUTINE qdsrc (is,v,e)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
+USE DATA
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: is
@@ -9018,9 +9021,6 @@ COMPLEX*16, INTENT(OUT)                  :: e(1)
 !     FILL INCIDENT FIELD ARRAY FOR CHARGE DISCONTINUITY VOLTAGE SOURCE
 COMPLEX*16 vqds,curd,ccj, exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc  &
     ,etk,ets,etc,vsant,vqd, zarray
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 
 COMMON /vsorc/ vqd(nsmax),vsant(nsmax),vqds(nsmax),ivqd(nsmax),  &
     isant(nsmax),iqds(nsmax),nvqd,nsant,nqds
@@ -9164,6 +9164,7 @@ SUBROUTINE rdpat
 !
 USE nec2dpar
 USE plot
+USE DATA
 
 PARAMETER(normax=4*maxseg)
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
@@ -9184,9 +9185,6 @@ REAL(NEC2REAL)                                        ::  ta = 1.745329252D-02
 REAL(NEC2REAL)                                        ::  td = 57.29577951D+0
 
 COMPLEX*16 eth,eph,erd,zrati,zrati2,t1,frati
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 COMMON/SAVE/epsr,sig,scrwlt,scrwrt,fmhz,ip(2*maxseg),kcom
 COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
 COMMON/fpat/thets,phis,dth,dph,rfld,gnor,clt,cht,epsr2,sig2,  &
@@ -9787,6 +9785,8 @@ SUBROUTINE reflc (ix,iy,iz,itx,nop)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
+USE DATA
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN OUT)                  :: ix
@@ -9799,9 +9799,6 @@ INTEGER, INTENT(IN)                      :: nop
 !     REFLC REFLECTS PARTIAL STRUCTURE ALONG X,Y, OR Z AXES OR ROTATES
 !     STRUCTURE TO COMPLETE A SYMMETRIC STRUCTURE.
 !
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 COMMON /angl/ salp(maxseg)
 DIMENSION t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1), x2(1), y2(1), z2(1)
 EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), &
@@ -10145,6 +10142,8 @@ SUBROUTINE sbf (i,is,aa,bb,cc)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
+USE DATA
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: i
@@ -10154,11 +10153,6 @@ REAL(NEC2REAL), INTENT(OUT)                      :: bb
 REAL(NEC2REAL), INTENT(OUT)                      :: cc
 ! ***
 !     COMPUTE COMPONENT OF BASIS FUNCTION I ON SEGMENT IS.
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
-
-
 aa=0.
 bb=0.
 cc=0.
@@ -10804,16 +10798,14 @@ SUBROUTINE tbf (i,icap)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
+USE DATA
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: i
 INTEGER, INTENT(IN)                      :: icap
 ! ***
 !     COMPUTE BASIS FUNCTION I
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
-
 COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
     jsno,iscon(50),nscon,ipcon(10),npcon
 
@@ -11009,15 +11001,13 @@ SUBROUTINE trio (j)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
+USE DATA
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: j
 ! ***
 !     COMPUTE THE COMPONENTS OF ALL BASIS FUNCTIONS ON SEGMENT J
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
-
 COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
     jsno,iscon(50),nscon,ipcon(10),npcon
 
@@ -11171,6 +11161,8 @@ SUBROUTINE wire (xw1,yw1,zw1,xw2,yw2,zw2,rad,rdel,rrad,ns,itg)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
+USE DATA
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 REAL(NEC2REAL), INTENT(IN)                         :: xw1
@@ -11189,9 +11181,6 @@ INTEGER, INTENT(IN)                      :: itg
 !     SUBROUTINE WIRE GENERATES SEGMENT GEOMETRY DATA FOR A STRAIGHT
 !     WIRE OF NS SEGMENTS.
 !
-COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
-    alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
-    itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
 DIMENSION x2(1), y2(1), z2(1)
 EQUIVALENCE (x2(1),si(1)), (y2(1),alp(1)), (z2(1),bet(1))
 
