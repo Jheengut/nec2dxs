@@ -62,6 +62,31 @@ MODULE plot
 END MODULE
 
 !***********************************************************************
+!
+! formerly common /matpar/
+!
+MODULE matpar
+    IMPLICIT NONE
+
+    INTEGER                               :: icase
+    INTEGER                               :: nbloks
+    INTEGER                               :: npblk
+    INTEGER                               :: nlast
+    INTEGER                               :: nblsym
+    INTEGER                               :: npsym
+    INTEGER                               :: nlsym
+    INTEGER                               :: imat
+    INTEGER                               :: icasx
+    INTEGER                               :: nbbx
+    INTEGER                               :: npbx
+    INTEGER                               :: nlbx
+    INTEGER                               :: nbbl
+    INTEGER                               :: npbl
+    INTEGER                               :: nlbl
+
+END MODULE
+
+!***********************************************************************
 PROGRAM nec2dxs
 !    av00    01-mar-02    First compile with Gnu77 compiler for windows
 
@@ -121,6 +146,7 @@ PROGRAM nec2dxs
     USE nec2dpar
     USE somset
     USE plot
+    USE matpar
 
     PARAMETER (iresrv=maxmat**2)
 
@@ -156,15 +182,11 @@ PROGRAM nec2dxs
 
     COMMON /cmb/cm(iresrv)
 
-    COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat,  &
-        icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
-
     COMMON/SAVE/epsr,sig,scrwlt,scrwrt,fmhz,ip(2*maxseg),kcom
 
     COMMON/csave/com(19,5)
 
-    COMMON /crnt/ air(maxseg),aii(maxseg),bir(maxseg),bii(maxseg),  &
-        cir(maxseg),cii(maxseg),cur(3*maxseg)
+    COMMON /crnt/ air(maxseg),aii(maxseg),bir(maxseg),bii(maxseg),cir(maxseg),cii(maxseg),cur(3*maxseg)
 
     COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
 
@@ -172,8 +194,7 @@ PROGRAM nec2dxs
 
     COMMON/yparm/y11a(5),y12a(20),ncoup,icoup,nctag(5),ncseg(5)
 
-    COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
-        jsno,iscon(50),nscon,ipcon(10),npcon
+    COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),jsno,iscon(50),nscon,ipcon(10),npcon
 
     COMMON/vsorc/vqd(nsmax),vsant(nsmax),vqds(nsmax),ivqd(nsmax),  &
         isant(nsmax),iqds(nsmax),nvqd,nsant,nqds
@@ -2358,6 +2379,8 @@ SUBROUTINE cmngf (cb,cc,cd,nb,nc,nd,rkhx,iexkx)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
+USE matpar
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 COMPLEX*16, INTENT(OUT)                  :: cb(nb,1)
@@ -2383,8 +2406,6 @@ COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
 
 COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
     ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
-COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym, &
-    imat,icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
 
 
 rkh=rkhx
@@ -2654,6 +2675,8 @@ SUBROUTINE cmset (nrow,cm,rkhx,iexkx)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
+USE matpar
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: nrow
@@ -2668,8 +2691,6 @@ COMPLEX*16  zarray,zaj,exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc,ssx, d,deter
 COMMON /DATA/ x(maxseg),y(maxseg),z(maxseg),si(maxseg),bi(maxseg),  &
     alp(maxseg),bet(maxseg),wlam,icon1(2*maxseg),icon2(2*maxseg),  &
     itag(2*maxseg),iconx(maxseg),ld,n1,n2,n,np,m1,m2,m,mp,ipsym
-COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat,icasx, &
-    nbbx,npbx,nlbx,nbbl,npbl,nlbl
 COMMON /smat/ ssx(16,16)
 COMMON /scratm/ d(2*maxseg)
 COMMON /zload/ zarray(maxseg),nload,nlodf
@@ -4742,6 +4763,8 @@ SUBROUTINE facgf (a,b,c,d,bx,ip,ix,np,n1,mp,m1,n1c,n2c)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
+USE matpar
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 COMPLEX*16, INTENT(IN OUT)               :: a(1)
@@ -4760,8 +4783,6 @@ INTEGER, INTENT(IN)                      :: n2c
 ! ***
 !     FACGF COMPUTES AND FACTORS D-C(INV(A)B).
 COMPLEX*16  sum
-COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat, &
-    icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
 DIMENSION  ix (1)
 
 IF (n2c == 0) RETURN
@@ -4859,6 +4880,8 @@ SUBROUTINE facio (a,nrow,nop,ip,iu1,iu2,iu3,iu4)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
+USE matpar
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 COMPLEX*16, INTENT(IN OUT)               :: a(nrow,1)
@@ -4874,10 +4897,6 @@ INTEGER, INTENT(IN)                      :: iu4
 !     FACIO CONTROLS I/O FOR OUT-OF-CORE FACTORIZATION
 !
 REAL :: t1, t2, time         ! hwh
-
-
-COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat, &
-    icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
 
 
 it=2*npsym*nrow
@@ -5024,6 +5043,8 @@ SUBROUTINE factrs (np,nrow,a,ip,ix,iu1,iu2,iu3,iu4)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
+USE matpar
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: np
@@ -5042,10 +5063,6 @@ INTEGER, INTENT(IN)                      :: iu4
 !     MATRICIES.  IF NO SYMMETRY, THE ROUTINE IS CALLED TO FACTOR THE
 !     COMPLETE MATRIX.
 !
-
-COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat,icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
-
-
 nop=nrow/np
 IF (icase > 2) GO TO 2
 DO  kk=1,nop
@@ -5184,6 +5201,8 @@ SUBROUTINE fblock (nrow,ncol,imax,irngf,ipsym)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
+USE matpar
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN OUT)                  :: nrow
@@ -5195,8 +5214,6 @@ INTEGER, INTENT(IN OUT)                  :: ipsym
 !     FBLOCK SETS PARAMETERS FOR OUT-OF-CORE SOLUTION FOR THE PRIMARY
 !     MATRIX (A)
 COMPLEX*16 ssx,deter
-COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat, &
-    icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
 COMMON /smat/ ssx(16,16)
 
 imx1=imax-irngf
@@ -5305,6 +5322,8 @@ SUBROUTINE fbngf (neq,neq2,iresrv,ib11,ic11,id11,ix11)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
+USE matpar
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN OUT)                  :: neq
@@ -5317,8 +5336,6 @@ INTEGER, INTENT(OUT)                     :: ix11
 ! ***
 !     FBNGF SETS THE BLOCKING PARAMETERS FOR THE B, C, AND D ARRAYS FOR
 !     OUT-OF-CORE STORAGE.
-COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat, &
-    icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
 
 iresx=iresrv-imat
 nbln=neq*neq2
@@ -5700,6 +5717,7 @@ SUBROUTINE gfil (iprt)
 !
 USE nec2dpar
 USE somset
+USE matpar
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -5719,8 +5737,6 @@ COMMON /angl/ salp(maxseg)
 COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
 !COMMON /ggrid/ ar1(11,10,4),ar2(17,5,4),ar3(9,8,4),epscf,dxa(3), &
 !    dya(3),xsa(3),ysa(3),nxa(3),nya(3)
-COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat, &
-    icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
 COMMON /smat/ ssx(16,16)
 COMMON /zload/ zarray(maxseg),nload,nlodf
 COMMON/SAVE/epsr,sig,scrwlt,scrwrt,fmhz,ip(2*maxseg),kcom
@@ -6047,6 +6063,7 @@ SUBROUTINE gfout
 !
 USE nec2dpar
 USE somset
+USE matpar
 
 PARAMETER (iresrv=maxmat**2)
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
@@ -6064,8 +6081,6 @@ COMMON /angl/ salp(maxseg)
 COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
 !COMMON /ggrid/ ar1(11,10,4),ar2(17,5,4),ar3(9,8,4),epscf,dxa(3), &
 !    dya(3),xsa(3),ysa(3),nxa(3),nya(3)
-COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat, &
-    icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
 COMMON /smat/ ssx(16,16)
 COMMON /zload/ zarray(maxseg),nload,nlodf
 COMMON/SAVE/epsr,sig,scrwlt,scrwrt,fmhz,ip(2*maxseg),kcom
@@ -7252,6 +7267,8 @@ SUBROUTINE lfactr (a,nrow,ix1,ix2,ip)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
+USE matpar
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 COMPLEX*16, INTENT(IN OUT)               :: a(nrow,1)
@@ -7270,8 +7287,6 @@ INTEGER, INTENT(IN OUT)                  :: ip(nrow)
 COMPLEX*16  d,ajr
 INTEGER :: r,r1,r2,pj,pr
 LOGICAL :: l1,l2,l3
-COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat, &
-    icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
 COMMON /scratm/ d(2*maxseg)
 
 
@@ -7547,6 +7562,8 @@ SUBROUTINE ltsolv (a,nrow,ix,b,neq,nrh,ifl1,ifl2)
 !     DOUBLE PRECISION 6/4/85
 !
     USE nec2dpar
+    USE matpar
+
     IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
     COMPLEX*16, INTENT(IN OUT)               :: a(nrow,nrow)
@@ -7566,8 +7583,6 @@ SUBROUTINE ltsolv (a,nrow,ix,b,neq,nrh,ifl1,ifl2)
     !     BLOCKS OF DESCENDING ORDER.
     !
     COMPLEX*16  y,sum
-    COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat, &
-        icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
     COMMON /scratm/ y(2*maxseg)
 
     !
@@ -7638,6 +7653,8 @@ SUBROUTINE lunscr (a,nrow,nop,ix,ip,iu2,iu3,iu4)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
+USE matpar
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 COMPLEX*16, INTENT(IN OUT)               :: a(nrow,1)
@@ -7653,9 +7670,6 @@ INTEGER, INTENT(IN)                      :: iu4
 !     S/R WHICH UNSCRAMBLES, SCRAMBLED FACTORED MATRIX
 !
 COMPLEX*16  temp
-COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat, &
-    icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
-
 
 i1=1
 i2=2*npsym*nrow
@@ -9727,6 +9741,8 @@ SUBROUTINE reblk (b,bx,nb,nbx,n2c)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
+    USE matpar
+
     IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
     COMPLEX*16, INTENT(OUT)                  :: b(nb,1)
@@ -9737,10 +9753,6 @@ SUBROUTINE reblk (b,bx,nb,nbx,n2c)
     ! ***
     !     REBLOCK ARRAY B IN N.G.F. SOLUTION FROM BLOCKS OF ROWS ON TAPE14
     !     TO BLOCKS OF COLUMNS ON TAPE16
-
-    COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat, &
-        icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
-
     REWIND 16
 
     nib=0
@@ -10427,6 +10439,8 @@ SUBROUTINE solgf (a,b,c,d,xy,ip,np,n1,n,mp,m1,m,n1c,n2c,n2cz)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
+USE matpar
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 COMPLEX*16, INTENT(IN OUT)               :: a(1)
@@ -10451,9 +10465,6 @@ COMMON /scratm/ y(2*maxseg)
 
 COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
     jsno,iscon(50),nscon,ipcon(10),npcon
-
-COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat, &
-    icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
 
 
 ifl=14
@@ -10639,6 +10650,8 @@ SUBROUTINE solves (a,ip,b,neq,nrh,np,n,mp,m,ifl1,ifl2)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
+USE matpar
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 COMPLEX*16, INTENT(IN OUT)               :: a(1)
@@ -10661,9 +10674,6 @@ INTEGER, INTENT(IN)                      :: ifl2
 COMPLEX*16  y,sum,ssx
 COMMON /smat/ ssx(16,16)
 COMMON /scratm/ y(2*maxseg)
-COMMON /matpar/ icase,nbloks,npblk,nlast,nblsym,npsym,nlsym,imat, &
-    icasx,nbbx,npbx,nlbx,nbbl,npbl,nlbl
-
 
 npeq=np+2*mp
 nop=neq/npeq
