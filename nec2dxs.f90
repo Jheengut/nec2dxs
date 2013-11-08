@@ -105,7 +105,7 @@ END MODULE
 !
 ! formerly common /DATA/
 !
-MODULE DATA
+MODULE data
     USE nec2dpar
 
     IMPLICIT NONE
@@ -133,6 +133,38 @@ MODULE DATA
     INTEGER                               :: m
     INTEGER                               :: mp
     INTEGER                               :: ipsym
+
+END MODULE
+
+!***********************************************************************
+!
+! formerly common /SAVE/
+!
+MODULE save
+    USE nec2dpar
+
+    IMPLICIT NONE
+
+    REAL(NEC2REAL)                        :: epsr
+    REAL(NEC2REAL)                        :: sig
+    REAL(NEC2REAL)                        :: scrwlt
+    REAL(NEC2REAL)                        :: scrwrt
+    REAL(NEC2REAL)                        :: fmhz
+    INTEGER, DIMENSION(2*maxseg)          :: ip
+    INTEGER                               :: kcom
+
+END MODULE
+
+!***********************************************************************
+!
+! formerly common /csave/
+!
+MODULE csave
+    USE nec2dpar
+
+    IMPLICIT NONE
+
+    REAL(NEC2REAL), DIMENSION(19,5)       :: com
 
 END MODULE
 
@@ -198,7 +230,9 @@ PROGRAM nec2dxs
     USE plot
     USE matpar
     USE cmb
-    USE DATA
+    USE data
+    USE save
+    USE csave
 
     IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -226,9 +260,6 @@ PROGRAM nec2dxs
     COMPLEX*16  ex,ey,ez,zped,vqd,vqds,t1,y11a,y12a,epsc,u,u2,xx1,xx2
     COMPLEX*16  frati
 
-    COMMON/SAVE/epsr,sig,scrwlt,scrwrt,fmhz,ip(2*maxseg),kcom
-
-    COMMON/csave/com(19,5)
 
     COMMON /crnt/ air(maxseg),aii(maxseg),bir(maxseg),bii(maxseg),cir(maxseg),cii(maxseg),cur(3*maxseg)
 
@@ -2170,7 +2201,7 @@ SUBROUTINE arc (itg,ns,rada,ang1,ang2,rad)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
-USE DATA
+USE data
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -2306,7 +2337,7 @@ SUBROUTINE cabc (curx)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
-USE DATA
+USE data
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 COMPLEX*16, INTENT(OUT)                  :: curx(1)
@@ -2420,7 +2451,7 @@ SUBROUTINE cmngf (cb,cc,cd,nb,nc,nd,rkhx,iexkx)
 !
 USE nec2dpar
 USE matpar
-USE DATA
+USE data
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -2714,7 +2745,7 @@ SUBROUTINE cmset (nrow,cm,rkhx,iexkx)
 !
 USE nec2dpar
 USE matpar
-USE DATA
+USE data
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -2842,7 +2873,7 @@ SUBROUTINE cmss (j1,j2,im1,im2,cm,nrow,itrp)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
-USE DATA
+USE data
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -2936,7 +2967,7 @@ SUBROUTINE cmsw (j1,j2,i1,i2,cm,cw,ncw,nrow,itrp)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
-USE DATA
+USE data
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -3096,7 +3127,7 @@ SUBROUTINE cmws (j,i1,i2,cm,nr,cw,nw,itrp)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
-USE DATA
+USE data
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -3197,7 +3228,7 @@ SUBROUTINE cmww (j,i1,i2,cm,nr,cw,nw,itrp)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
-USE DATA
+USE data
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -3346,7 +3377,7 @@ SUBROUTINE conect (ignd)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
-USE DATA
+USE data
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -3753,7 +3784,7 @@ SUBROUTINE datagn
 !
         USE nec2dpar
         USE plot
-        USE DATA
+        USE data
 
         IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -4538,7 +4569,7 @@ SUBROUTINE etmns (p1,p2,p3,p4,p5,p6,ipr,e)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
-USE DATA
+USE data
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -5435,7 +5466,7 @@ SUBROUTINE ffld (thet,phi,eth,eph)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
-USE DATA
+USE data
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -5661,7 +5692,7 @@ END SUBROUTINE ffld
 SUBROUTINE fflds (rox,roy,roz,scur,ex,ey,ez)
 
     USE nec2dpar
-    USE DATA
+    USE data
 
     IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -5743,7 +5774,9 @@ USE nec2dpar
 USE somset
 USE matpar
 USE cmb
-USE DATA
+USE data
+USE save
+USE csave
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -5761,8 +5794,6 @@ COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
 !    dya(3),xsa(3),ysa(3),nxa(3),nya(3)
 COMMON /smat/ ssx(16,16)
 COMMON /zload/ zarray(maxseg),nload,nlodf
-COMMON/SAVE/epsr,sig,scrwlt,scrwrt,fmhz,ip(2*maxseg),kcom
-COMMON/csave/com(19,5)
 
 CHARACTER (LEN=80) :: ngfnam
 COMMON /ngfnam/ ngfnam
@@ -5917,7 +5948,7 @@ SUBROUTINE gfld (rho,phi,rz,eth,epi,erd,ux,ksymp)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
-USE DATA
+USE data
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -6086,7 +6117,9 @@ USE nec2dpar
 USE somset
 USE matpar
 USE cmb
-USE DATA
+USE data
+USE save
+USE csave
 
 !PARAMETER (iresrv=maxmat**2)
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
@@ -6102,8 +6135,6 @@ COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
 !    dya(3),xsa(3),ysa(3),nxa(3),nya(3)
 COMMON /smat/ ssx(16,16)
 COMMON /zload/ zarray(maxseg),nload,nlodf
-COMMON/SAVE/epsr,sig,scrwlt,scrwrt,fmhz,ip(2*maxseg),kcom
-COMMON/csave/com(19,5)
 
 CHARACTER (LEN=80) :: ngfnam
 COMMON /ngfnam/ ngfnam
@@ -6399,7 +6430,7 @@ SUBROUTINE helix(s,hl,a1,b1,a2,b2,rad,ns,itg)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
-USE DATA
+USE data
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -7244,7 +7275,7 @@ FUNCTION isegno (itagi,mx)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
-USE DATA
+USE data
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -7404,7 +7435,7 @@ SUBROUTINE load (ldtyp,ldtag,ldtagf,ldtagt,zlr,zli,zlc)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
-USE DATA
+USE data
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -7745,7 +7776,7 @@ SUBROUTINE move (rox,roy,roz,xs,ys,zs,its,nrpt,itgi)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
-USE DATA
+USE data
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -7865,7 +7896,7 @@ END SUBROUTINE move
 !
 SUBROUTINE nefld (xob,yob,zob,ex,ey,ez)
 USE nec2dpar
-USE DATA
+USE data
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -8016,7 +8047,7 @@ SUBROUTINE netwk (cm,cmb,cmc,cmd,ip,einc)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
-USE DATA
+USE data
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -8380,7 +8411,7 @@ END SUBROUTINE netwk
 SUBROUTINE nfpat
 USE nec2dpar
 USE plot
-USE DATA
+USE data
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 COMPLEX*16 ex,ey,ez
@@ -8484,7 +8515,7 @@ SUBROUTINE nhfld (xob,yob,zob,hx,hy,hz)
 !     THE STRUCTURE CURRENTS HAVE BEEN COMPUTED.
 !
 USE nec2dpar
-USE DATA
+USE data
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -8601,7 +8632,7 @@ END SUBROUTINE nhfld
 !
 SUBROUTINE patch (nx,ny,x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4)
     USE nec2dpar
-    USE DATA
+    USE data
 
     IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -8757,7 +8788,7 @@ END SUBROUTINE patch
 !
 SUBROUTINE subph (nx,ny,x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4)
     USE nec2dpar
-    USE DATA
+    USE data
 
     IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -9010,7 +9041,7 @@ SUBROUTINE qdsrc (is,v,e)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
-USE DATA
+USE data
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -9164,7 +9195,8 @@ SUBROUTINE rdpat
 !
 USE nec2dpar
 USE plot
-USE DATA
+USE data
+USE save
 
 PARAMETER(normax=4*maxseg)
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
@@ -9185,7 +9217,6 @@ REAL(NEC2REAL)                                        ::  ta = 1.745329252D-02
 REAL(NEC2REAL)                                        ::  td = 57.29577951D+0
 
 COMPLEX*16 eth,eph,erd,zrati,zrati2,t1,frati
-COMMON/SAVE/epsr,sig,scrwlt,scrwrt,fmhz,ip(2*maxseg),kcom
 COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
 COMMON/fpat/thets,phis,dth,dph,rfld,gnor,clt,cht,epsr2,sig2,  &
     xpr6,pinr,pnlr,ploss,xnr,ynr,znr,dxnr,dynr,dznr,nth,nph,ipd,iavp,  &
@@ -9785,7 +9816,7 @@ SUBROUTINE reflc (ix,iy,iz,itx,nop)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
-USE DATA
+USE data
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -10142,7 +10173,7 @@ SUBROUTINE sbf (i,is,aa,bb,cc)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
-USE DATA
+USE data
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -10798,7 +10829,7 @@ SUBROUTINE tbf (i,icap)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
-USE DATA
+USE data
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -11001,7 +11032,7 @@ SUBROUTINE trio (j)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
-USE DATA
+USE data
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -11161,7 +11192,7 @@ SUBROUTINE wire (xw1,yw1,zw1,xw2,yw2,zw2,rad,rdel,rrad,ns,itg)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
-USE DATA
+USE data
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
