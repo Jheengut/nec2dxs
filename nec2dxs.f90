@@ -169,6 +169,31 @@ MODULE csave
 END MODULE
 
 !***********************************************************************
+!
+! formerly common /gnd/
+!
+MODULE gnd
+    USE nec2dpar
+
+    IMPLICIT NONE
+
+    COMPLEX*16                            :: zrati
+    COMPLEX*16                            :: zrati2
+    COMPLEX*16                            :: frati
+    COMPLEX*16                            :: t1
+    REAL(NEC2REAL)                        :: t2
+    REAL(NEC2REAL)                        :: cl
+    REAL(NEC2REAL)                        :: ch
+    REAL(NEC2REAL)                        :: scrwl
+    REAL(NEC2REAL)                        :: scrwr
+    INTEGER                               :: nradl
+    INTEGER                               :: ksymp
+    INTEGER                               :: ifar
+    INTEGER                               :: iperf
+
+END MODULE
+
+!***********************************************************************
 PROGRAM nec2dxs
 !    av00    01-mar-02    First compile with Gnu77 compiler for windows
 
@@ -233,6 +258,7 @@ PROGRAM nec2dxs
     USE data
     USE save
     USE csave
+    USE gnd
 
     IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -256,14 +282,11 @@ PROGRAM nec2dxs
 
     INTEGER*2                           :: llneg
 
-    COMPLEX*16 fj,vsant,eth,eph,zrati,cur,curi,zarray,zrati2
-    COMPLEX*16  ex,ey,ez,zped,vqd,vqds,t1,y11a,y12a,epsc,u,u2,xx1,xx2
-    COMPLEX*16  frati
+    COMPLEX*16 fj,vsant,eth,eph,cur,curi,zarray
+    COMPLEX*16  ex,ey,ez,zped,vqd,vqds,y11a,y12a,epsc,u,u2,xx1,xx2
 
 
     COMMON /crnt/ air(maxseg),aii(maxseg),bir(maxseg),bii(maxseg),cir(maxseg),cii(maxseg),cur(3*maxseg)
-
-    COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
 
     COMMON /zload/ zarray(maxseg),nload,nlodf
 
@@ -2968,6 +2991,7 @@ SUBROUTINE cmsw (j1,j2,i1,i2,cm,cw,ncw,nrow,itrp)
 !
 USE nec2dpar
 USE data
+USE gnd
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -2985,9 +3009,8 @@ INTEGER                                  :: ip
 
 ! ***
 !     COMPUTES MATRIX ELEMENTS FOR E ALONG WIRES DUE TO PATCH CURRENT
-COMPLEX*16  zrati,zrati2,t1,exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc ,emel, frati
+COMPLEX*16  exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc ,emel
 COMMON /angl/ salp(maxseg)
-COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
 COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
     ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
 
@@ -4187,6 +4210,7 @@ SUBROUTINE efld (xi,yi,zi,ai,ij)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar, ONLY : pi
+USE gnd
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -4203,11 +4227,10 @@ INTEGER                                  :: ip
 !     CONSTANT CURRENTS.  GROUND EFFECT INCLUDED.
 !
 COMPLEX*16 txk,tyk,tzk,txs,tys,tzs,txc,tyc,tzc,exk,eyk,ezk,exs,eys  &
-    ,ezs,exc,eyc,ezc,epx,epy,zrati,refs,refps,zrsin,zratx,t1,zscrn  &
-    ,zrati2,tezs,ters,tezc,terc,tezk,terk,egnd,frati
+    ,ezs,exc,eyc,ezc,epx,epy,refs,refps,zrsin,zratx,zscrn  &
+    ,tezs,ters,tezc,terc,tezk,terk,egnd
 COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
     ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
-COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
 COMMON /incom/ xo,yo,zo,sn,xsn,ysn,isnor
 DIMENSION egnd(9)
 EQUIVALENCE (egnd(1),txk), (egnd(2),tyk), (egnd(3),tzk), (egnd(4),  &
@@ -4570,6 +4593,7 @@ SUBROUTINE etmns (p1,p2,p3,p4,p5,p6,ipr,e)
 !
 USE nec2dpar
 USE data
+USE gnd
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -4587,14 +4611,12 @@ COMPLEX*16, INTENT(OUT)                  :: e(2*maxseg)
 !     INCIDENT ON THE STRUCTURE.  E IS THE RIGHT HAND SIDE OF THE MATRIX
 !     EQUATION.
 !
-COMPLEX*16  cx,cy,cz,vsant,er,et,ezh,erh,vqd,vqds,zrati  &
-    ,zrati2,rrv,rrh,t1,tt1,tt2,frati
+COMPLEX*16  cx,cy,cz,vsant,er,et,ezh,erh,vqd,vqds,rrv,rrh,tt1,tt2
 COMMON /angl/ salp(maxseg)
 
 COMMON /vsorc/ vqd(nsmax),vsant(nsmax),vqds(nsmax),ivqd(nsmax),  &
     isant(nsmax),iqds(nsmax),nvqd,nsant,nqds
 
-COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
 DIMENSION cab(1), sab(1)
 DIMENSION t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1)
 EQUIVALENCE (cab,alp), (sab,bet)
@@ -5467,6 +5489,7 @@ SUBROUTINE ffld (thet,phi,eth,eph)
 !
 USE nec2dpar
 USE data
+USE gnd
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -5483,12 +5506,11 @@ INTEGER                                  :: ip
 !     THE FACTOR EXP(J*K*R)/(R/LAMDA) NOT INCLUDED
 !
 COMPLEX*16 cix,ciy,ciz,exa, const,ccx,ccy,ccz,cdp,cur
-COMPLEX*16 zrati,zrsin,rrv,rrh,rrv1,rrh1,rrv2,rrh2,zrati2,tix,tiy  &
-    ,tiz,t1,zscrn,ex,ey,ez,gx,gy,gz,frati
+COMPLEX*16 zrsin,rrv,rrh,rrv1,rrh1,rrv2,rrh2,tix,tiy  &
+    ,tiz,zscrn,ex,ey,ez,gx,gy,gz
 COMMON /angl/ salp(maxseg)
 COMMON /crnt/ air(maxseg),aii(maxseg),bir(maxseg),bii(maxseg),  &
     cir(maxseg),cii(maxseg),cur(3*maxseg)
-COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
 DIMENSION cab(1), sab(1), consx(2)
 EQUIVALENCE (cab,alp), (sab,bet), (const,consx)
 DATA tp,eta/6.283185308D+0,376.73/
@@ -5777,6 +5799,7 @@ USE cmb
 USE data
 USE save
 USE csave
+USE gnd
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -5786,10 +5809,9 @@ INTEGER, INTENT(IN OUT)                  :: iprt
 !
 !     GFIL READS THE N.G.F. FILE
 !
-COMPLEX*16 ssx,zrati,zrati2,t1,zarray,frati
+COMPLEX*16 ssx,zarray
 
 COMMON /angl/ salp(maxseg)
-COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
 !COMMON /ggrid/ ar1(11,10,4),ar2(17,5,4),ar3(9,8,4),epscf,dxa(3), &
 !    dya(3),xsa(3),ysa(3),nxa(3),nya(3)
 COMMON /smat/ ssx(16,16)
@@ -6120,6 +6142,7 @@ USE cmb
 USE data
 USE save
 USE csave
+USE gnd
 
 !PARAMETER (iresrv=maxmat**2)
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
@@ -6127,10 +6150,9 @@ IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 !
 !     WRITE N.G.F. FILE
 !
-COMPLEX*16 ssx,zrati,zrati2,t1,zarray,frati
+COMPLEX*16 ssx,zarray
 
 COMMON /angl/ salp(maxseg)
-COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
 !COMMON /ggrid/ ar1(11,10,4),ar2(17,5,4),ar3(9,8,4),epscf,dxa(3), &
 !    dya(3),xsa(3),ysa(3),nxa(3),nya(3)
 COMMON /smat/ ssx(16,16)
@@ -6646,6 +6668,8 @@ SUBROUTINE hintg (xi,yi,zi)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
+USE gnd
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 REAL(NEC2REAL), INTENT(IN)                         :: xi
@@ -6656,11 +6680,10 @@ INTEGER                                    :: ip
 
 ! ***
 !     HINTG COMPUTES THE H FIELD OF A PATCH CURRENT
-COMPLEX*16 exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc,zrati,zrati2,gam,  &
-    f1x,f1y,f1z,f2x,f2y,f2z,rrv,rrh,t1,frati
+COMPLEX*16 exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc,gam,  &
+    f1x,f1y,f1z,f2x,f2y,f2z,rrv,rrh
 COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
     ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
-COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
 EQUIVALENCE (t1xj,cabj), (t1yj,sabj), (t1zj,salpj), (t2xj,b), (t2yj,ind1), (t2zj,ind2)
 DATA fpi/12.56637062D+0/,tp/6.283185308D+0/
 
@@ -6741,6 +6764,8 @@ SUBROUTINE hsfld (xi,yi,zi,ai)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
+USE gnd
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 REAL(NEC2REAL), INTENT(IN)                         :: xi
@@ -6753,11 +6778,10 @@ INTEGER                                    :: ip
 ! ***
 !     HSFLD COMPUTES THE H FIELD FOR CONSTANT, SINE, AND COSINE CURRENT
 !     ON A SEGMENT INCLUDING GROUND EFFECTS.
-COMPLEX*16 exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc,zrati,zrati2,t1  &
-    ,hpk,hps,hpc,qx,qy,qz,rrv,rrh,zratx,frati
+COMPLEX*16 exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc,  &
+    hpk,hps,hpc,qx,qy,qz,rrv,rrh,zratx
 COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
     ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
-COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
 DATA eta/376.73/
 
 xij=xi-xj
@@ -7897,6 +7921,7 @@ END SUBROUTINE move
 SUBROUTINE nefld (xob,yob,zob,ex,ey,ez)
 USE nec2dpar
 USE data
+USE gnd
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -7909,14 +7934,12 @@ COMPLEX*16, INTENT(OUT)                  :: ez
 
 INTEGER                                  :: ip
 
-COMPLEX*16  cur,acx,bcx,ccx,exk,eyk,ezk,exs,eys,ezs,exc  &
-    ,eyc,ezc,zrati,zrati2,t1,frati
+COMPLEX*16  cur,acx,bcx,ccx,exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc
 COMMON /angl/ salp(maxseg)
 COMMON /crnt/ air(maxseg),aii(maxseg),bir(maxseg),bii(maxseg),  &
     cir(maxseg),cii(maxseg),cur(3*maxseg)
 COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
     ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
-COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl,ksymp,ifar,iperf
 DIMENSION cab(1), sab(1), t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1)
 EQUIVALENCE (cab,alp), (sab,bet)
 EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), (t2y,icon2), (t2z,itag)
@@ -8516,6 +8539,7 @@ SUBROUTINE nhfld (xob,yob,zob,hx,hy,hz)
 !
 USE nec2dpar
 USE data
+USE gnd
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -8526,11 +8550,10 @@ COMPLEX*16, INTENT(OUT)                  :: hx
 COMPLEX*16, INTENT(OUT)                  :: hy
 COMPLEX*16, INTENT(OUT)                  :: hz
 COMPLEX*16  cur,acx,bcx,ccx,exk,eyk,ezk,exs,eys,ezs,exc, eyc,ezc
-COMPLEX*16 zrati,zrati2,frati,t1,con
+COMPLEX*16 con
 COMPLEX*16 expx,exmx,expy,exmy,expz,exmz
 COMPLEX*16 eypx,eymx,eypy,eymy,eypz,eymz
 COMPLEX*16 ezpx,ezmx,ezpy,ezmy,ezpz,ezmz
-COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
 COMMON /angl/ salp(maxseg)
 COMMON /crnt/ air(maxseg),aii(maxseg),bir(maxseg),bii(maxseg),  &
     cir(maxseg),cii(maxseg),cur(3*maxseg)
@@ -9197,6 +9220,7 @@ USE nec2dpar
 USE plot
 USE data
 USE save
+USE gnd
 
 PARAMETER(normax=4*maxseg)
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
@@ -9216,8 +9240,7 @@ CHARACTER (LEN=6)                             :: isens
 REAL(NEC2REAL)                                        ::  ta = 1.745329252D-02
 REAL(NEC2REAL)                                        ::  td = 57.29577951D+0
 
-COMPLEX*16 eth,eph,erd,zrati,zrati2,t1,frati
-COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
+COMPLEX*16 eth,eph,erd,t1
 COMMON/fpat/thets,phis,dth,dph,rfld,gnor,clt,cht,epsr2,sig2,  &
     xpr6,pinr,pnlr,ploss,xnr,ynr,znr,dxnr,dynr,dznr,nth,nph,ipd,iavp,  &
     inor,iax,ixtyp,near,nfeh,nrx,nry,nrz
@@ -10339,6 +10362,7 @@ SUBROUTINE sflds (t,e)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar, ONLY : pi
+USE gnd
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -10350,12 +10374,11 @@ COMPLEX*16, INTENT(OUT)                  :: e(9)
 !     THE SOURCE SEGMENT AT T RELATIVE TO THE SEGMENT CENTER.
 !
 COMPLEX*16  erv,ezv,erh,ezh,eph,t1,exk,eyk,ezk,exs,eys,ezs,exc  &
-    ,eyc,ezc,xx1,xx2,u,u2,zrati,zrati2,frati,er,et,hrv,hzv,hrh
+    ,eyc,ezc,xx1,xx2,u,u2,er,et,hrv,hzv,hrh
 COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
     ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
 COMMON /incom/ xo,yo,zo,sn,xsn,ysn,isnor
 COMMON /gwav/ u,u2,xx1,xx2,r1,r2,zmh,zph
-COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
 
 DATA tp/6.283185308D+0/,pot/1.570796327D+0/
 
@@ -11100,6 +11123,8 @@ SUBROUTINE unere (xob,yob,zob)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
+USE gnd
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 REAL(NEC2REAL), INTENT(IN)                         :: xob
@@ -11108,11 +11133,10 @@ REAL(NEC2REAL), INTENT(IN)                         :: zob
 ! ***
 !     CALCULATES THE ELECTRIC FIELD DUE TO UNIT CURRENT IN THE T1 AND T2
 !     DIRECTIONS ON A PATCH
-COMPLEX*16 exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc,zrati,zrati2,t1  &
-    ,er,q1,q2,rrv,rrh,edp,frati
+COMPLEX*16 exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc,t1  &
+    ,er,q1,q2,rrv,rrh,edp
 COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
     ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
-COMMON /gnd/zrati,zrati2,frati,t1,t2,cl,ch,scrwl,scrwr,nradl, ksymp,ifar,iperf
 EQUIVALENCE (t1xj,cabj), (t1yj,sabj), (t1zj,salpj), (t2xj,b), &
     (t2yj,ind1), (t2zj,ind2)
 DATA tpi,const/6.283185308D+0,4.771341188D+0/
