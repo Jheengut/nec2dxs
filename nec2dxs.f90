@@ -241,6 +241,26 @@ MODULE zload
 END MODULE
 
 !***********************************************************************
+!
+! formerly common /gwav/
+!
+MODULE gwav
+    USE nec2dpar
+
+    IMPLICIT NONE
+
+    COMPLEX*16                            :: u
+    COMPLEX*16                            :: u2
+    COMPLEX*16                            :: xx1
+    COMPLEX*16                            :: xx2
+    REAL(NEC2REAL)                        :: r1
+    REAL(NEC2REAL)                        :: r2
+    REAL(NEC2REAL)                        :: zmh
+    REAL(NEC2REAL)                        :: zph
+
+END MODULE
+
+!***********************************************************************
 PROGRAM nec2dxs
 !    av00    01-mar-02    First compile with Gnu77 compiler for windows
 
@@ -308,6 +328,7 @@ PROGRAM nec2dxs
     USE gnd
     USE crnt
     USE zload
+    USE gwav
 
     IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -332,7 +353,7 @@ PROGRAM nec2dxs
     INTEGER*2                           :: llneg
 
     COMPLEX*16 fj,vsant,eth,eph,curi
-    COMPLEX*16  ex,ey,ez,zped,vqd,vqds,y11a,y12a,epsc,u,u2,xx1,xx2
+    COMPLEX*16  ex,ey,ez,zped,vqd,vqds,y11a,y12a,epsc
 
     COMMON/yparm/y11a(5),y12a(20),ncoup,icoup,nctag(5),ncseg(5)
 
@@ -348,9 +369,6 @@ PROGRAM nec2dxs
     COMMON/fpat/thets,phis,dth,dph,rfld,gnor,clt,cht,epsr2,sig2,  &
         xpr6,pinr,pnlr,ploss,xnr,ynr,znr,dxnr,dynr,dznr,nth,nph,ipd,iavp,  &
         inor,iax,ixtyp,near,nfeh,nrx,nry,nrz
-
-    COMMON/gwav/u,u2,xx1,xx2,r1,r2,zmh,zph
-
 
     DIMENSION cab(1),sab(1),x2(1),y2(1),z2(1)
 
@@ -6013,6 +6031,7 @@ USE nec2dpar
 USE data
 USE crnt
 USE angl
+USE gwav
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -6028,9 +6047,8 @@ INTEGER, INTENT(IN OUT)                  :: ksymp
 !
 !     GFLD COMPUTES THE RADIATED FIELD INCLUDING GROUND WAVE.
 !
-COMPLEX*16 cix,ciy,ciz,exa,xx1,xx2,u,u2,erv,ezv,erh,eph
+COMPLEX*16 cix,ciy,ciz,exa,erv,ezv,erh,eph
 COMPLEX*16 ezh,ex,ey
-COMMON /gwav/ u,u2,xx1,xx2,r1,r2,zmh,zph
 DIMENSION cab(1), sab(1)
 EQUIVALENCE (cab(1),alp(1)), (sab(1),bet(1))
 DATA tp/6.283185308D+0/
@@ -6316,6 +6334,8 @@ SUBROUTINE gwave (erv,ezv,erh,ezh,eph)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
+USE gwav
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 COMPLEX*16, INTENT(OUT)                  :: erv
@@ -6329,10 +6349,9 @@ COMPLEX*16, INTENT(OUT)                  :: eph
 !     CURRENT ELEMENT OVER A GROUND PLANE USING FORMULAS OF K.A. NORTON
 !     (PROC. IRE, SEPT., 1937, PP.1203,1236.)
 !
-COMPLEX*16 fj,tpj,u2,u,rk1,rk2,t1,t2,t3,t4,p1,rv,omr,w,f,q1,rh,v,g  &
-    ,xr1,xr2,x1,x2,x3,x4,x5,x6,x7, xx1,xx2,econ, fbar
+COMPLEX*16 fj,tpj,rk1,rk2,t1,t2,t3,t4,p1,rv,omr,w,f,q1,rh,v,g  &
+    ,xr1,xr2,x1,x2,x3,x4,x5,x6,x7,econ,fbar
 
-COMMON /gwav/ u,u2,xx1,xx2,r1,r2,zmh,zph
 DIMENSION fjx(2), tpjx(2), econx(2)
 EQUIVALENCE (fj,fjx), (tpj,tpjx), (econ,econx)
 DATA fjx/0.,1./,tpjx/0.,6.283185308D+0/
@@ -10397,6 +10416,7 @@ SUBROUTINE sflds (t,e)
 !
 USE nec2dpar, ONLY : pi
 USE gnd
+USE gwav
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -10408,11 +10428,10 @@ COMPLEX*16, INTENT(OUT)                  :: e(9)
 !     THE SOURCE SEGMENT AT T RELATIVE TO THE SEGMENT CENTER.
 !
 COMPLEX*16  erv,ezv,erh,ezh,eph,t1,exk,eyk,ezk,exs,eys,ezs,exc  &
-    ,eyc,ezc,xx1,xx2,u,u2,er,et,hrv,hzv,hrh
+    ,eyc,ezc,er,et,hrv,hzv,hrh
 COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
     ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
 COMMON /incom/ xo,yo,zo,sn,xsn,ysn,isnor
-COMMON /gwav/ u,u2,xx1,xx2,r1,r2,zmh,zph
 
 DATA tp/6.283185308D+0/,pot/1.570796327D+0/
 
