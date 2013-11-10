@@ -194,6 +194,25 @@ MODULE gnd
 END MODULE
 
 !***********************************************************************
+!
+! formerly common /crnt/
+!
+MODULE crnt
+    USE nec2dpar
+
+    IMPLICIT NONE
+
+    REAL(NEC2REAL), DIMENSION(maxseg)     :: air
+    REAL(NEC2REAL), DIMENSION(maxseg)     :: aii
+    REAL(NEC2REAL), DIMENSION(maxseg)     :: bir
+    REAL(NEC2REAL), DIMENSION(maxseg)     :: bii
+    REAL(NEC2REAL), DIMENSION(maxseg)     :: cir
+    REAL(NEC2REAL), DIMENSION(maxseg)     :: cii
+    COMPLEX*16,     DIMENSION(3*maxseg)   :: cur
+
+END MODULE
+
+!***********************************************************************
 PROGRAM nec2dxs
 !    av00    01-mar-02    First compile with Gnu77 compiler for windows
 
@@ -259,6 +278,7 @@ PROGRAM nec2dxs
     USE save
     USE csave
     USE gnd
+    USE crnt
 
     IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -282,11 +302,10 @@ PROGRAM nec2dxs
 
     INTEGER*2                           :: llneg
 
-    COMPLEX*16 fj,vsant,eth,eph,cur,curi,zarray
+    COMPLEX*16 fj,vsant,eth,eph,curi,zarray
     COMPLEX*16  ex,ey,ez,zped,vqd,vqds,y11a,y12a,epsc,u,u2,xx1,xx2
 
 
-    COMMON /crnt/ air(maxseg),aii(maxseg),bir(maxseg),bii(maxseg),cir(maxseg),cii(maxseg),cur(3*maxseg)
 
     COMMON /zload/ zarray(maxseg),nload,nlodf
 
@@ -2361,6 +2380,8 @@ SUBROUTINE cabc (curx)
 !
 USE nec2dpar
 USE data
+USE crnt
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 COMPLEX*16, INTENT(OUT)                  :: curx(1)
@@ -2370,9 +2391,7 @@ COMPLEX*16, INTENT(OUT)                  :: curx(1)
 !     COSINE (C) TERMS IN THE CURRENT INTERPOLATION FUNCTIONS FOR THE
 !     CURRENT VECTOR CUR.
 !
-COMPLEX*16 cur, vqds,curd,ccj,vsant,vqd,cs1,cs2
-COMMON /crnt/ air(maxseg),aii(maxseg),bir(maxseg),bii(maxseg),  &
-    cir(maxseg),cii(maxseg),cur(3*maxseg)
+COMPLEX*16 vqds,curd,ccj,vsant,vqd,cs1,cs2
 COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
     jsno,iscon(50),nscon,ipcon(10),npcon
 
@@ -5490,6 +5509,7 @@ SUBROUTINE ffld (thet,phi,eth,eph)
 USE nec2dpar
 USE data
 USE gnd
+USE crnt
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -5505,12 +5525,10 @@ INTEGER                                  :: ip
 !     FFLD CALCULATES THE FAR ZONE RADIATED ELECTRIC FIELDS,
 !     THE FACTOR EXP(J*K*R)/(R/LAMDA) NOT INCLUDED
 !
-COMPLEX*16 cix,ciy,ciz,exa, const,ccx,ccy,ccz,cdp,cur
+COMPLEX*16 cix,ciy,ciz,exa, const,ccx,ccy,ccz,cdp
 COMPLEX*16 zrsin,rrv,rrh,rrv1,rrh1,rrv2,rrh2,tix,tiy  &
     ,tiz,zscrn,ex,ey,ez,gx,gy,gz
 COMMON /angl/ salp(maxseg)
-COMMON /crnt/ air(maxseg),aii(maxseg),bir(maxseg),bii(maxseg),  &
-    cir(maxseg),cii(maxseg),cur(3*maxseg)
 DIMENSION cab(1), sab(1), consx(2)
 EQUIVALENCE (cab,alp), (sab,bet), (const,consx)
 DATA tp,eta/6.283185308D+0,376.73/
@@ -5971,6 +5989,7 @@ SUBROUTINE gfld (rho,phi,rz,eth,epi,erd,ux,ksymp)
 !
 USE nec2dpar
 USE data
+USE crnt
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -5986,11 +6005,9 @@ INTEGER, INTENT(IN OUT)                  :: ksymp
 !
 !     GFLD COMPUTES THE RADIATED FIELD INCLUDING GROUND WAVE.
 !
-COMPLEX*16 cur, cix,ciy,ciz,exa,xx1,xx2,u,u2,erv,ezv,erh,eph
+COMPLEX*16 cix,ciy,ciz,exa,xx1,xx2,u,u2,erv,ezv,erh,eph
 COMPLEX*16 ezh,ex,ey
 COMMON /angl/ salp(maxseg)
-COMMON /crnt/ air(maxseg),aii(maxseg),bir(maxseg),bii(maxseg),  &
-    cir(maxseg),cii(maxseg),cur(3*maxseg)
 COMMON /gwav/ u,u2,xx1,xx2,r1,r2,zmh,zph
 DIMENSION cab(1), sab(1)
 EQUIVALENCE (cab(1),alp(1)), (sab(1),bet(1))
@@ -7922,6 +7939,7 @@ SUBROUTINE nefld (xob,yob,zob,ex,ey,ez)
 USE nec2dpar
 USE data
 USE gnd
+USE crnt
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -7934,10 +7952,8 @@ COMPLEX*16, INTENT(OUT)                  :: ez
 
 INTEGER                                  :: ip
 
-COMPLEX*16  cur,acx,bcx,ccx,exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc
+COMPLEX*16  acx,bcx,ccx,exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc
 COMMON /angl/ salp(maxseg)
-COMMON /crnt/ air(maxseg),aii(maxseg),bir(maxseg),bii(maxseg),  &
-    cir(maxseg),cii(maxseg),cur(3*maxseg)
 COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
     ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
 DIMENSION cab(1), sab(1), t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1)
@@ -8071,6 +8087,7 @@ SUBROUTINE netwk (cm,cmb,cmc,cmd,ip,einc)
 !
 USE nec2dpar
 USE data
+USE crnt
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -8086,10 +8103,7 @@ COMPLEX*16, INTENT(IN OUT)               :: einc(1)
 !     EXCITATION INCLUDING THE EFFECT OF NON-RADIATING NETWORKS IF
 !     PRESENT.
 !
-COMPLEX*16 cmn,rhnt,ymit,rhs,zped, vsant,vlt,cur,vsrc,rhnx ,vqd,vqds,cux
-
-COMMON /crnt/ air(maxseg),aii(maxseg),bir(maxseg),bii(maxseg),  &
-    cir(maxseg),cii(maxseg),cur(3*maxseg)
+COMPLEX*16 cmn,rhnt,ymit,rhs,zped, vsant,vlt,vsrc,rhnx ,vqd,vqds,cux
 
 COMMON /vsorc/ vqd(nsmax),vsant(nsmax),vqds(nsmax),ivqd(nsmax),  &
     isant(nsmax),iqds(nsmax),nvqd,nsant,nqds
@@ -8540,6 +8554,7 @@ SUBROUTINE nhfld (xob,yob,zob,hx,hy,hz)
 USE nec2dpar
 USE data
 USE gnd
+USE crnt
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -8549,14 +8564,12 @@ REAL(NEC2REAL), INTENT(IN)                         :: zob
 COMPLEX*16, INTENT(OUT)                  :: hx
 COMPLEX*16, INTENT(OUT)                  :: hy
 COMPLEX*16, INTENT(OUT)                  :: hz
-COMPLEX*16  cur,acx,bcx,ccx,exk,eyk,ezk,exs,eys,ezs,exc, eyc,ezc
+COMPLEX*16  acx,bcx,ccx,exk,eyk,ezk,exs,eys,ezs,exc, eyc,ezc
 COMPLEX*16 con
 COMPLEX*16 expx,exmx,expy,exmy,expz,exmz
 COMPLEX*16 eypx,eymx,eypy,eymy,eypz,eymz
 COMPLEX*16 ezpx,ezmx,ezpy,ezmy,ezpz,ezmz
 COMMON /angl/ salp(maxseg)
-COMMON /crnt/ air(maxseg),aii(maxseg),bir(maxseg),bii(maxseg),  &
-    cir(maxseg),cii(maxseg),cur(3*maxseg)
 COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
     ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
 DIMENSION cab(1), sab(1)
