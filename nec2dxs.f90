@@ -213,6 +213,19 @@ MODULE crnt
 END MODULE
 
 !***********************************************************************
+!
+! formerly common /angl/
+!
+MODULE angl
+    USE nec2dpar
+
+    IMPLICIT NONE
+
+    REAL(NEC2REAL), DIMENSION(maxseg)     :: salp
+
+END MODULE
+
+!***********************************************************************
 PROGRAM nec2dxs
 !    av00    01-mar-02    First compile with Gnu77 compiler for windows
 
@@ -2381,6 +2394,7 @@ SUBROUTINE cabc (curx)
 USE nec2dpar
 USE data
 USE crnt
+USE angl
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -2398,7 +2412,6 @@ COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
 COMMON /vsorc/ vqd(nsmax),vsant(nsmax),vqds(nsmax),ivqd(nsmax),  &
     isant(nsmax),iqds(nsmax),nvqd,nsant,nqds
 
-COMMON /angl/ salp(maxseg)
 DIMENSION t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1)
 DIMENSION  ccjx(2)
 EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), (t2y,icon2), (t2z,itag)
@@ -2916,6 +2929,7 @@ SUBROUTINE cmss (j1,j2,im1,im2,cm,nrow,itrp)
 !
 USE nec2dpar
 USE data
+USE angl
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -2929,7 +2943,6 @@ INTEGER, INTENT(IN)                      :: itrp
 ! ***
 !     CMSS COMPUTES MATRIX ELEMENTS FOR SURFACE-SURFACE INTERACTIONS.
 COMPLEX*16 g11,g12,g21,g22, exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc
-COMMON /angl/ salp(maxseg)
 COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
     ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
 
@@ -3011,6 +3024,7 @@ SUBROUTINE cmsw (j1,j2,i1,i2,cm,cw,ncw,nrow,itrp)
 USE nec2dpar
 USE data
 USE gnd
+USE angl
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -3029,7 +3043,6 @@ INTEGER                                  :: ip
 ! ***
 !     COMPUTES MATRIX ELEMENTS FOR E ALONG WIRES DUE TO PATCH CURRENT
 COMPLEX*16  exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc ,emel
-COMMON /angl/ salp(maxseg)
 COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
     ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
 
@@ -3170,6 +3183,7 @@ SUBROUTINE cmws (j,i1,i2,cm,nr,cw,nw,itrp)
 !
 USE nec2dpar
 USE data
+USE angl
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -3186,7 +3200,6 @@ INTEGER, INTENT(IN)                      :: itrp
 !     CMWS COMPUTES MATRIX ELEMENTS FOR WIRE-SURFACE INTERACTIONS
 !
 COMPLEX*16  etk,ets,etc,exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc
-COMMON /angl/ salp(maxseg)
 
 COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
     jsno,iscon(50),nscon,ipcon(10),npcon
@@ -3271,6 +3284,7 @@ SUBROUTINE cmww (j,i1,i2,cm,nr,cw,nw,itrp)
 !
 USE nec2dpar
 USE data
+USE angl
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -3287,7 +3301,6 @@ INTEGER, INTENT(IN)                      :: itrp
 !     CMWW COMPUTES MATRIX ELEMENTS FOR WIRE-WIRE INTERACTIONS
 !
 COMPLEX*16  etk,ets,etc,exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc
-COMMON /angl/ salp(maxseg)
 
 COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
     jsno,iscon(50),nscon,ipcon(10),npcon
@@ -3827,6 +3840,7 @@ SUBROUTINE datagn
         USE nec2dpar
         USE plot
         USE data
+        USE angl
 
         IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -3836,8 +3850,6 @@ SUBROUTINE datagn
         CHARACTER (LEN=1), DIMENSION(2), PARAMETER :: ifx = (/' ','X'/)
         CHARACTER (LEN=1), DIMENSION(2), PARAMETER :: ify = (/' ','Y'/)
         CHARACTER (LEN=1), DIMENSION(2), PARAMETER :: ifz = (/' ','Z'/)
-
-        COMMON /angl/ salp(maxseg)
 
         DIMENSION x2(1), y2(1), z2(1), t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), &
             t2z(1), cab(1), sab(1)
@@ -4613,6 +4625,7 @@ SUBROUTINE etmns (p1,p2,p3,p4,p5,p6,ipr,e)
 USE nec2dpar
 USE data
 USE gnd
+USE angl
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -4631,7 +4644,6 @@ COMPLEX*16, INTENT(OUT)                  :: e(2*maxseg)
 !     EQUATION.
 !
 COMPLEX*16  cx,cy,cz,vsant,er,et,ezh,erh,vqd,vqds,rrv,rrh,tt1,tt2
-COMMON /angl/ salp(maxseg)
 
 COMMON /vsorc/ vqd(nsmax),vsant(nsmax),vqds(nsmax),ivqd(nsmax),  &
     isant(nsmax),iqds(nsmax),nvqd,nsant,nqds
@@ -5510,6 +5522,7 @@ USE nec2dpar
 USE data
 USE gnd
 USE crnt
+USE angl
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -5528,7 +5541,6 @@ INTEGER                                  :: ip
 COMPLEX*16 cix,ciy,ciz,exa, const,ccx,ccy,ccz,cdp
 COMPLEX*16 zrsin,rrv,rrh,rrv1,rrh1,rrv2,rrh2,tix,tiy  &
     ,tiz,zscrn,ex,ey,ez,gx,gy,gz
-COMMON /angl/ salp(maxseg)
 DIMENSION cab(1), sab(1), consx(2)
 EQUIVALENCE (cab,alp), (sab,bet), (const,consx)
 DATA tp,eta/6.283185308D+0,376.73/
@@ -5818,6 +5830,7 @@ USE data
 USE save
 USE csave
 USE gnd
+USE angl
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -5829,7 +5842,6 @@ INTEGER, INTENT(IN OUT)                  :: iprt
 !
 COMPLEX*16 ssx,zarray
 
-COMMON /angl/ salp(maxseg)
 !COMMON /ggrid/ ar1(11,10,4),ar2(17,5,4),ar3(9,8,4),epscf,dxa(3), &
 !    dya(3),xsa(3),ysa(3),nxa(3),nya(3)
 COMMON /smat/ ssx(16,16)
@@ -5990,6 +6002,7 @@ SUBROUTINE gfld (rho,phi,rz,eth,epi,erd,ux,ksymp)
 USE nec2dpar
 USE data
 USE crnt
+USE angl
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -6007,7 +6020,6 @@ INTEGER, INTENT(IN OUT)                  :: ksymp
 !
 COMPLEX*16 cix,ciy,ciz,exa,xx1,xx2,u,u2,erv,ezv,erh,eph
 COMPLEX*16 ezh,ex,ey
-COMMON /angl/ salp(maxseg)
 COMMON /gwav/ u,u2,xx1,xx2,r1,r2,zmh,zph
 DIMENSION cab(1), sab(1)
 EQUIVALENCE (cab(1),alp(1)), (sab(1),bet(1))
@@ -6160,6 +6172,7 @@ USE data
 USE save
 USE csave
 USE gnd
+USE angl
 
 !PARAMETER (iresrv=maxmat**2)
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
@@ -6169,7 +6182,6 @@ IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 !
 COMPLEX*16 ssx,zarray
 
-COMMON /angl/ salp(maxseg)
 !COMMON /ggrid/ ar1(11,10,4),ar2(17,5,4),ar3(9,8,4),epscf,dxa(3), &
 !    dya(3),xsa(3),ysa(3),nxa(3),nya(3)
 COMMON /smat/ ssx(16,16)
@@ -7818,6 +7830,7 @@ SUBROUTINE move (rox,roy,roz,xs,ys,zs,its,nrpt,itgi)
 !
 USE nec2dpar
 USE data
+USE angl
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -7837,7 +7850,6 @@ INTEGER, INTENT(IN)                        :: itgi
 !     STRUCTURE IS ROTATED ABOUT X,Y,Z AXES BY ROX,ROY,ROZ
 !     RESPECTIVELY, THEN SHIFTED BY XS,YS,ZS
 !
-COMMON /angl/ salp(maxseg)
 DIMENSION t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1), x2(1), y2(1), z2(1)
 EQUIVALENCE (x2(1),si(1)), (y2(1),alp(1)), (z2(1),bet(1))
 EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), (t2y,icon2), (t2z,itag)
@@ -7940,6 +7952,7 @@ USE nec2dpar
 USE data
 USE gnd
 USE crnt
+USE angl
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -7953,7 +7966,6 @@ COMPLEX*16, INTENT(OUT)                  :: ez
 INTEGER                                  :: ip
 
 COMPLEX*16  acx,bcx,ccx,exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc
-COMMON /angl/ salp(maxseg)
 COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
     ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
 DIMENSION cab(1), sab(1), t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1)
@@ -8555,6 +8567,7 @@ USE nec2dpar
 USE data
 USE gnd
 USE crnt
+USE angl
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -8569,7 +8582,6 @@ COMPLEX*16 con
 COMPLEX*16 expx,exmx,expy,exmy,expz,exmz
 COMPLEX*16 eypx,eymx,eypy,eymy,eypz,eymz
 COMPLEX*16 ezpx,ezmx,ezpy,ezmy,ezpz,ezmz
-COMMON /angl/ salp(maxseg)
 COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
     ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
 DIMENSION cab(1), sab(1)
@@ -8669,6 +8681,7 @@ END SUBROUTINE nhfld
 SUBROUTINE patch (nx,ny,x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4)
     USE nec2dpar
     USE data
+    USE angl
 
     IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -8689,7 +8702,6 @@ SUBROUTINE patch (nx,ny,x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4)
 
     INTEGER                                  :: ix
 
-    COMMON /angl/ salp(maxseg)
     DIMENSION t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1)
     EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), (t2y,icon2), (t2z,itag)
 
@@ -8825,6 +8837,7 @@ END SUBROUTINE patch
 SUBROUTINE subph (nx,ny,x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4)
     USE nec2dpar
     USE data
+    USE angl
 
     IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -8844,8 +8857,6 @@ SUBROUTINE subph (nx,ny,x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4)
     REAL(NEC2REAL), INTENT(IN)                       :: z4
 
     INTEGER                                  :: ix
-
-    COMMON /angl/ salp(maxseg)
 
     DIMENSION t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1)
 
@@ -9078,6 +9089,7 @@ SUBROUTINE qdsrc (is,v,e)
 !
 USE nec2dpar
 USE data
+USE angl
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -9097,7 +9109,6 @@ COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
 
 COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
     ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
-COMMON /angl/ salp(maxseg)
 COMMON /zload/ zarray(maxseg),nload,nlodf
 DIMENSION ccjx(2), cab(1), sab(1)
 DIMENSION t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1)
@@ -9853,6 +9864,7 @@ SUBROUTINE reflc (ix,iy,iz,itx,nop)
 !
 USE nec2dpar
 USE data
+USE angl
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -9866,7 +9878,6 @@ INTEGER, INTENT(IN)                      :: nop
 !     REFLC REFLECTS PARTIAL STRUCTURE ALONG X,Y, OR Z AXES OR ROTATES
 !     STRUCTURE TO COMPLETE A SYMMETRIC STRUCTURE.
 !
-COMMON /angl/ salp(maxseg)
 DIMENSION t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1), x2(1), y2(1), z2(1)
 EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), &
     (t2y,icon2), (t2z,itag), (x2,si), (y2,alp), (z2,bet)
