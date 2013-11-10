@@ -226,6 +226,21 @@ MODULE angl
 END MODULE
 
 !***********************************************************************
+!
+! formerly common /zload/
+!
+MODULE zload
+    USE nec2dpar
+
+    IMPLICIT NONE
+
+    COMPLEX*16, DIMENSION(maxseg)         :: zarray
+    INTEGER                               :: nload
+    INTEGER                               :: nlodf
+
+END MODULE
+
+!***********************************************************************
 PROGRAM nec2dxs
 !    av00    01-mar-02    First compile with Gnu77 compiler for windows
 
@@ -292,6 +307,7 @@ PROGRAM nec2dxs
     USE csave
     USE gnd
     USE crnt
+    USE zload
 
     IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -315,12 +331,8 @@ PROGRAM nec2dxs
 
     INTEGER*2                           :: llneg
 
-    COMPLEX*16 fj,vsant,eth,eph,curi,zarray
+    COMPLEX*16 fj,vsant,eth,eph,curi
     COMPLEX*16  ex,ey,ez,zped,vqd,vqds,y11a,y12a,epsc,u,u2,xx1,xx2
-
-
-
-    COMMON /zload/ zarray(maxseg),nload,nlodf
 
     COMMON/yparm/y11a(5),y12a(20),ncoup,icoup,nctag(5),ncseg(5)
 
@@ -2507,6 +2519,7 @@ SUBROUTINE cmngf (cb,cc,cd,nb,nc,nd,rkhx,iexkx)
 USE nec2dpar
 USE matpar
 USE data
+USE zload
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -2523,8 +2536,7 @@ INTEGER                                  :: ix
 
 ! ***
 !     CMNGF FILLS INTERACTION MATRICIES B, C, AND D FOR N.G.F. SOLUTION
-COMPLEX*16  zarray,exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc
-COMMON /zload/ zarray(maxseg),nload,nlodf
+COMPLEX*16  exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc
 COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
     jsno,iscon(50),nscon,ipcon(10),npcon
 
@@ -2801,6 +2813,7 @@ SUBROUTINE cmset (nrow,cm,rkhx,iexkx)
 USE nec2dpar
 USE matpar
 USE data
+USE zload
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -2812,10 +2825,9 @@ INTEGER, INTENT(IN)                      :: iexkx
 !
 !     CMSET SETS UP THE COMPLEX STRUCTURE MATRIX IN THE ARRAY CM
 !
-COMPLEX*16  zarray,zaj,exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc,ssx, d,deter
+COMPLEX*16  zaj,exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc,ssx, d,deter
 COMMON /smat/ ssx(16,16)
 COMMON /scratm/ d(2*maxseg)
-COMMON /zload/ zarray(maxseg),nload,nlodf
 
 COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
     jsno,iscon(50),nscon,ipcon(10),npcon
@@ -5831,6 +5843,7 @@ USE save
 USE csave
 USE gnd
 USE angl
+USE zload
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -5840,12 +5853,9 @@ INTEGER, INTENT(IN OUT)                  :: iprt
 !
 !     GFIL READS THE N.G.F. FILE
 !
-COMPLEX*16 ssx,zarray
+COMPLEX*16 ssx
 
-!COMMON /ggrid/ ar1(11,10,4),ar2(17,5,4),ar3(9,8,4),epscf,dxa(3), &
-!    dya(3),xsa(3),ysa(3),nxa(3),nya(3)
 COMMON /smat/ ssx(16,16)
-COMMON /zload/ zarray(maxseg),nload,nlodf
 
 CHARACTER (LEN=80) :: ngfnam
 COMMON /ngfnam/ ngfnam
@@ -6173,6 +6183,7 @@ USE save
 USE csave
 USE gnd
 USE angl
+USE zload
 
 !PARAMETER (iresrv=maxmat**2)
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
@@ -6180,12 +6191,11 @@ IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 !
 !     WRITE N.G.F. FILE
 !
-COMPLEX*16 ssx,zarray
+COMPLEX*16 ssx
 
 !COMMON /ggrid/ ar1(11,10,4),ar2(17,5,4),ar3(9,8,4),epscf,dxa(3), &
 !    dya(3),xsa(3),ysa(3),nxa(3),nya(3)
 COMMON /smat/ ssx(16,16)
-COMMON /zload/ zarray(maxseg),nload,nlodf
 
 CHARACTER (LEN=80) :: ngfnam
 COMMON /ngfnam/ ngfnam
@@ -7489,6 +7499,7 @@ SUBROUTINE load (ldtyp,ldtag,ldtagf,ldtagt,zlr,zli,zlc)
 !
 USE nec2dpar
 USE data
+USE zload
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -7504,8 +7515,7 @@ REAL(NEC2REAL), INTENT(IN)                         :: zlc(1)
 !     LOAD CALCULATES THE IMPEDANCE OF SPECIFIED SEGMENTS FOR VARIOUS
 !     TYPES OF LOADING
 !
-COMPLEX*16 zarray,zt,tpcj,zint
-COMMON /zload/ zarray(maxseg),nload,nlodf
+COMPLEX*16 zt,tpcj,zint
 DIMENSION  tpcjx(2)
 EQUIVALENCE (tpcj,tpcjx)
 DATA tpcjx/0.,1.883698955D+9/
@@ -9090,6 +9100,7 @@ SUBROUTINE qdsrc (is,v,e)
 USE nec2dpar
 USE data
 USE angl
+USE zload
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -9099,7 +9110,7 @@ COMPLEX*16, INTENT(OUT)                  :: e(1)
 ! ***
 !     FILL INCIDENT FIELD ARRAY FOR CHARGE DISCONTINUITY VOLTAGE SOURCE
 COMPLEX*16 vqds,curd,ccj, exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc  &
-    ,etk,ets,etc,vsant,vqd, zarray
+    ,etk,ets,etc,vsant,vqd
 
 COMMON /vsorc/ vqd(nsmax),vsant(nsmax),vqds(nsmax),ivqd(nsmax),  &
     isant(nsmax),iqds(nsmax),nvqd,nsant,nqds
@@ -9109,7 +9120,6 @@ COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
 
 COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
     ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
-COMMON /zload/ zarray(maxseg),nload,nlodf
 DIMENSION ccjx(2), cab(1), sab(1)
 DIMENSION t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1)
 EQUIVALENCE (ccj,ccjx), (cab,alp), (sab,bet)
