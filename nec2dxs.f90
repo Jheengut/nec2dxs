@@ -352,6 +352,50 @@ MODULE netcx
 END MODULE
 
 !***********************************************************************
+!
+! formerly common /fpat/
+!
+MODULE fpat
+    USE nec2dpar
+
+    IMPLICIT NONE
+
+    REAL(NEC2REAL)                      :: thets
+    REAL(NEC2REAL)                      :: phis
+    REAL(NEC2REAL)                      :: dth
+    REAL(NEC2REAL)                      :: dph
+    REAL(NEC2REAL)                      :: rfld
+    REAL(NEC2REAL)                      :: gnor
+    REAL(NEC2REAL)                      :: clt
+    REAL(NEC2REAL)                      :: cht
+    REAL(NEC2REAL)                      :: epsr2
+    REAL(NEC2REAL)                      :: sig2
+    REAL(NEC2REAL)                      :: xpr6
+    REAL(NEC2REAL)                      :: pinr
+    REAL(NEC2REAL)                      :: pnlr
+    REAL(NEC2REAL)                      :: ploss
+    REAL(NEC2REAL)                      :: xnr
+    REAL(NEC2REAL)                      :: ynr
+    REAL(NEC2REAL)                      :: znr
+    REAL(NEC2REAL)                      :: dxnr
+    REAL(NEC2REAL)                      :: dynr
+    REAL(NEC2REAL)                      :: dznr
+    INTEGER                             :: nth
+    INTEGER                             :: nph
+    INTEGER                             :: ipd
+    INTEGER                             :: iavp
+    INTEGER                             :: inor
+    INTEGER                             :: iax
+    INTEGER                             :: ixtyp
+    INTEGER                             :: near
+    INTEGER                             :: nfeh
+    INTEGER                             :: nrx
+    INTEGER                             :: nry
+    INTEGER                             :: nrz
+
+END MODULE
+
+!***********************************************************************
 PROGRAM nec2dxs
 !    av00    01-mar-02    First compile with Gnu77 compiler for windows
 
@@ -423,6 +467,7 @@ PROGRAM nec2dxs
     USE segj
     USE vsorc
     USE netcx
+    USE fpat
 
     IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -449,9 +494,13 @@ PROGRAM nec2dxs
     COMPLEX*16 fj,eth,eph,curi
     COMPLEX*16  ex,ey,ez,epsc
 
-    COMMON/fpat/thets,phis,dth,dph,rfld,gnor,clt,cht,epsr2,sig2,  &
-        xpr6,pinr,pnlr,ploss,xnr,ynr,znr,dxnr,dynr,dznr,nth,nph,ipd,iavp,  &
-        inor,iax,ixtyp,near,nfeh,nrx,nry,nrz
+
+
+
+
+
+
+
 
     DIMENSION cab(1),sab(1),x2(1),y2(1),z2(1)
 
@@ -8548,12 +8597,10 @@ SUBROUTINE nfpat
 USE nec2dpar
 USE plot
 USE data
+USE fpat
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 COMPLEX*16 ex,ey,ez
-COMMON/fpat/thets,phis,dth,dph,rfld,gnor,clt,cht,epsr2,sig2,  &
-    xpr6,pinr,pnlr,ploss,xnr,ynr,znr,dxnr,dynr,dznr,nth,nph,ipd,iavp,  &
-    inor,iax,ixtyp,near,nfeh,nrx,nry,nrz
 
 REAL(NEC2REAL)                   :: ta = 1.745329252D-02
 
@@ -9328,6 +9375,7 @@ USE plot
 USE data
 USE save
 USE gnd
+USE fpat
 
 PARAMETER(normax=4*maxseg)
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
@@ -9348,9 +9396,6 @@ REAL(NEC2REAL)                                        ::  ta = 1.745329252D-02
 REAL(NEC2REAL)                                        ::  td = 57.29577951D+0
 
 COMPLEX*16 eth,eph,erd,t1
-COMMON/fpat/thets,phis,dth,dph,rfld,gnor,clt,cht,epsr2,sig2,  &
-    xpr6,pinr,pnlr,ploss,xnr,ynr,znr,dxnr,dynr,dznr,nth,nph,ipd,iavp,  &
-    inor,iax,ixtyp,near,nfeh,nrx,nry,nrz
 COMMON /scratm/ gain(normax)
 
 IF (ifar < 2) GO TO 2
