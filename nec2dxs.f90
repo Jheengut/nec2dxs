@@ -279,11 +279,31 @@ MODULE yparm
 END MODULE
 
 !***********************************************************************
+!
+! formerly common /segj/
+!
+MODULE segj
+    USE nec2dpar
+
+    IMPLICIT NONE
+
+    REAL(NEC2REAL), DIMENSION(jmax)       :: ax
+    REAL(NEC2REAL), DIMENSION(jmax)       :: bx
+    REAL(NEC2REAL), DIMENSION(jmax)       :: cx
+    INTEGER,        DIMENSION(jmax)       :: jco
+    INTEGER                               :: jsno
+    INTEGER,        DIMENSION(50)         :: iscon
+    INTEGER                               :: nscon
+    INTEGER,        DIMENSION(10)         :: ipcon
+    INTEGER                               :: npcon
+
+END MODULE
+
+!***********************************************************************
 PROGRAM nec2dxs
 !    av00    01-mar-02    First compile with Gnu77 compiler for windows
 
-! Code converted using TO_F90 by Alan Miller
-! Date: 2013-11-02  Time: 18:26:59
+! Code converted using "TO_F90 by Alan Miller" 2013-11-02 - hwh
 
 !                         (Thanks to Raymond Anderson for letting me know
 !                         about this compiler and doing initial compilations)
@@ -348,6 +368,7 @@ PROGRAM nec2dxs
     USE zload
     USE gwav
     USE yparm
+    USE segj
 
     IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -373,8 +394,6 @@ PROGRAM nec2dxs
 
     COMPLEX*16 fj,vsant,eth,eph,curi
     COMPLEX*16  ex,ey,ez,zped,vqd,vqds,epsc
-
-    COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),jsno,iscon(50),nscon,ipcon(10),npcon
 
     COMMON/vsorc/vqd(nsmax),vsant(nsmax),vqds(nsmax),ivqd(nsmax),  &
         isant(nsmax),iqds(nsmax),nvqd,nsant,nqds
@@ -2442,6 +2461,7 @@ USE nec2dpar
 USE data
 USE crnt
 USE angl
+USE segj
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -2453,8 +2473,6 @@ COMPLEX*16, INTENT(OUT)                  :: curx(1)
 !     CURRENT VECTOR CUR.
 !
 COMPLEX*16 vqds,curd,ccj,vsant,vqd,cs1,cs2
-COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
-    jsno,iscon(50),nscon,ipcon(10),npcon
 
 COMMON /vsorc/ vqd(nsmax),vsant(nsmax),vqds(nsmax),ivqd(nsmax),  &
     isant(nsmax),iqds(nsmax),nvqd,nsant,nqds
@@ -2555,6 +2573,7 @@ USE nec2dpar
 USE matpar
 USE data
 USE zload
+USE segj
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -2572,8 +2591,6 @@ INTEGER                                  :: ix
 ! ***
 !     CMNGF FILLS INTERACTION MATRICIES B, C, AND D FOR N.G.F. SOLUTION
 COMPLEX*16  exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc
-COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
-    jsno,iscon(50),nscon,ipcon(10),npcon
 
 COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
     ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
@@ -2849,6 +2866,7 @@ USE nec2dpar
 USE matpar
 USE data
 USE zload
+USE segj
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -2863,9 +2881,6 @@ INTEGER, INTENT(IN)                      :: iexkx
 COMPLEX*16  zaj,exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc,ssx, d,deter
 COMMON /smat/ ssx(16,16)
 COMMON /scratm/ d(2*maxseg)
-
-COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
-    jsno,iscon(50),nscon,ipcon(10),npcon
 
 COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
     ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
@@ -3072,6 +3087,7 @@ USE nec2dpar
 USE data
 USE gnd
 USE angl
+USE segj
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -3092,9 +3108,6 @@ INTEGER                                  :: ip
 COMPLEX*16  exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc ,emel
 COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
     ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
-
-COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
-    jsno,iscon(50),nscon,ipcon(10),npcon
 
 DIMENSION cab(1), sab(1)
 DIMENSION t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1), emel(9)
@@ -3231,6 +3244,7 @@ SUBROUTINE cmws (j,i1,i2,cm,nr,cw,nw,itrp)
 USE nec2dpar
 USE data
 USE angl
+USE segj
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -3247,9 +3261,6 @@ INTEGER, INTENT(IN)                      :: itrp
 !     CMWS COMPUTES MATRIX ELEMENTS FOR WIRE-SURFACE INTERACTIONS
 !
 COMPLEX*16  etk,ets,etc,exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc
-
-COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
-    jsno,iscon(50),nscon,ipcon(10),npcon
 
 COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
     ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
@@ -3332,6 +3343,7 @@ SUBROUTINE cmww (j,i1,i2,cm,nr,cw,nw,itrp)
 USE nec2dpar
 USE data
 USE angl
+USE segj
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -3348,9 +3360,6 @@ INTEGER, INTENT(IN)                      :: itrp
 !     CMWW COMPUTES MATRIX ELEMENTS FOR WIRE-WIRE INTERACTIONS
 !
 COMPLEX*16  etk,ets,etc,exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc
-
-COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
-    jsno,iscon(50),nscon,ipcon(10),npcon
 
 COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
     ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
@@ -3480,6 +3489,7 @@ SUBROUTINE conect (ignd)
 !
 USE nec2dpar
 USE data
+USE segj
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -3489,9 +3499,6 @@ INTEGER, INTENT(IN OUT)                  :: ignd
 !     CONNECT SETS UP SEGMENT CONNECTION DATA IN ARRAYS ICON1 AND ICON2
 !     BY SEARCHING FOR SEGMENT ENDS THAT ARE IN CONTACT.
 !
-COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
-    jsno,iscon(50),nscon,ipcon(10),npcon
-
 DIMENSION x2(1), y2(1), z2(1)
 EQUIVALENCE (x2,si), (y2,alp), (z2,bet)
 
@@ -9138,6 +9145,7 @@ USE nec2dpar
 USE data
 USE angl
 USE zload
+USE segj
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -9151,9 +9159,6 @@ COMPLEX*16 vqds,curd,ccj, exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc  &
 
 COMMON /vsorc/ vqd(nsmax),vsant(nsmax),vqds(nsmax),ivqd(nsmax),  &
     isant(nsmax),iqds(nsmax),nvqd,nsant,nqds
-
-COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
-    jsno,iscon(50),nscon,ipcon(10),npcon
 
 COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
     ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
@@ -10559,6 +10564,7 @@ SUBROUTINE solgf (a,b,c,d,xy,ip,np,n1,n,mp,m1,m,n1c,n2c,n2cz)
 !
 USE nec2dpar
 USE matpar
+USE segj
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -10581,10 +10587,6 @@ INTEGER, INTENT(IN OUT)                  :: n2cz
 !     SOLVE FOR CURRENT IN N.G.F. PROCEDURE
 COMPLEX*16  sum, y
 COMMON /scratm/ y(2*maxseg)
-
-COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
-    jsno,iscon(50),nscon,ipcon(10),npcon
-
 
 ifl=14
 IF (icasx > 0) ifl=13
@@ -10924,6 +10926,7 @@ SUBROUTINE tbf (i,icap)
 !
 USE nec2dpar
 USE data
+USE segj
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -10931,8 +10934,6 @@ INTEGER, INTENT(IN)                      :: i
 INTEGER, INTENT(IN)                      :: icap
 ! ***
 !     COMPUTE BASIS FUNCTION I
-COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
-    jsno,iscon(50),nscon,ipcon(10),npcon
 
 jsno=0
 pp=0.
@@ -11127,14 +11128,13 @@ SUBROUTINE trio (j)
 !
 USE nec2dpar
 USE data
+USE segj
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: j
 ! ***
 !     COMPUTE THE COMPONENTS OF ALL BASIS FUNCTIONS ON SEGMENT J
-COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),  &
-    jsno,iscon(50),nscon,ipcon(10),npcon
 
 jsno=0
 jcox=icon1(j)
