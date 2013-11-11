@@ -300,6 +300,27 @@ MODULE segj
 END MODULE
 
 !***********************************************************************
+!
+! formerly common /vsorc/
+!
+MODULE vsorc
+    USE nec2dpar
+
+    IMPLICIT NONE
+
+    COMPLEX*16, DIMENSION(nsmax)        :: vqd
+    COMPLEX*16, DIMENSION(nsmax)        :: vsant
+    COMPLEX*16, DIMENSION(nsmax)        :: vqds
+    INTEGER,    DIMENSION(nsmax)        :: ivqd
+    INTEGER,    DIMENSION(nsmax)        :: isant
+    INTEGER,    DIMENSION(nsmax)        :: iqds
+    INTEGER                             :: nvqd
+    INTEGER                             :: nsant
+    INTEGER                             :: nqds
+
+END MODULE
+
+!***********************************************************************
 PROGRAM nec2dxs
 !    av00    01-mar-02    First compile with Gnu77 compiler for windows
 
@@ -369,6 +390,7 @@ PROGRAM nec2dxs
     USE gwav
     USE yparm
     USE segj
+    USE vsorc
 
     IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -392,11 +414,8 @@ PROGRAM nec2dxs
 
     INTEGER*2                           :: llneg
 
-    COMPLEX*16 fj,vsant,eth,eph,curi
-    COMPLEX*16  ex,ey,ez,zped,vqd,vqds,epsc
-
-    COMMON/vsorc/vqd(nsmax),vsant(nsmax),vqds(nsmax),ivqd(nsmax),  &
-        isant(nsmax),iqds(nsmax),nvqd,nsant,nqds
+    COMPLEX*16 fj,eth,eph,curi
+    COMPLEX*16  ex,ey,ez,zped,epsc
 
     COMMON/netcx/zped,pin,pnls,x11r(netmx),x11i(netmx),x12r(netmx),  &
         x12i(netmx),x22r(netmx),x22i(netmx),ntyp(netmx),iseg1(netmx),  &
@@ -415,8 +434,7 @@ PROGRAM nec2dxs
     DIMENSION fnorm(200)
     DIMENSION t1x(1),t1y(1),t1z(1),t2x(1),t2y(1),t2z(1)
 
-    DIMENSION xtemp(maxseg),ytemp(maxseg),ztemp(maxseg),  &
-        sitemp(maxseg),bitemp(maxseg)
+    DIMENSION xtemp(maxseg),ytemp(maxseg),ztemp(maxseg),sitemp(maxseg),bitemp(maxseg)
 
     EQUIVALENCE (cab,alp),(sab,bet),(x2,si),(y2,alp),(z2,bet)
     EQUIVALENCE (t1x,si),(t1y,alp),(t1z,bet),(t2x,icon1),(t2y,icon2), (t2z,itag)
@@ -2462,6 +2480,7 @@ USE data
 USE crnt
 USE angl
 USE segj
+USE vsorc
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -2472,15 +2491,14 @@ COMPLEX*16, INTENT(OUT)                  :: curx(1)
 !     COSINE (C) TERMS IN THE CURRENT INTERPOLATION FUNCTIONS FOR THE
 !     CURRENT VECTOR CUR.
 !
-COMPLEX*16 vqds,curd,ccj,vsant,vqd,cs1,cs2
-
-COMMON /vsorc/ vqd(nsmax),vsant(nsmax),vqds(nsmax),ivqd(nsmax),  &
-    isant(nsmax),iqds(nsmax),nvqd,nsant,nqds
+COMPLEX*16 curd,ccj,cs1,cs2
 
 DIMENSION t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1)
 DIMENSION  ccjx(2)
+
 EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), (t2y,icon2), (t2z,itag)
 EQUIVALENCE (ccj,ccjx)
+
 DATA tp/6.283185308D+0/,ccjx/0.,-0.01666666667D+0/
 
 IF (n == 0) GO TO 6
@@ -3811,6 +3829,7 @@ SUBROUTINE couple (cur,wlam)
 !
 USE nec2dpar
 USE yparm
+USE vsorc
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -3820,12 +3839,7 @@ REAL(NEC2REAL), INTENT(IN)                         :: wlam
 !
 !     COUPLE COMPUTES THE MAXIMUM COUPLING BETWEEN PAIRS OF SEGMENTS.
 !
-COMPLEX*16 y11,y12,y22,yl,yin,zl,zin,rho,vqd,vsant ,vqds
-
-COMMON /vsorc/ vqd(nsmax),vsant(nsmax),vqds(nsmax),ivqd(nsmax),  &
-    isant(nsmax),iqds(nsmax),nvqd,nsant,nqds
-
-
+COMPLEX*16 y11,y12,y22,yl,yin,zl,zin,rho
 
 IF (nsant /= 1.OR.nvqd /= 0) RETURN
 j=isegno(nctag(icoup+1),ncseg(icoup+1))
@@ -4681,6 +4695,7 @@ USE nec2dpar
 USE data
 USE gnd
 USE angl
+USE vsorc
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -4698,10 +4713,7 @@ COMPLEX*16, INTENT(OUT)                  :: e(2*maxseg)
 !     INCIDENT ON THE STRUCTURE.  E IS THE RIGHT HAND SIDE OF THE MATRIX
 !     EQUATION.
 !
-COMPLEX*16  cx,cy,cz,vsant,er,et,ezh,erh,vqd,vqds,rrv,rrh,tt1,tt2
-
-COMMON /vsorc/ vqd(nsmax),vsant(nsmax),vqds(nsmax),ivqd(nsmax),  &
-    isant(nsmax),iqds(nsmax),nvqd,nsant,nqds
+COMPLEX*16  cx,cy,cz,er,et,ezh,erh,rrv,rrh,tt1,tt2
 
 DIMENSION cab(1), sab(1)
 DIMENSION t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1)
@@ -8154,6 +8166,7 @@ SUBROUTINE netwk (cm,cmb,cmc,cmd,ip,einc)
 USE nec2dpar
 USE data
 USE crnt
+USE vsorc
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -8169,10 +8182,7 @@ COMPLEX*16, INTENT(IN OUT)               :: einc(1)
 !     EXCITATION INCLUDING THE EFFECT OF NON-RADIATING NETWORKS IF
 !     PRESENT.
 !
-COMPLEX*16 cmn,rhnt,ymit,rhs,zped, vsant,vlt,vsrc,rhnx ,vqd,vqds,cux
-
-COMMON /vsorc/ vqd(nsmax),vsant(nsmax),vqds(nsmax),ivqd(nsmax),  &
-    isant(nsmax),iqds(nsmax),nvqd,nsant,nqds
+COMPLEX*16 cmn,rhnt,ymit,rhs,zped,vlt,vsrc,rhnx,cux
 
 COMMON/netcx/zped,pin,pnls,x11r(netmx),x11i(netmx),x12r(netmx),  &
     x12i(netmx),x22r(netmx),x22i(netmx),ntyp(netmx),iseg1(netmx),  &
@@ -9146,6 +9156,7 @@ USE data
 USE angl
 USE zload
 USE segj
+USE vsorc
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -9154,11 +9165,8 @@ COMPLEX*16, INTENT(IN)                   :: v
 COMPLEX*16, INTENT(OUT)                  :: e(1)
 ! ***
 !     FILL INCIDENT FIELD ARRAY FOR CHARGE DISCONTINUITY VOLTAGE SOURCE
-COMPLEX*16 vqds,curd,ccj, exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc  &
-    ,etk,ets,etc,vsant,vqd
-
-COMMON /vsorc/ vqd(nsmax),vsant(nsmax),vqds(nsmax),ivqd(nsmax),  &
-    isant(nsmax),iqds(nsmax),nvqd,nsant,nqds
+COMPLEX*16 curd,ccj,exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc  &
+    ,etk,ets,etc
 
 COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
     ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
