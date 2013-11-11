@@ -321,6 +321,37 @@ MODULE vsorc
 END MODULE
 
 !***********************************************************************
+!
+! formerly common /netcx/
+!
+MODULE netcx
+    USE nec2dpar
+
+    IMPLICIT NONE
+
+    COMPLEX*16                          :: zped
+    REAL(NEC2REAL)                      :: pin
+    REAL(NEC2REAL)                      :: pnls
+    REAL(NEC2REAL), DIMENSION(netmx)    :: x11r(netmx)
+    REAL(NEC2REAL), DIMENSION(netmx)    :: x11i(netmx)
+    REAL(NEC2REAL), DIMENSION(netmx)    :: x12r(netmx)
+    REAL(NEC2REAL), DIMENSION(netmx)    :: x12i(netmx)
+    REAL(NEC2REAL), DIMENSION(netmx)    :: x22r(netmx)
+    REAL(NEC2REAL), DIMENSION(netmx)    :: x22i(netmx)
+    INTEGER,        DIMENSION(netmx)    :: ntyp(netmx)
+    INTEGER,        DIMENSION(netmx)    :: iseg1(netmx)
+    INTEGER,        DIMENSION(netmx)    :: iseg2(netmx)
+    INTEGER                             :: neq
+    INTEGER                             :: npeq
+    INTEGER                             :: neq2
+    INTEGER                             :: nonet
+    INTEGER                             :: ntsol
+    INTEGER                             :: nprint
+    INTEGER                             :: masym
+
+END MODULE
+
+!***********************************************************************
 PROGRAM nec2dxs
 !    av00    01-mar-02    First compile with Gnu77 compiler for windows
 
@@ -391,6 +422,7 @@ PROGRAM nec2dxs
     USE yparm
     USE segj
     USE vsorc
+    USE netcx
 
     IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -415,11 +447,7 @@ PROGRAM nec2dxs
     INTEGER*2                           :: llneg
 
     COMPLEX*16 fj,eth,eph,curi
-    COMPLEX*16  ex,ey,ez,zped,epsc
-
-    COMMON/netcx/zped,pin,pnls,x11r(netmx),x11i(netmx),x12r(netmx),  &
-        x12i(netmx),x22r(netmx),x22i(netmx),ntyp(netmx),iseg1(netmx),  &
-        iseg2(netmx),neq,npeq,neq2,nonet,ntsol,nprint,masym
+    COMPLEX*16  ex,ey,ez,epsc
 
     COMMON/fpat/thets,phis,dth,dph,rfld,gnor,clt,cht,epsr2,sig2,  &
         xpr6,pinr,pnlr,ploss,xnr,ynr,znr,dxnr,dynr,dznr,nth,nph,ipd,iavp,  &
@@ -8167,6 +8195,7 @@ USE nec2dpar
 USE data
 USE crnt
 USE vsorc
+USE netcx
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -8182,13 +8211,7 @@ COMPLEX*16, INTENT(IN OUT)               :: einc(1)
 !     EXCITATION INCLUDING THE EFFECT OF NON-RADIATING NETWORKS IF
 !     PRESENT.
 !
-COMPLEX*16 cmn,rhnt,ymit,rhs,zped,vlt,vsrc,rhnx,cux
-
-COMMON/netcx/zped,pin,pnls,x11r(netmx),x11i(netmx),x12r(netmx),  &
-    x12i(netmx),x22r(netmx),x22i(netmx),ntyp(netmx),iseg1(netmx),  &
-    iseg2(netmx),neq,npeq,neq2,nonet,ntsol,nprint,masym
-
-
+COMPLEX*16 cmn,rhnt,ymit,rhs,vlt,vsrc,rhnx,cux
 
 DIMENSION cmn(netmx,netmx), rhnt(netmx), ipnt(netmx),  &
     nteqa(netmx), ntsca(netmx), rhs(3*maxseg), vsrc(netmx), rhnx(netmx)
