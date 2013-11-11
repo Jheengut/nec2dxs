@@ -261,6 +261,24 @@ MODULE gwav
 END MODULE
 
 !***********************************************************************
+!
+! formerly common /yparm/
+!
+MODULE yparm
+    USE nec2dpar
+
+    IMPLICIT NONE
+
+    COMPLEX*16, DIMENSION(5)              :: y11a
+    COMPLEX*16, DIMENSION(20)             :: y12a
+    INTEGER                               :: ncoup
+    INTEGER                               :: icoup
+    INTEGER,    DIMENSION(5)              :: nctag
+    INTEGER,    DIMENSION(5)              :: ncseg
+
+END MODULE
+
+!***********************************************************************
 PROGRAM nec2dxs
 !    av00    01-mar-02    First compile with Gnu77 compiler for windows
 
@@ -329,6 +347,7 @@ PROGRAM nec2dxs
     USE crnt
     USE zload
     USE gwav
+    USE yparm
 
     IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -353,9 +372,7 @@ PROGRAM nec2dxs
     INTEGER*2                           :: llneg
 
     COMPLEX*16 fj,vsant,eth,eph,curi
-    COMPLEX*16  ex,ey,ez,zped,vqd,vqds,y11a,y12a,epsc
-
-    COMMON/yparm/y11a(5),y12a(20),ncoup,icoup,nctag(5),ncseg(5)
+    COMPLEX*16  ex,ey,ez,zped,vqd,vqds,epsc
 
     COMMON /segj/ ax(jmax),bx(jmax),cx(jmax),jco(jmax),jsno,iscon(50),nscon,ipcon(10),npcon
 
@@ -3786,6 +3803,8 @@ SUBROUTINE couple (cur,wlam)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
+USE yparm
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 COMPLEX*16, INTENT(IN)                   :: cur(1)
@@ -3794,8 +3813,7 @@ REAL(NEC2REAL), INTENT(IN)                         :: wlam
 !
 !     COUPLE COMPUTES THE MAXIMUM COUPLING BETWEEN PAIRS OF SEGMENTS.
 !
-COMPLEX*16 y11a,y12a, y11,y12,y22,yl,yin,zl,zin,rho,vqd,vsant ,vqds
-COMMON/yparm/y11a(5),y12a(20),ncoup,icoup,nctag(5),ncseg(5)
+COMPLEX*16 y11,y12,y22,yl,yin,zl,zin,rho,vqd,vsant ,vqds
 
 COMMON /vsorc/ vqd(nsmax),vsant(nsmax),vqds(nsmax),ivqd(nsmax),  &
     isant(nsmax),iqds(nsmax),nvqd,nsant,nqds
