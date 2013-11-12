@@ -471,6 +471,23 @@ MODULE cntour
 END MODULE
 
 !***********************************************************************
+!
+! formerly common /scratm/
+!
+MODULE scratm
+    USE nec2dpar
+
+    IMPLICIT NONE
+
+    COMPLEX*16, DIMENSION(2*maxseg)   :: d
+    COMPLEX*16, DIMENSION(2*maxseg)   :: y
+    INTEGER, PARAMETER                :: normax = 4*maxseg
+    INTEGER, DIMENSION(normax)        :: gain
+
+
+END MODULE
+
+!***********************************************************************
 PROGRAM nec2dxs
 !    av00    01-mar-02    First compile with Gnu77 compiler for windows
 
@@ -3041,6 +3058,7 @@ USE data
 USE zload
 USE segj
 USE dataj
+USE scratm
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -3052,9 +3070,9 @@ INTEGER, INTENT(IN)                      :: iexkx
 !
 !     CMSET SETS UP THE COMPLEX STRUCTURE MATRIX IN THE ARRAY CM
 !
-COMPLEX*16  zaj,ssx,d,deter
+COMPLEX*16  zaj,ssx,deter
+
 COMMON /smat/ ssx(16,16)
-COMMON /scratm/ d(2*maxseg)
 
 mp2=2*mp
 npeq=np+mp2
@@ -5275,6 +5293,8 @@ SUBROUTINE factr (n,a,ip,ndim)
 !     DOUBLE PRECISION 6/4/85
 !
 USE nec2dpar
+USE scratm
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: n
@@ -5289,9 +5309,8 @@ INTEGER, INTENT(IN)                      :: ndim
 !     NUMERICAL ANALYSIS.  COMMENTS BELOW REFER TO COMMENTS IN RALSTONS
 !     TEXT.    (MATRIX TRANSPOSED.
 !
-COMPLEX*16  d,arj
+COMPLEX*16  arj
 
-COMMON /scratm/ d(2*maxseg)
 INTEGER :: r,rm1,rp1,pj,pr
 !
 !     Un-transpose the matrix for Gauss elimination
@@ -7580,6 +7599,7 @@ SUBROUTINE lfactr (a,nrow,ix1,ix2,ip)
 !
 USE nec2dpar
 USE matpar
+USE scratm
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -7596,10 +7616,9 @@ INTEGER, INTENT(IN OUT)                  :: ip(nrow)
 !     COURSE IN NUMERICAL ANALYSIS.  COMMENTS BELOW REFER TO COMMENTS IN
 !     RALSTONS TEXT.
 !
-COMPLEX*16  d,ajr
+COMPLEX*16  ajr
 INTEGER :: r,r1,r2,pj,pr
 LOGICAL :: l1,l2,l3
-COMMON /scratm/ d(2*maxseg)
 
 
 iflg=0
@@ -7874,6 +7893,7 @@ SUBROUTINE ltsolv (a,nrow,ix,b,neq,nrh,ifl1,ifl2)
 !
     USE nec2dpar
     USE matpar
+    USE scratm
 
     IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -7893,8 +7913,7 @@ SUBROUTINE ltsolv (a,nrow,ix,b,neq,nrh,ifl1,ifl2)
     !     STORED ON TAPE 5 IN BLOCKS IN ASCENDING ORDER AND ON FILE 3 IN
     !     BLOCKS OF DESCENDING ORDER.
     !
-    COMPLEX*16  y,sum
-    COMMON /scratm/ y(2*maxseg)
+    COMPLEX*16  sum
 
     !
     !     FORWARD SUBSTITUTION
@@ -9450,8 +9469,8 @@ USE data
 USE save
 USE gnd
 USE fpat
+USE scratm
 
-PARAMETER(normax=4*maxseg)
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 ! ***
 !     COMPUTE RADIATION PATTERN, GAIN, NORMALIZED GAIN
@@ -9470,7 +9489,6 @@ REAL(NEC2REAL)                                        ::  ta = 1.745329252D-02
 REAL(NEC2REAL)                                        ::  td = 57.29577951D+0
 
 COMPLEX*16 eth,eph,erd,t1
-COMMON /scratm/ gain(normax)
 
 IF (ifar < 2) GO TO 2
 WRITE(3,35)
@@ -10714,6 +10732,7 @@ SUBROUTINE solgf (a,b,c,d,xy,ip,np,n1,n,mp,m1,m,n1c,n2c,n2cz)
 USE nec2dpar
 USE matpar
 USE segj
+USE scratm
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -10722,20 +10741,19 @@ COMPLEX*16, INTENT(IN OUT)               :: b(n1c,1)
 COMPLEX*16, INTENT(IN OUT)               :: c(n1c,1)
 COMPLEX*16, INTENT(IN OUT)               :: d(n2cz,1)
 COMPLEX*16, INTENT(IN OUT)               :: xy(1)
-INTEGER, INTENT(IN OUT)                  :: ip(1)
-INTEGER, INTENT(IN OUT)                  :: np
-INTEGER, INTENT(IN)                      :: n1
-INTEGER, INTENT(IN)                      :: n
-INTEGER, INTENT(IN OUT)                  :: mp
-INTEGER, INTENT(IN)                      :: m1
-INTEGER, INTENT(IN OUT)                  :: m
-INTEGER, INTENT(IN)                      :: n1c
-INTEGER, INTENT(IN)                      :: n2c
-INTEGER, INTENT(IN OUT)                  :: n2cz
+INTEGER,    INTENT(IN OUT)               :: ip(1)
+INTEGER,    INTENT(IN OUT)               :: np
+INTEGER,    INTENT(IN)                   :: n1
+INTEGER,    INTENT(IN)                   :: n
+INTEGER,    INTENT(IN OUT)               :: mp
+INTEGER,    INTENT(IN)                   :: m1
+INTEGER,    INTENT(IN OUT)               :: m
+INTEGER,    INTENT(IN)                   :: n1c
+INTEGER,    INTENT(IN)                   :: n2c
+INTEGER,    INTENT(IN OUT)               :: n2cz
 ! ***
 !     SOLVE FOR CURRENT IN N.G.F. PROCEDURE
-COMPLEX*16  sum, y
-COMMON /scratm/ y(2*maxseg)
+COMPLEX*16  sum
 
 ifl=14
 IF (icasx > 0) ifl=13
@@ -10858,30 +10876,28 @@ END DO
 22    RETURN
 END SUBROUTINE solgf
 !----------------------------------------------------------------------------
-
+!
+!     SUBROUTINE TO SOLVE THE MATRIX EQUATION LU*X=B WHERE L IS A UNIT
+!     LOWER TRIANGULAR MATRIX AND U IS AN UPPER TRIANGULAR MATRIX BOTH
+!     OF WHICH ARE STORED IN A.  THE RHS VECTOR B IS INPUT AND THE
+!     SOLUTION IS RETURNED THROUGH VECTOR B.
+!
 SUBROUTINE solve (n,a,ip,b,ndim)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
-    USE nec2dpar, ONLY : maxseg
+    USE scratm
 
     IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-    INTEGER, INTENT(IN)                      :: n
+    INTEGER,    INTENT(IN)                   :: n
     COMPLEX*16, INTENT(IN)                   :: a(ndim,ndim)
-    INTEGER, INTENT(IN)                      :: ip(ndim)
+    INTEGER,    INTENT(IN)                   :: ip(ndim)
     COMPLEX*16, INTENT(IN OUT)               :: b(ndim)
-    INTEGER, INTENT(IN)                      :: ndim
-    ! ***
-    !
-    !     SUBROUTINE TO SOLVE THE MATRIX EQUATION LU*X=B WHERE L IS A UNIT
-    !     LOWER TRIANGULAR MATRIX AND U IS AN UPPER TRIANGULAR MATRIX BOTH
-    !     OF WHICH ARE STORED IN A.  THE RHS VECTOR B IS INPUT AND THE
-    !     SOLUTION IS RETURNED THROUGH VECTOR B.
-    !
-    COMPLEX*16  y,sum
-    INTEGER :: pi
-    COMMON /scratm/ y(2*maxseg)
+    INTEGER,    INTENT(IN)                   :: ndim
+
+    COMPLEX*16                               :: sum
+    INTEGER                                  :: pi
 
     !
     !     FORWARD SUBSTITUTION
@@ -10921,6 +10937,7 @@ SUBROUTINE solves (a,ip,b,neq,nrh,np,n,mp,m,ifl1,ifl2)
 !
 USE nec2dpar
 USE matpar
+USE scratm
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -10941,9 +10958,8 @@ INTEGER, INTENT(IN)                      :: ifl2
 !     TRANSFORMATION OF THE RIGHT HAND SIDE VECTOR AND SOLUTION OF THE
 !     MATRIX EQ.
 !
-COMPLEX*16  y,sum,ssx
+COMPLEX*16  sum,ssx
 COMMON /smat/ ssx(16,16)
-COMMON /scratm/ y(2*maxseg)
 
 npeq=np+2*mp
 nop=neq/npeq
