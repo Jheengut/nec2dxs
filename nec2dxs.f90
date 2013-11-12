@@ -458,6 +458,19 @@ MODULE dataj
 END MODULE
 
 !***********************************************************************
+!
+! formerly common /cntour/
+!
+MODULE cntour
+
+    IMPLICIT NONE
+
+    COMPLEX*16                            :: a
+    COMPLEX*16                            :: b
+
+END MODULE
+
+!***********************************************************************
 PROGRAM nec2dxs
 !    av00    01-mar-02    First compile with Gnu77 compiler for windows
 
@@ -1940,6 +1953,7 @@ END SUBROUTINE bessel
 !
 SUBROUTINE evlua (erv,ezv,erh,eph)
         USE evlcom
+        USE cntour
 
         IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -1947,11 +1961,12 @@ SUBROUTINE evlua (erv,ezv,erh,eph)
         COMPLEX*16, INTENT(OUT)                  :: ezv
         COMPLEX*16, INTENT(OUT)                  :: erh
         COMPLEX*16, INTENT(OUT)                  :: eph
+
         SAVE
-        COMPLEX*16  a,b,bk,delta,delta2,cp1,cp2,cp3
+
+        COMPLEX*16  bk,delta,delta2,cp1,cp2,cp3
         COMPLEX*16, DIMENSION(6)                 :: sum
         COMPLEX*16, DIMENSION(6)                 :: ans
-        COMMON /cntour/ a,b
 
         REAL(NEC2REAL)                           :: ptp = 0.6283185308
 
@@ -2053,20 +2068,25 @@ END SUBROUTINE evlua
 !     IS USED
 !
 SUBROUTINE gshank (start,dela,sum,nans,seed,ibk,bk,delb)
+    USE cntour
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 COMPLEX*16, INTENT(IN)                   :: start
 COMPLEX*16, INTENT(IN)                   :: dela
 COMPLEX*16, INTENT(IN OUT)               :: sum(6)
-INTEGER, INTENT(IN)                      :: nans
+INTEGER,    INTENT(IN)                   :: nans
 COMPLEX*16, INTENT(IN)                   :: seed(6)
-INTEGER, INTENT(IN)                      :: ibk
+INTEGER,    INTENT(IN)                   :: ibk
 COMPLEX*16, INTENT(IN)                   :: bk
 COMPLEX*16, INTENT(IN)                   :: delb
+
 SAVE
-COMPLEX*16  a,b,q1,q2,ans1,ans2,a1,a2, as1,as2,del,aa
-COMMON /cntour/ a,b
+
+COMPLEX*16  q1,q2,ans1,ans2,a1,a2, as1,as2,del,aa
+
 DIMENSION q1(6,20), q2(6,20), ans1(6), ans2(6)
+
 DATA crit/1.e-4/,maxh/20/
 
 rbk=dREAL(bk)
@@ -2276,18 +2296,19 @@ SUBROUTINE lambda (t,xlam,dxlam)
 !
 !     COMPUTE INTEGRATION PARAMETER XLAM=LAMBDA FROM PARAMETER T.
 !
-IMPLICIT REAL(NEC2REAL)(a-h,o-z)
+    USE cntour
 
-REAL(NEC2REAL), INTENT(IN)                         :: t
-COMPLEX*16, INTENT(OUT)                  :: xlam
-COMPLEX*16, INTENT(OUT)                  :: dxlam
-SAVE
-COMPLEX*16 a,b
-COMMON /cntour/ a,b
+    IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-dxlam=b-a
-xlam=a+dxlam*t
-RETURN
+    REAL(NEC2REAL), INTENT(IN)                   :: t
+    COMPLEX*16,     INTENT(OUT)                  :: xlam
+    COMPLEX*16,     INTENT(OUT)                  :: dxlam
+
+    SAVE
+
+    dxlam=b-a
+    xlam=a+dxlam*t
+    RETURN
 END SUBROUTINE lambda
 
 !***********************************************************************
@@ -2299,15 +2320,20 @@ SUBROUTINE rom1 (n,sum,nx)
 !     ROM1 INTEGRATES THE 6 SOMMERFELD INTEGRALS FROM A TO B IN LAMBDA.
 !     THE METHOD OF VARIABLE INTERVAL WIDTH ROMBERG INTEGRATION IS USED.
 !
+USE cntour
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-INTEGER, INTENT(IN)                      :: n
-COMPLEX*16, INTENT(OUT)                  :: sum(6)
-INTEGER, INTENT(IN)                      :: nx
+INTEGER,    INTENT(IN)                      :: n
+COMPLEX*16, INTENT(OUT)                     :: sum(6)
+INTEGER,    INTENT(IN)                      :: nx
+
 SAVE
-COMPLEX*16 a,b, g1,g2,g3,g4,g5,t00,t01,t10,t02,t11,t20
-COMMON /cntour/ a,b
+
+COMPLEX*16 g1,g2,g3,g4,g5,t00,t01,t10,t02,t11,t20
+
 DIMENSION  g1(6), g2(6), g3(6), g4(6), g5(6), t01(6), t10(6 ), t20(6)
+
 DATA nm,nts,rx/131072,4,1.e-4/
 
 lstep=0
