@@ -488,6 +488,18 @@ MODULE scratm
 END MODULE
 
 !***********************************************************************
+!
+! formerly common /smat/
+!
+MODULE smat
+
+    IMPLICIT NONE
+
+    COMPLEX*16, DIMENSION(16,16)      :: ssx
+
+END MODULE
+
+!***********************************************************************
 PROGRAM nec2dxs
 !    av00    01-mar-02    First compile with Gnu77 compiler for windows
 
@@ -3059,20 +3071,19 @@ USE zload
 USE segj
 USE dataj
 USE scratm
+USE smat
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 INTEGER, INTENT(IN)                      :: nrow
 COMPLEX*16, INTENT(OUT)                  :: cm(nrow,1)
-REAL(NEC2REAL), INTENT(IN)                         :: rkhx
+REAL(NEC2REAL), INTENT(IN)               :: rkhx
 INTEGER, INTENT(IN)                      :: iexkx
 ! ***
 !
 !     CMSET SETS UP THE COMPLEX STRUCTURE MATRIX IN THE ARRAY CM
 !
-COMPLEX*16  zaj,ssx,deter
-
-COMMON /smat/ ssx(16,16)
+COMPLEX*16  zaj,deter
 
 mp2=2*mp
 npeq=np+mp2
@@ -5546,6 +5557,7 @@ SUBROUTINE fblock (nrow,ncol,imax,irngf,ipsym)
 !     DOUBLE PRECISION 6/4/85
 !
 USE matpar
+USE smat
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -5557,8 +5569,7 @@ INTEGER, INTENT(IN OUT)                  :: ipsym
 ! ***
 !     FBLOCK SETS PARAMETERS FOR OUT-OF-CORE SOLUTION FOR THE PRIMARY
 !     MATRIX (A)
-COMPLEX*16 ssx,deter
-COMMON /smat/ ssx(16,16)
+COMPLEX*16 deter
 
 imx1=imax-irngf
 IF (nrow*ncol > imx1) GO TO 2
@@ -6065,6 +6076,7 @@ USE csave
 USE gnd
 USE angl
 USE zload
+USE smat
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -6074,10 +6086,6 @@ INTEGER, INTENT(IN OUT)                  :: iprt
 !
 !     GFIL READS THE N.G.F. FILE
 !
-COMPLEX*16 ssx
-
-COMMON /smat/ ssx(16,16)
-
 CHARACTER (LEN=80) :: ngfnam
 COMMON /ngfnam/ ngfnam
 !
@@ -6405,6 +6413,7 @@ USE csave
 USE gnd
 USE angl
 USE zload
+USE smat
 
 !PARAMETER (iresrv=maxmat**2)
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
@@ -6412,12 +6421,6 @@ IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 !
 !     WRITE N.G.F. FILE
 !
-COMPLEX*16 ssx
-
-!COMMON /ggrid/ ar1(11,10,4),ar2(17,5,4),ar3(9,8,4),epscf,dxa(3), &
-!    dya(3),xsa(3),ysa(3),nxa(3),nya(3)
-COMMON /smat/ ssx(16,16)
-
 CHARACTER (LEN=80) :: ngfnam
 COMMON /ngfnam/ ngfnam
 !
@@ -10938,6 +10941,7 @@ SUBROUTINE solves (a,ip,b,neq,nrh,np,n,mp,m,ifl1,ifl2)
 USE nec2dpar
 USE matpar
 USE scratm
+USE smat
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -10958,8 +10962,7 @@ INTEGER, INTENT(IN)                      :: ifl2
 !     TRANSFORMATION OF THE RIGHT HAND SIDE VECTOR AND SOLUTION OF THE
 !     MATRIX EQ.
 !
-COMPLEX*16  sum,ssx
-COMMON /smat/ ssx(16,16)
+COMPLEX*16  sum
 
 npeq=np+2*mp
 nop=neq/npeq
