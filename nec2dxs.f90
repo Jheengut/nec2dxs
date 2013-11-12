@@ -396,6 +396,32 @@ MODULE fpat
 END MODULE
 
 !***********************************************************************
+!
+! formerly common /evlcom/
+!
+MODULE evlcom
+    USE nec2dpar
+
+    IMPLICIT NONE
+
+    COMPLEX*16                          :: cksm
+    COMPLEX*16                          :: ct1
+    COMPLEX*16                          :: ct2
+    COMPLEX*16                          :: ct3
+    COMPLEX*16                          :: ck1
+    COMPLEX*16                          :: ck1sq
+    REAL(NEC2REAL)                      :: ck2
+    REAL(NEC2REAL)                      :: ck2sq
+    REAL(NEC2REAL)                      :: tkmag
+    REAL(NEC2REAL)                      :: tsmag
+    REAL(NEC2REAL)                      :: ck1r
+    REAL(NEC2REAL)                      :: zph
+    REAL(NEC2REAL)                      :: rho
+    INTEGER                             :: jh
+
+END MODULE
+
+!***********************************************************************
 PROGRAM nec2dxs
 !    av00    01-mar-02    First compile with Gnu77 compiler for windows
 
@@ -493,14 +519,6 @@ PROGRAM nec2dxs
 
     COMPLEX*16 fj,eth,eph,curi
     COMPLEX*16  ex,ey,ez,epsc
-
-
-
-
-
-
-
-
 
     DIMENSION cab(1),sab(1),x2(1),y2(1),z2(1)
 
@@ -1604,6 +1622,7 @@ END SUBROUTINE get_filenames
 
 SUBROUTINE som2d (rmhz, repr, rsig)
         USE somset
+        USE evlcom
 
         IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -1611,8 +1630,8 @@ SUBROUTINE som2d (rmhz, repr, rsig)
         REAL(NEC2REAL), INTENT(IN)                         :: repr
         REAL(NEC2REAL), INTENT(IN)                         :: rsig
         !***
-        COMPLEX*16 ck1,ck1sq,erv,ezv,erh,eph,cksm,ct1,ct2,ct3,cl1,cl2,con
-        COMMON /evlcom/ cksm,ct1,ct2,ct3,ck1,ck1sq,ck2,ck2sq,tkmag,tsmag,ck1r,zph,rho,jh
+        COMPLEX*16 erv,ezv,erh,eph,cl1,cl2,con
+
 
         CHARACTER (LEN=3), DIMENSION(4)  :: lcomp = (/'ERV','EZV','ERH','EPH'/)
 
@@ -1884,6 +1903,8 @@ END SUBROUTINE bessel
 !     PLANE FOR EVALUATION OF THE SOMMERFELD INTEGRALS.
 !
 SUBROUTINE evlua (erv,ezv,erh,eph)
+        USE evlcom
+
         IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
         COMPLEX*16, INTENT(OUT)                  :: erv
@@ -1891,11 +1912,10 @@ SUBROUTINE evlua (erv,ezv,erh,eph)
         COMPLEX*16, INTENT(OUT)                  :: erh
         COMPLEX*16, INTENT(OUT)                  :: eph
         SAVE
-        COMPLEX*16  a,b,ck1,ck1sq,bk,delta,delta2,cp1,cp2,cp3,cksm,ct1,ct2,ct3
+        COMPLEX*16  a,b,bk,delta,delta2,cp1,cp2,cp3
         COMPLEX*16, DIMENSION(6)                 :: sum
         COMPLEX*16, DIMENSION(6)                 :: ans
         COMMON /cntour/ a,b
-        COMMON /evlcom/ cksm,ct1,ct2,ct3,ck1,ck1sq,ck2,ck2sq,tkmag,tsmag,ck1r,zph,rho,jh
 
         REAL(NEC2REAL)                           :: ptp = 0.6283185308
 
@@ -2349,14 +2369,14 @@ SUBROUTINE saoa (t,ans)
 !     SAOA COMPUTES THE INTEGRAND FOR EACH OF THE 6
 !     SOMMERFELD INTEGRALS FOR SOURCE AND OBSERVER ABOVE GROUND
 !
+USE evlcom
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 REAL(NEC2REAL), INTENT(IN)                       :: t
 COMPLEX*16, INTENT(OUT)                  :: ans(6)
 SAVE
-COMPLEX*16  xl,dxl,cgam1,cgam2,b0,b0p,com,ck1,ck1sq,cksm,ct1,  &
-    ct2,ct3,dgam,den1,den2
-COMMON /evlcom/ cksm,ct1,ct2,ct3,ck1,ck1sq,ck2,ck2sq,tkmag,tsmag,ck1r,zph,rho,jh
+COMPLEX*16  xl,dxl,cgam1,cgam2,b0,b0p,com,dgam,den1,den2
 
 
 CALL lambda (t,xl,dxl)
