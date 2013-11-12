@@ -422,6 +422,42 @@ MODULE evlcom
 END MODULE
 
 !***********************************************************************
+!
+! formerly common /dataj/
+!
+MODULE dataj
+    USE nec2dpar
+
+    IMPLICIT NONE
+
+    REAL(NEC2REAL)                        :: s
+    REAL(NEC2REAL)                        :: b
+    REAL(NEC2REAL)                        :: xj
+    REAL(NEC2REAL)                        :: yj
+    REAL(NEC2REAL)                        :: zj
+    REAL(NEC2REAL)                        :: cabj
+    REAL(NEC2REAL)                        :: sabj
+    REAL(NEC2REAL)                        :: salpj
+    COMPLEX*16                            :: exk
+    COMPLEX*16                            :: eyk
+    COMPLEX*16                            :: ezk
+    COMPLEX*16                            :: exs
+    COMPLEX*16                            :: eys
+    COMPLEX*16                            :: ezs
+    COMPLEX*16                            :: exc
+    COMPLEX*16                            :: eyc
+    COMPLEX*16                            :: ezc
+    REAL(NEC2REAL)                        :: rkh
+    INTEGER                               :: ind1
+    INTEGER                               :: indd1
+    INTEGER                               :: ind2
+    INTEGER                               :: indd2
+    INTEGER                               :: iexk
+    INTEGER                               :: ipgnd
+
+END MODULE
+
+!***********************************************************************
 PROGRAM nec2dxs
 !    av00    01-mar-02    First compile with Gnu77 compiler for windows
 
@@ -2689,6 +2725,7 @@ USE matpar
 USE data
 USE zload
 USE segj
+USE dataj
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -2705,11 +2742,6 @@ INTEGER                                  :: ix
 
 ! ***
 !     CMNGF FILLS INTERACTION MATRICIES B, C, AND D FOR N.G.F. SOLUTION
-COMPLEX*16  exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc
-
-COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
-    ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
-
 
 rkh=rkhx
 iexk=iexkx
@@ -2982,6 +3014,7 @@ USE matpar
 USE data
 USE zload
 USE segj
+USE dataj
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -2993,13 +3026,9 @@ INTEGER, INTENT(IN)                      :: iexkx
 !
 !     CMSET SETS UP THE COMPLEX STRUCTURE MATRIX IN THE ARRAY CM
 !
-COMPLEX*16  zaj,exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc,ssx, d,deter
+COMPLEX*16  zaj,ssx,d,deter
 COMMON /smat/ ssx(16,16)
 COMMON /scratm/ d(2*maxseg)
-
-COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
-    ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
-
 
 mp2=2*mp
 npeq=np+mp2
@@ -3107,6 +3136,7 @@ SUBROUTINE cmss (j1,j2,im1,im2,cm,nrow,itrp)
 USE nec2dpar
 USE data
 USE angl
+USE dataj
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -3119,9 +3149,7 @@ INTEGER, INTENT(IN)                      :: nrow
 INTEGER, INTENT(IN)                      :: itrp
 ! ***
 !     CMSS COMPUTES MATRIX ELEMENTS FOR SURFACE-SURFACE INTERACTIONS.
-COMPLEX*16 g11,g12,g21,g22, exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc
-COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
-    ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
+COMPLEX*16 g11,g12,g21,g22
 
 DIMENSION t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1)
 EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), (t2y,icon2), (t2z,itag)
@@ -3203,6 +3231,7 @@ USE data
 USE gnd
 USE angl
 USE segj
+USE dataj
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -3220,9 +3249,8 @@ INTEGER                                  :: ip
 
 ! ***
 !     COMPUTES MATRIX ELEMENTS FOR E ALONG WIRES DUE TO PATCH CURRENT
-COMPLEX*16  exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc ,emel
-COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
-    ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
+COMPLEX*16  emel
+
 
 DIMENSION cab(1), sab(1)
 DIMENSION t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1), emel(9)
@@ -3360,6 +3388,7 @@ USE nec2dpar
 USE data
 USE angl
 USE segj
+USE dataj
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -3375,10 +3404,8 @@ INTEGER, INTENT(IN)                      :: itrp
 !
 !     CMWS COMPUTES MATRIX ELEMENTS FOR WIRE-SURFACE INTERACTIONS
 !
-COMPLEX*16  etk,ets,etc,exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc
+COMPLEX*16  etk,ets,etc
 
-COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
-    ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
 DIMENSION  cab(1), sab(1)
 DIMENSION t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1)
 EQUIVALENCE (cab,alp), (sab,bet), (t1x,si), (t1y,alp), (t1z,bet)
@@ -3459,6 +3486,7 @@ USE nec2dpar
 USE data
 USE angl
 USE segj
+USE dataj
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -3474,10 +3502,8 @@ INTEGER, INTENT(IN)                      :: itrp
 !
 !     CMWW COMPUTES MATRIX ELEMENTS FOR WIRE-WIRE INTERACTIONS
 !
-COMPLEX*16  etk,ets,etc,exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc
+COMPLEX*16  etk,ets,etc
 
-COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
-    ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
 DIMENSION  cab(1), sab(1)
 EQUIVALENCE (cab,alp), (sab,bet)
 
@@ -4408,6 +4434,7 @@ SUBROUTINE efld (xi,yi,zi,ai,ij)
 !
 USE nec2dpar, ONLY : pi
 USE gnd
+USE dataj
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -4423,11 +4450,8 @@ INTEGER                                  :: ip
 !     COMPUTE NEAR E FIELDS OF A SEGMENT WITH SINE, COSINE, AND
 !     CONSTANT CURRENTS.  GROUND EFFECT INCLUDED.
 !
-COMPLEX*16 txk,tyk,tzk,txs,tys,tzs,txc,tyc,tzc,exk,eyk,ezk,exs,eys  &
-    ,ezs,exc,eyc,ezc,epx,epy,refs,refps,zrsin,zratx,zscrn  &
-    ,tezs,ters,tezc,terc,tezk,terk,egnd
-COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
-    ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
+COMPLEX*16 txk,tyk,tzk,txs,tys,tzs,txc,tyc,tzc,epx,epy,refs,refps, &
+    zrsin,zratx,zscrn,tezs,ters,tezc,terc,tezk,terk,egnd
 COMMON /incom/ xo,yo,zo,sn,xsn,ysn,isnor
 DIMENSION egnd(9)
 EQUIVALENCE (egnd(1),txk), (egnd(2),tyk), (egnd(3),tzk), (egnd(4),  &
@@ -6861,6 +6885,7 @@ SUBROUTINE hintg (xi,yi,zi)
 !     DOUBLE PRECISION 6/4/85
 !
 USE gnd
+USE dataj
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -6868,15 +6893,14 @@ REAL(NEC2REAL), INTENT(IN)                         :: xi
 REAL(NEC2REAL), INTENT(IN)                         :: yi
 REAL(NEC2REAL), INTENT(IN)                         :: zi
 
-INTEGER                                    :: ip
+INTEGER                                            :: ip
 
 ! ***
 !     HINTG COMPUTES THE H FIELD OF A PATCH CURRENT
-COMPLEX*16 exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc,gam,  &
-    f1x,f1y,f1z,f2x,f2y,f2z,rrv,rrh
-COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
-    ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
+COMPLEX*16 gam,f1x,f1y,f1z,f2x,f2y,f2z,rrv,rrh
+
 EQUIVALENCE (t1xj,cabj), (t1yj,sabj), (t1zj,salpj), (t2xj,b), (t2yj,ind1), (t2zj,ind2)
+
 DATA fpi/12.56637062D+0/,tp/6.283185308D+0/
 
 rx=xi-xj
@@ -6957,6 +6981,7 @@ SUBROUTINE hsfld (xi,yi,zi,ai)
 !     DOUBLE PRECISION 6/4/85
 !
 USE gnd
+USE dataj
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -6970,10 +6995,8 @@ INTEGER                                    :: ip
 ! ***
 !     HSFLD COMPUTES THE H FIELD FOR CONSTANT, SINE, AND COSINE CURRENT
 !     ON A SEGMENT INCLUDING GROUND EFFECTS.
-COMPLEX*16 exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc,  &
-    hpk,hps,hpc,qx,qy,qz,rrv,rrh,zratx
-COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
-    ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
+COMPLEX*16 hpk,hps,hpc,qx,qy,qz,rrv,rrh,zratx
+
 DATA eta/376.73/
 
 xij=xi-xj
@@ -8116,22 +8139,23 @@ USE data
 USE gnd
 USE crnt
 USE angl
+USE dataj
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 REAL(NEC2REAL), INTENT(IN)                       :: xob
 REAL(NEC2REAL), INTENT(IN)                       :: yob
 REAL(NEC2REAL), INTENT(IN)                       :: zob
-COMPLEX*16, INTENT(OUT)                  :: ex
-COMPLEX*16, INTENT(OUT)                  :: ey
-COMPLEX*16, INTENT(OUT)                  :: ez
+COMPLEX*16, INTENT(OUT)                          :: ex
+COMPLEX*16, INTENT(OUT)                          :: ey
+COMPLEX*16, INTENT(OUT)                          :: ez
 
-INTEGER                                  :: ip
+INTEGER                                          :: ip
 
-COMPLEX*16  acx,bcx,ccx,exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc
-COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
-    ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
+COMPLEX*16  acx,bcx,ccx
+
 DIMENSION cab(1), sab(1), t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1)
+
 EQUIVALENCE (cab,alp), (sab,bet)
 EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), (t2y,icon2), (t2z,itag)
 EQUIVALENCE (t1xj,cabj), (t1yj,sabj), (t1zj,salpj), (t2xj,b), &
@@ -8722,24 +8746,27 @@ USE data
 USE gnd
 USE crnt
 USE angl
+USE dataj
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 REAL(NEC2REAL), INTENT(IN)                         :: xob
 REAL(NEC2REAL), INTENT(IN)                         :: yob
 REAL(NEC2REAL), INTENT(IN)                         :: zob
-COMPLEX*16, INTENT(OUT)                  :: hx
-COMPLEX*16, INTENT(OUT)                  :: hy
-COMPLEX*16, INTENT(OUT)                  :: hz
-COMPLEX*16  acx,bcx,ccx,exk,eyk,ezk,exs,eys,ezs,exc, eyc,ezc
+COMPLEX*16,     INTENT(OUT)                        :: hx
+COMPLEX*16,     INTENT(OUT)                        :: hy
+COMPLEX*16,     INTENT(OUT)                        :: hz
+
+
+COMPLEX*16  acx,bcx,ccx
 COMPLEX*16 con
 COMPLEX*16 expx,exmx,expy,exmy,expz,exmz
 COMPLEX*16 eypx,eymx,eypy,eymy,eypz,eymz
 COMPLEX*16 ezpx,ezmx,ezpy,ezmy,ezpz,ezmz
-COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
-    ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
+
 DIMENSION cab(1), sab(1)
 DIMENSION t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1), xs(1), ys(1), zs(1)
+
 EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), (t2y,icon2), &
     (t2z,itag), (xs,x), (ys,y), (zs,z)
 EQUIVALENCE (t1xj,cabj), (t1yj,sabj), (t1zj,salpj), (t2xj,b), &
@@ -9084,6 +9111,8 @@ SUBROUTINE pcint (xi,yi,zi,cabi,sabi,salpi,e)
 ! ***
 !     DOUBLE PRECISION 6/4/85
 !
+USE dataj
+
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
 REAL(NEC2REAL), INTENT(IN OUT)                     :: xi
@@ -9092,15 +9121,14 @@ REAL(NEC2REAL), INTENT(IN OUT)                     :: zi
 REAL(NEC2REAL), INTENT(IN)                         :: cabi
 REAL(NEC2REAL), INTENT(IN)                         :: sabi
 REAL(NEC2REAL), INTENT(IN)                         :: salpi
-COMPLEX*16, INTENT(OUT)                  :: e(9)
+COMPLEX*16,     INTENT(OUT)                        :: e(9)
 ! ***
 !     INTEGRATE OVER PATCHES AT WIRE CONNECTION POINT
-COMPLEX*16 exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc, e1,e2,e3,e4,e5 ,e6,e7,e8,e9
-COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
-    ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
+COMPLEX*16 e1,e2,e3,e4,e5,e6,e7,e8,e9
 
 EQUIVALENCE (t1xj,cabj), (t1yj,sabj), (t1zj,salpj), (t2xj,b), &
     (t2yj,ind1), (t2zj,ind2)
+
 DATA tpi/6.283185308D+0/,nint/10/
 
 d=SQRT(s)*.5
@@ -9247,23 +9275,23 @@ USE angl
 USE zload
 USE segj
 USE vsorc
+USE dataj
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-INTEGER, INTENT(IN)                      :: is
+INTEGER,    INTENT(IN)                   :: is
 COMPLEX*16, INTENT(IN)                   :: v
 COMPLEX*16, INTENT(OUT)                  :: e(1)
 ! ***
 !     FILL INCIDENT FIELD ARRAY FOR CHARGE DISCONTINUITY VOLTAGE SOURCE
-COMPLEX*16 curd,ccj,exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc  &
-    ,etk,ets,etc
+COMPLEX*16 curd,ccj,etk,ets,etc
 
-COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
-    ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
 DIMENSION ccjx(2), cab(1), sab(1)
 DIMENSION t1x(1), t1y(1), t1z(1), t2x(1), t2y(1), t2z(1)
+
 EQUIVALENCE (ccj,ccjx), (cab,alp), (sab,bet)
 EQUIVALENCE (t1x,si), (t1y,alp), (t1z,bet), (t2x,icon1), (t2y,icon2), (t2z,itag)
+
 DATA tp/6.283185308D+0/,ccjx/0.,-.01666666667D+0/
 
 i=icon1(is)
@@ -10536,20 +10564,19 @@ SUBROUTINE sflds (t,e)
 USE nec2dpar, ONLY : pi
 USE gnd
 USE gwav
+USE dataj
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
-REAL(NEC2REAL), INTENT(IN)                         :: t
-COMPLEX*16, INTENT(OUT)                  :: e(9)
+REAL(NEC2REAL), INTENT(IN)                   :: t
+COMPLEX*16,     INTENT(OUT)                  :: e(9)
 ! ***
 !
 !     SFLDX RETURNS THE FIELD DUE TO GROUND FOR A CURRENT ELEMENT ON
 !     THE SOURCE SEGMENT AT T RELATIVE TO THE SEGMENT CENTER.
 !
-COMPLEX*16  erv,ezv,erh,ezh,eph,t1,exk,eyk,ezk,exs,eys,ezs,exc  &
-    ,eyc,ezc,er,et,hrv,hzv,hrh
-COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
-    ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
+COMPLEX*16  erv,ezv,erh,ezh,eph,t1,er,et,hrv,hzv,hrh
+
 COMMON /incom/ xo,yo,zo,sn,xsn,ysn,isnor
 
 DATA tp/6.283185308D+0/,pot/1.570796327D+0/
@@ -11291,6 +11318,7 @@ SUBROUTINE unere (xob,yob,zob)
 !     DOUBLE PRECISION 6/4/85
 !
 USE gnd
+USE dataj
 
 IMPLICIT REAL(NEC2REAL)(a-h,o-z)
 
@@ -11300,13 +11328,13 @@ REAL(NEC2REAL), INTENT(IN)                         :: zob
 ! ***
 !     CALCULATES THE ELECTRIC FIELD DUE TO UNIT CURRENT IN THE T1 AND T2
 !     DIRECTIONS ON A PATCH
-COMPLEX*16 exk,eyk,ezk,exs,eys,ezs,exc,eyc,ezc,t1  &
-    ,er,q1,q2,rrv,rrh,edp
-COMMON /dataj/ s,b,xj,yj,zj,cabj,sabj,salpj,exk,eyk,ezk,exs,eys,  &
-    ezs,exc,eyc,ezc,rkh,ind1,indd1,ind2,indd2,iexk,ipgnd
+COMPLEX*16 t1,er,q1,q2,rrv,rrh,edp
+
 EQUIVALENCE (t1xj,cabj), (t1yj,sabj), (t1zj,salpj), (t2xj,b), &
     (t2yj,ind1), (t2zj,ind2)
+
 DATA tpi,const/6.283185308D+0,4.771341188D+0/
+
 !     CONST=ETA/(8.*PI**2)
 zr=zj
 t1zr=t1zj
